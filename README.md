@@ -19,7 +19,7 @@ This repository is for the [AGiXT](https://github.com/Josh-XT/AGiXT) SDK for Typ
 
 2. Import the library into your project:
    ```typescript
-   import AGiXTSDK from 'agixt-sdk';
+   import AGiXTSDK from 'agixt';
    ```
 
 3. Create an instance of the AGiXTSDK class by providing the base URI and an optional API key:
