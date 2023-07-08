@@ -1,2 +1,3 @@
-# typescript-sdk
-AGiXT SDK for TypeScript
+# AGiXT SDK for TypeScript
+
+
