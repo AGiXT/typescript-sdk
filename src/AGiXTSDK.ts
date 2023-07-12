@@ -442,6 +442,23 @@ class AGiXTSDK {
       throw new Error(this.handleError(error));
     }
   }
+  public async runChainStep(
+    chainName: string,
+    userInput: string,
+    agentName: string = "",
+    stepNumber: number = 1
+  ): Promise<string> {
+    try {
+      const url = `${this.baseUri}/api/chain/${chainName}/run/step/${stepNumber}`;
+      const data = {
+        prompt: userInput,
+        agent_override: agentName,
+      };
+      return this.post<string>(url, data);
+    } catch (error) {
+      throw new Error(this.handleError(error));
+    }
+  }
 
   public async addChain(chainName: string): Promise<string> {
     try {
