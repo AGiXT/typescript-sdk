@@ -635,6 +635,19 @@ class AGiXTSDK {
     }
   }
 
+  public async renamePrompt(
+    promptName: string,
+    newName: string
+  ): Promise<string> {
+    try {
+      const url = `${this.baseUri}/api/prompt/${promptName}`;
+      const data = { prompt_name: newName };
+      return this.patch<string>(url, data);
+    } catch (error) {
+      throw new Error(this.handleError(error));
+    }
+  }
+
   public async getExtensionSettings(): Promise<Record<string, any>> {
     try {
       const url = `${this.baseUri}/api/extensions/settings`;
