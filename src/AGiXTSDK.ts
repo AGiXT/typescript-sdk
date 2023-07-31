@@ -361,11 +361,11 @@ class AGiXTSDK {
   }
 
   public smartInstruct(agentName: string, prompt: string): Promise<string> {
-    return this.runChain(agentName, "Smart Instruct", prompt, false, 1);
+    return this.runChain(agentName, "Smart Instruct", prompt, false, 1, {});
   }
 
   public smartChat(agentName: string, prompt: string): Promise<string> {
-    return this.runChain(agentName, "Smart Chat", prompt, false, 1);
+    return this.runChain(agentName, "Smart Chat", prompt, false, 1, {});
   }
 
   public async getCommands(
@@ -427,7 +427,8 @@ class AGiXTSDK {
     userInput: string,
     agentName: string = "",
     allResponses: boolean = false,
-    fromStep: number = 1
+    fromStep: number = 1,
+    chainArgs: Record<string, any> = {}
   ): Promise<string> {
     try {
       const url = `${this.baseUri}/api/chain/${chainName}/run`;
@@ -436,6 +437,7 @@ class AGiXTSDK {
         agent_override: agentName,
         all_responses: allResponses,
         from_step: fromStep,
+        chain_args: chainArgs,
       };
       return this.post<string>(url, data);
     } catch (error) {
@@ -446,13 +448,15 @@ class AGiXTSDK {
     chainName: string,
     userInput: string,
     agentName: string = "",
-    stepNumber: number = 1
+    stepNumber: number = 1,
+    chainArgs: Record<string, any> = {}
   ): Promise<string> {
     try {
       const url = `${this.baseUri}/api/chain/${chainName}/run/step/${stepNumber}`;
       const data = {
         prompt: userInput,
         agent_override: agentName,
+        chain_args: chainArgs,
       };
       return this.post<string>(url, data);
     } catch (error) {
