@@ -13,29 +13,6 @@ interface AgentSettings {
   [key: string]: any;
 }
 
-interface CommandArgs {
-  [key: string]: any;
-}
-
-interface StepPrompt {
-  prompt_type: string;
-  prompt: PromptArgs;
-  agent_name: string;
-  step_number: number;
-}
-
-interface StepMove {
-  old_step_number: number;
-  new_step_number: number;
-}
-
-interface StepUpdate {
-  prompt_type: string;
-  prompt: PromptArgs;
-  agent_name: string;
-  step_number: number;
-}
-
 class AGiXTSDK {
   private baseUri: string;
   private headers: Record<string, string>;
@@ -416,6 +393,15 @@ class AGiXTSDK {
   ): Promise<Record<string, any>> {
     try {
       const url = `${this.baseUri}/api/chain/${chainName}/responses`;
+      return this.get<Record<string, any>>(url);
+    } catch (error) {
+      throw new Error(this.handleError(error));
+    }
+  }
+
+  public async getChainArgs(chainName: string): Promise<Record<string, any>> {
+    try {
+      const url = `${this.baseUri}/api/chain/${chainName}/args`;
       return this.get<Record<string, any>>(url);
     } catch (error) {
       throw new Error(this.handleError(error));
