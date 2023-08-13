@@ -36,107 +36,87 @@ Create an SDK instance:
 
 ```typescript
 const agixt = new AGiXTSDK({
-  baseUrl: 'http://localhost:7437',
-  apiKey: 'YOUR_API_KEY' 
+  baseUri: 'http://localhost:7437', 
+  apiKey: 'YOUR_API_KEY'
 });
 ```
 
-The SDK can then be used to call AGiXT APIs:
+### Providers
+
+- `getProviders()` - Get list of available AI providers
+- `getProviderSettings(providerName)` - Get settings for a provider
+- `getEmbedProviders()` - Get list of embedding providers
 
 ### Agents
 
-```typescript
-// List all agents
-const agents = await agixt.listAgents(); 
-
-// Get a specific agent
-const agent = await agixt.getAgent('agent-name');
-
-// Create a new agent
-await agixt.createAgent({
-  name: 'new-agent',
-  provider: 'gpt3',
-  settings: {
-    model: 'text-davinci-003'  
-  }
-});
-
-// Update an agent
-await agixt.updateAgent('agent-name', {
-  settings: {
-    model: 'text-curie-001'
-  }  
-});
-
-// Delete an agent
-await agixt.deleteAgent('agent-name');
-```
-
-### Prompts
-
-```typescript
-// Prompt an agent 
-const response = await agixt.promptAgent('agent-name', 'prompt-name', {
-  conversationId: 'convo-123',
-  promptArgs: {
-    topic: 'cooking'
-  }
-});
-
-// Run a prompt chain
-const responses = await agixt.runPromptChain('chain-name', 'user input');
-``` 
-
-### Chains
-
-```typescript
-// Get all chains
-const chains = await agixt.getChains();
-
-// Get a chain
-const chain = await agixt.getChain('chain-name');
-
-// Create a chain 
-await agixt.createChain('new-chain');
-
-// Add a step to a chain
-await agixt.addChainStep('chain-name', {
-  agent: 'agent-name',
-  promptName: 'prompt-name' 
-});
-
-// Delete a chain
-await agixt.deleteChain('chain-name');
-```
-
-### Learning
-
-```typescript
-// Learn from a URL
-await agixt.learnUrl('agent-name', 'https://example.com');
-
-// Learn from a local file 
-await agixt.learnFile('agent-name', '/path/to/file.md');
-
-// Learn from a GitHub repo
-await agixt.learnGitHub('agent-name', 'owner/repo');
-```
+- `addAgent(agentName, settings)` - Add a new agent
+- `importAgent(agentName, settings, commands)` - Import an existing agent
+- `renameAgent(agentName, newName)` - Rename an agent 
+- `updateAgentSettings(agentName, settings)` - Update agent settings
+- `updateAgentCommands(agentName, commands)` - Update agent commands
+- `deleteAgent(agentName)` - Delete an agent
+- `getAgents()` - Get all agents
+- `getAgentConfig(agentName)` - Get config for an agent
+- `learnUrl(agentName, url)` - Learn from a URL
+- `learnFile(agentName, fileName, fileContent)` - Learn from a file
+- `learnGithubRepo(agentName, repo, user, token, branch)` - Learn from a GitHub repo
 
 ### Conversations
 
-```typescript
-// List conversations
-const conversations = await agixt.listConversations('agent-name');
+- `getConversations(agentName)` - Get conversations for an agent or all agents
+- `getConversation(agentName, conversationName, limit, page)` - Get a conversation
+- `newConversation(agentName, conversationName)` - Start a new conversation
+- `deleteConversation(agentName, conversationName)` - Delete a conversation
+- `deleteConversationMessage(agentName, conversationName, message)` - Delete a message
+- `wipeAgentMemories(agentName)` - Wipe an agent's memories
 
-// Get a conversation 
-const conversation = await agixt.getConversation('agent-name', 'convo-123');
+### Prompting
 
-// Create a conversation
-await agixt.createConversation('agent-name', 'new-conversation');  
+- `promptAgent(agentName, promptName, promptArgs)` - Prompt an agent
+- `instruct(agentName, userInput, conversation)` - Instruct with no memory 
+- `chat(agentName, userInput, conversation, contextResults)` - Chat with no memory
+- `smartinstruct(agentName, userInput, conversation)` - Smart instruct with no memory
+- `smartchat(agentName, userInput, conversation)` - Smart chat with no memory
 
-// Delete a conversation
-await agixt.deleteConversation('agent-name', 'convo-123');
-```
+### Commands
 
+- `getCommands(agentName)` - Get commands for an agent
+- `toggleCommand(agentName, commandName, enable)` - Enable/disable a command
+
+### Chains
+
+- `getChains()` - Get all chains
+- `getChain(chainName)` - Get a chain
+- `getChainResponses(chainName)` - Get responses for a chain 
+- `getChainArgs(chainName)` - Get args for a chain
+- `runChain(chainName, userInput, agentName, allResponses, fromStep, chainArgs)` - Run a chain
+- `runChainStep(chainName, stepNumber, userInput, agentName, chainArgs)` - Run a chain step
+- `addChain(chainName)` - Add a new chain
+- `importChain(chainName, steps)` - Import a chain
+- `renameChain(chainName, newName)` - Rename a chain
+- `deleteChain(chainName)` - Delete a chain
+- `addStep(chainName, stepNumber, agentName, promptType, prompt)` - Add step to a chain
+- `updateStep(chainName, stepNumber, agentName, promptType, prompt)` - Update step
+- `moveStep(chainName, oldStepNumber, newStepNumber)` - Move step
+- `deleteStep(chainName, stepNumber)` - Delete step
+
+### Prompts
+
+- `addPrompt(promptName, prompt, promptCategory)` - Add a prompt
+- `getPrompt(promptName, promptCategory)` - Get a prompt 
+- `getPrompts(promptCategory)` - Get prompts in a category
+- `getPromptCategories()` - Get all prompt categories
+- `getPromptArgs(promptName, promptCategory)` - Get args for a prompt
+- `deletePrompt(promptName, promptCategory)` - Delete a prompt
+- `updatePrompt(promptName, prompt, promptCategory)` - Update a prompt
+- `renamePrompt(promptName, newName, promptCategory)` - Rename a prompt
+
+### Extensions
+
+- `getExtensionSettings()` - Get extension settings
+- `getExtensions()` - Get all extensions
+- `getCommandArgs(commandName)` - Get args for an extension command
+
+This covers the major methods available in the SDK. Refer to the source for additional helper methods and error handling.
 ## More Documentation
 Want to know more about AGiXT?  Check out our [documentation](https://josh-xt.github.io/AGiXT/) or [GitHub](https://github.com/Josh-XT/AGiXT) page.
