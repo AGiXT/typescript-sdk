@@ -15,107 +15,131 @@
 [![Logo](https://josh-xt.github.io/AGiXT/images/AGiXT-gradient-flat.svg)](https://josh-xt.github.io/AGiXT/)
 
 This repository is for the [AGiXT](https://github.com/Josh-XT/AGiXT) SDK for TypeScript. https://www.npmjs.com/package/agixt
-## Installation and Usage
+Here is an improved README.md with updated documentation for the AGiXT SDK:
 
-1. Install the library by running the following command:
-   ```
-   npm install agixt
-   ```
+# AGiXT SDK for TypeScript
 
-2. Import the library into your project:
-   ```typescript
-   import AGiXTSDK from 'agixt';
-   ```
+The AGiXT SDK for TypeScript provides an easy way to interact with AGiXT APIs from your Node.js and browser applications.
 
-3. Create an instance of the AGiXTSDK class by providing the base URI and an optional API key:
-   ```typescript
-   const api = new AGiXTSDK('http://localhost:7437', 'your-api-key');
-   ```
+## Installation
 
-4. Use the available methods to interact with the AGiXT API. Here are some examples:
+```
+npm install agixt
+```
 
-   - Get the list of available providers:
-     ```typescript
-     const providers = await api.getProviders();
-     console.log(providers);
-     ```
+## Usage
 
-   - Get the settings for a specific provider:
-     ```typescript
-     const providerSettings = await api.getProviderSettings('provider-name');
-     console.log(providerSettings);
-     ```
+Import the SDK:
 
-   - Create a new agent:
-     ```typescript
-     const agent = await api.addAgent('agent-name');
-     console.log(agent);
-     ```
+```typescript
+import { AGiXTSDK } from 'agixt';
+```
 
-   - Get the list of agents:
-     ```typescript
-     const agents = await api.getAgents();
-     console.log(agents);
-     ```
+Create an SDK instance:
 
-   - Get the configuration of a specific agent:
-     ```typescript
-     const agentConfig = await api.getAgentConfig('agent-name');
-     console.log(agentConfig);
-     ```
+```typescript
+const agixt = new AGiXTSDK({
+  baseUrl: 'http://localhost:7437',
+  apiKey: 'YOUR_API_KEY' 
+});
+```
 
-   - Prompt the agent for a response:
-     ```typescript
-     const response = await api.promptAgent('agent-name', 'prompt-name', { prompt_args });
-     console.log(response);
-     ```
+The SDK can then be used to call AGiXT APIs:
 
-   - Run a chain of prompts:
-     ```typescript
-     const chainResponse = await api.runChain('chain-name', 'user-input', 'agent-name', false, 1);
-     console.log(chainResponse);
-     ```
+### Agents
 
-   - Add a new prompt:
-     ```typescript
-     const newPrompt = await api.addPrompt('prompt-name', 'prompt');
-     console.log(newPrompt);
-     ```
+```typescript
+// List all agents
+const agents = await agixt.listAgents(); 
 
-   - Get the details of a specific prompt:
-     ```typescript
-     const promptDetails = await api.getPrompt('prompt-name');
-     console.log(promptDetails);
-     ```
+// Get a specific agent
+const agent = await agixt.getAgent('agent-name');
 
-   - Update the content of a prompt:
-     ```typescript
-     const updatedPrompt = await api.updatePrompt('prompt-name', 'new-prompt');
-     console.log(updatedPrompt);
-     ```
+// Create a new agent
+await agixt.createAgent({
+  name: 'new-agent',
+  provider: 'gpt3',
+  settings: {
+    model: 'text-davinci-003'  
+  }
+});
 
-   - Delete a prompt:
-     ```typescript
-     const deletedPrompt = await api.deletePrompt('prompt-name');
-     console.log(deletedPrompt);
-     ```
+// Update an agent
+await agixt.updateAgent('agent-name', {
+  settings: {
+    model: 'text-curie-001'
+  }  
+});
 
-   - Learn from a URL:
-     ```typescript
-     const learningResult = await api.learnUrl('agent-name', 'url');
-     console.log(learningResult);
-     ```
+// Delete an agent
+await agixt.deleteAgent('agent-name');
+```
 
-   - Learn from a file:
-     ```typescript
-     const learningResult = await api.learnFile('agent-name', 'file-name', 'file-content');
-     console.log(learningResult);
-     ```
+### Prompts
 
-   Note: The examples above are just a subset of the available methods. Refer to the library documentation or explore the code for more functionality.
+```typescript
+// Prompt an agent 
+const response = await agixt.promptAgent('agent-name', 'prompt-name', {
+  conversationId: 'convo-123',
+  promptArgs: {
+    topic: 'cooking'
+  }
+});
 
-5. Handle any errors that may occur during API calls. The methods in the AGiXTSDK class may throw errors, so it's important to catch and handle them appropriately.
+// Run a prompt chain
+const responses = await agixt.runPromptChain('chain-name', 'user input');
+``` 
 
-That's it! You can now use the AGiXTSDK library to interact with the AGiXT API in your project.
+### Chains
+
+```typescript
+// Get all chains
+const chains = await agixt.getChains();
+
+// Get a chain
+const chain = await agixt.getChain('chain-name');
+
+// Create a chain 
+await agixt.createChain('new-chain');
+
+// Add a step to a chain
+await agixt.addChainStep('chain-name', {
+  agent: 'agent-name',
+  promptName: 'prompt-name' 
+});
+
+// Delete a chain
+await agixt.deleteChain('chain-name');
+```
+
+### Learning
+
+```typescript
+// Learn from a URL
+await agixt.learnUrl('agent-name', 'https://example.com');
+
+// Learn from a local file 
+await agixt.learnFile('agent-name', '/path/to/file.md');
+
+// Learn from a GitHub repo
+await agixt.learnGitHub('agent-name', 'owner/repo');
+```
+
+### Conversations
+
+```typescript
+// List conversations
+const conversations = await agixt.listConversations('agent-name');
+
+// Get a conversation 
+const conversation = await agixt.getConversation('agent-name', 'convo-123');
+
+// Create a conversation
+await agixt.createConversation('agent-name', 'new-conversation');  
+
+// Delete a conversation
+await agixt.deleteConversation('agent-name', 'convo-123');
+```
+
 ## More Documentation
 Want to know more about AGiXT?  Check out our [documentation](https://josh-xt.github.io/AGiXT/) or [GitHub](https://github.com/Josh-XT/AGiXT) page.
