@@ -1,745 +1,805 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
-interface ApiResponse<T> {
-  data: T;
-  error?: string;
+export interface AGiXTSDKConfig {
+  baseUri?: string;
+  apiKey?: string;
 }
 
-interface PromptArgs {
-  [key: string]: any;
-}
-
-interface AgentSettings {
-  [key: string]: any;
-}
-
-class AGiXTSDK {
+export default class AGiXTSDK {
   private baseUri: string;
-  private headers: Record<string, string>;
+  private headers: AxiosRequestConfig["headers"];
 
-  constructor(baseUri: string = "http://localhost:7437", apiKey?: string) {
-    this.baseUri = baseUri;
-    this.headers = {
-      "Content-Type": "application/json",
-    };
-
-    if (apiKey) {
-      this.headers["Authorization"] = `Bearer ${apiKey}`;
+  constructor(config: AGiXTSDKConfig = {}) {
+    this.baseUri = config.baseUri || "http://localhost:7437";
+    if (config.apiKey) {
+      this.headers = {
+        Authorization: `Bearer ${config.apiKey}`,
+        "Content-Type": "application/json",
+      };
+    } else {
+      this.headers = {
+        "Content-Type": "application/json",
+      };
     }
 
-    if (this.baseUri.endsWith("/")) {
+    if (this.baseUri.slice(-1) === "/") {
       this.baseUri = this.baseUri.slice(0, -1);
     }
   }
 
-  private handleResponse<T>(response: AxiosResponse<ApiResponse<T>>): T {
-    const data = response.data;
-    if (response.status >= 200 && response.status < 300 && !data.error) {
-      return data.data;
-    } else {
-      throw new Error(data.error || "Request failed");
-    }
-  }
-
-  private handleError(error: any): string {
+  private handleError(error: any) {
+    //console.error(`Error: ${error}`);
     return "Unable to retrieve data.";
   }
 
-  private async get<T>(url: string, data?: any): Promise<T> {
+  async getProviders(): Promise<string[]> {
     try {
-      const response = await axios.get<ApiResponse<T>>(url, {
-        params: data,
+      const response = await axios.get<{ providers: string[] }>(
+        `${this.baseUri}/api/provider`,
+        { headers: this.headers }
+      );
+      return response.data.providers;
+    } catch (error) {
+      return [this.handleError(error)];
+    }
+  }
+
+  async getProviderSettings(providerName: string) {
+    try {
+      const response = await axios.get<{ settings: any }>(
+        `${this.baseUri}/api/provider/${providerName}`,
+        { headers: this.headers }
+      );
+      return response.data.settings;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getEmbedProviders(): Promise<string[]> {
+    try {
+      const response = await axios.get<{ providers: string[] }>(
+        `${this.baseUri}/api/embedding_providers`,
+        { headers: this.headers }
+      );
+      return response.data.providers;
+    } catch (error) {
+      return [this.handleError(error)];
+    }
+  }
+
+  async addAgent(agentName: string, settings: any = {}) {
+    try {
+      const response = await axios.post<{ [key: string]: any }>(
+        `${this.baseUri}/api/agent`,
+        {
+          agent_name: agentName,
+          settings,
+        },
+        { headers: this.headers }
+      );
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async importAgent(agentName: string, settings: any = {}, commands: any = {}) {
+    try {
+      const response = await axios.post<{ [key: string]: any }>(
+        `${this.baseUri}/api/agent/import`,
+        {
+          agent_name: agentName,
+          settings,
+          commands,
+        },
+        { headers: this.headers }
+      );
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async renameAgent(agentName: string, newName: string) {
+    try {
+      const response = await axios.patch(
+        `${this.baseUri}/api/agent/${agentName}`,
+        { new_name: newName },
+        { headers: this.headers }
+      );
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async updateAgentSettings(agentName: string, settings: any) {
+    try {
+      const response = await axios.put(
+        `${this.baseUri}/api/agent/${agentName}`,
+        {
+          settings,
+          agent_name: agentName,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async updateAgentCommands(agentName: string, commands: any) {
+    try {
+      const response = await axios.put(
+        `${this.baseUri}/api/agent/${agentName}/commands`,
+        {
+          commands,
+          agent_name: agentName,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async deleteAgent(agentName: string) {
+    try {
+      const response = await axios.delete(
+        `${this.baseUri}/api/agent/${agentName}`,
+        { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getAgents() {
+    try {
+      const response = await axios.get<{ agents: any[] }>(
+        `${this.baseUri}/api/agent`,
+        { headers: this.headers }
+      );
+      return response.data.agents;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getAgentConfig(agentName: string) {
+    try {
+      const response = await axios.get<{ agent: any }>(
+        `${this.baseUri}/api/agent/${agentName}`,
+        { headers: this.headers }
+      );
+      return response.data.agent;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getConversations(agentName = "") {
+    const url = agentName
+      ? `${this.baseUri}/api/${agentName}/conversations`
+      : `${this.baseUri}/api/conversations`;
+
+    try {
+      const response = await axios.get<{ conversations: string[] }>(url, {
         headers: this.headers,
       });
-      return this.handleResponse(response);
+      return response.data.conversations;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  private async post<T>(url: string, data: any): Promise<T> {
-    try {
-      const response = await axios.post<ApiResponse<T>>(url, data, {
-        headers: this.headers as AxiosRequestConfig["headers"],
-      });
-      return this.handleResponse(response);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  private async put<T>(url: string, data: any): Promise<T> {
-    try {
-      const response = await axios.put<ApiResponse<T>>(url, data, {
-        headers: this.headers as AxiosRequestConfig["headers"],
-      });
-      return this.handleResponse(response);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  private async patch<T>(url: string, data: any): Promise<T> {
-    try {
-      const response = await axios.patch<ApiResponse<T>>(url, data, {
-        headers: this.headers as AxiosRequestConfig["headers"],
-      });
-      return this.handleResponse(response);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  private async delete<T>(url: string, data?: any): Promise<T> {
-    try {
-      const response = await axios.delete<ApiResponse<T>>(url, {
-        data,
-        headers: this.headers,
-      });
-      return this.handleResponse(response);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async getProviders(): Promise<string[]> {
-    try {
-      const url = `${this.baseUri}/api/provider`;
-      return this.get<string[]>(url);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async getProviderSettings(
-    providerName: string
-  ): Promise<Record<string, any>> {
-    try {
-      const url = `${this.baseUri}/api/provider/${providerName}`;
-      return this.get<Record<string, any>>(url);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async getEmbedProviders(): Promise<string[]> {
-    try {
-      const url = `${this.baseUri}/api/embedding_providers`;
-      return this.get<string[]>(url);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async addAgent(
-    agentName: string,
-    settings: AgentSettings = {}
-  ): Promise<Record<string, any>> {
-    try {
-      const url = `${this.baseUri}/api/agent`;
-      const data = { agent_name: agentName, settings };
-      return this.post<Record<string, any>>(url, data);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async importAgent(
-    agentName: string,
-    settings: AgentSettings = {},
-    commands: Record<string, any> = {}
-  ): Promise<Record<string, any>> {
-    try {
-      const url = `${this.baseUri}/api/agent/import`;
-      const data = { agent_name: agentName, settings, commands };
-      return this.post<Record<string, any>>(url, data);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async renameAgent(
-    agentName: string,
-    newName: string
-  ): Promise<string> {
-    try {
-      const url = `${this.baseUri}/api/agent/${agentName}`;
-      const data = { new_name: newName };
-      return this.patch<string>(url, data);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async updateAgentSettings(
-    agentName: string,
-    settings: AgentSettings
-  ): Promise<string> {
-    try {
-      const url = `${this.baseUri}/api/agent/${agentName}`;
-      const data = { settings, agent_name: agentName };
-      return this.put<string>(url, data);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async updateAgentCommands(
-    agentName: string,
-    commands: Record<string, any>
-  ): Promise<string> {
-    try {
-      const url = `${this.baseUri}/api/agent/${agentName}/commands`;
-      const data = { commands, agent_name: agentName };
-      return this.put<string>(url, data);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async deleteAgent(agentName: string): Promise<string> {
-    try {
-      const url = `${this.baseUri}/api/agent/${agentName}`;
-      return this.delete<string>(url);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async getAgents(): Promise<Record<string, any>[]> {
-    try {
-      const url = `${this.baseUri}/api/agent`;
-      return this.get<Record<string, any>[]>(url);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async getAgentConfig(agentName: string): Promise<Record<string, any>> {
-    try {
-      const url = `${this.baseUri}/api/agent/${agentName}`;
-      return this.get<Record<string, any>>(url);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async getConversations(agentName: string): Promise<string[]> {
-    try {
-      const url = `${this.baseUri}/api/${agentName}/conversations`;
-      return this.get<string[]>(url);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async getConversation(
+  async getConversation(
     agentName: string,
     conversationName: string,
-    limit: number = 100,
-    page: number = 1
-  ): Promise<Record<string, any>[]> {
+    limit = 100,
+    page = 1
+  ) {
     try {
-      const url = `${this.baseUri}/api/conversation`;
-      const data = {
-        conversation_name: conversationName,
-        agent_name: agentName,
-        limit,
-        page,
-      };
-      return this.get<Record<string, any>[]>(url, data);
+      const response = await axios.get<{ conversation_history: any[] }>(
+        `${this.baseUri}/api/conversation`,
+        {
+          headers: this.headers,
+          params: {
+            conversation_name: conversationName,
+            agent_name: agentName,
+            limit,
+            page,
+          },
+        }
+      );
+      return response.data.conversation_history;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async newConversation(
-    agentName: string,
-    conversationName: string
-  ): Promise<Record<string, any>[]> {
+  async newConversation(agentName: string, conversationName: string) {
     try {
-      const url = `${this.baseUri}/api/conversation`;
-      const data = {
-        conversation_name: conversationName,
-        agent_name: agentName,
-      };
-      return this.post<Record<string, any>[]>(url, data);
+      const response = await axios.post<{ conversation_history: any[] }>(
+        `${this.baseUri}/api/conversation`,
+        {
+          conversation_name: conversationName,
+          agent_name: agentName,
+        },
+        { headers: this.headers }
+      );
+      return response.data.conversation_history;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async deleteConversation(
-    agentName: string,
-    conversationName: string
-  ): Promise<string> {
+  async deleteConversation(agentName: string, conversationName: string) {
     try {
-      const url = `${this.baseUri}/api/conversation`;
-      const data = {
-        conversation_name: conversationName,
-        agent_name: agentName,
-      };
-      return this.delete<string>(url, data);
+      const response = await axios.delete(`${this.baseUri}/api/conversation`, {
+        headers: this.headers,
+        data: {
+          conversation_name: conversationName,
+          agent_name: agentName,
+        },
+      });
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async deleteConversationMessage(
+  async deleteConversationMessage(
     agentName: string,
     conversationName: string,
     message: string
-  ): Promise<string> {
+  ) {
     try {
-      const url = `${this.baseUri}/api/conversation/message`;
-      const data = {
-        message,
-        agent_name: agentName,
-        conversation_name: conversationName,
-      };
-      return this.delete<string>(url, data);
+      const response = await axios.delete(
+        `${this.baseUri}/api/conversation/message`,
+        {
+          headers: this.headers,
+          data: {
+            message,
+            agent_name: agentName,
+            conversation_name: conversationName,
+          },
+        }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async wipeAgentMemories(agentName: string): Promise<string> {
+  async wipeAgentMemories(agentName: string) {
     try {
-      const url = `${this.baseUri}/api/agent/${agentName}/memory`;
-      return this.delete<string>(url);
+      const response = await axios.delete(
+        `${this.baseUri}/api/agent/${agentName}/memory`,
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async promptAgent(
-    agentName: string,
-    promptName: string,
-    promptArgs: PromptArgs
-  ): Promise<string> {
+  async promptAgent(agentName: string, promptName: string, promptArgs: any) {
     try {
-      const url = `${this.baseUri}/api/agent/${agentName}/prompt`;
-      const data = { prompt_name: promptName, prompt_args: promptArgs };
-      return this.post<string>(url, data);
+      const response = await axios.post<{ response: string }>(
+        `${this.baseUri}/api/agent/${agentName}/prompt`,
+        {
+          prompt_name: promptName,
+          prompt_args: promptArgs,
+        },
+        { headers: this.headers }
+      );
+      return response.data.response;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public instruct(agentName: string, prompt: string): Promise<string> {
-    return this.promptAgent(agentName, "instruct", { user_input: prompt });
-  }
-
-  public chat(agentName: string, prompt: string): Promise<string> {
-    return this.promptAgent(agentName, "Chat", {
-      user_input: prompt,
-      context_results: 4,
+  async instruct(agentName: string, userInput: string, conversation: string) {
+    return this.promptAgent(agentName, "instruct", {
+      user_input: userInput,
+      disable_memory: true,
+      conversation_name: conversation,
     });
   }
 
-  public smartInstruct(agentName: string, prompt: string): Promise<string> {
-    return this.runChain(agentName, "Smart Instruct", prompt, false, 1, {});
-  }
-
-  public smartChat(agentName: string, prompt: string): Promise<string> {
-    return this.runChain(agentName, "Smart Chat", prompt, false, 1, {});
-  }
-
-  public async getCommands(
-    agentName: string
-  ): Promise<Record<string, boolean>> {
-    try {
-      const url = `${this.baseUri}/api/agent/${agentName}/command`;
-      return this.get<Record<string, boolean>>(url);
-    } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async toggleCommand(
+  async chat(
     agentName: string,
-    commandName: string,
-    enable: boolean
-  ): Promise<string> {
+    userInput: string,
+    conversation: string,
+    contextResults = 4
+  ) {
+    return this.promptAgent(agentName, "Chat", {
+      user_input: userInput,
+      context_results: contextResults,
+      conversation_name: conversation,
+      disable_memory: true,
+    });
+  }
+
+  async smartinstruct(
+    agentName: string,
+    userInput: string,
+    conversation: string
+  ) {
+    return this.runChain("Smart Instruct", userInput, agentName, false, 1, {
+      conversation_name: conversation,
+      disable_memory: true,
+    });
+  }
+
+  async smartchat(agentName: string, userInput: string, conversation: string) {
+    return this.runChain("Smart Chat", userInput, agentName, false, 1, {
+      conversation_name: conversation,
+      disable_memory: true,
+    });
+  }
+
+  async getCommands(agentName: string) {
     try {
-      const url = `${this.baseUri}/api/agent/${agentName}/command`;
-      const data = { command_name: commandName, enable };
-      return this.patch<string>(url, data);
+      const response = await axios.get<{ commands: any }>(
+        `${this.baseUri}/api/agent/${agentName}/command`,
+        { headers: this.headers }
+      );
+      return response.data.commands;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async getChains(): Promise<string[]> {
+  async toggleCommand(agentName: string, commandName: string, enable: boolean) {
     try {
-      const url = `${this.baseUri}/api/chain`;
-      return this.get<string[]>(url);
+      const response = await axios.patch(
+        `${this.baseUri}/api/agent/${agentName}/command`,
+        { command_name: commandName, enable },
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async getChain(chainName: string): Promise<Record<string, any>> {
+  async getChains() {
     try {
-      const url = `${this.baseUri}/api/chain/${chainName}`;
-      return this.get<Record<string, any>>(url);
+      const response = await axios.get<string[]>(`${this.baseUri}/api/chain`, {
+        headers: this.headers,
+      });
+      return response.data;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async getChainResponses(
-    chainName: string
-  ): Promise<Record<string, any>> {
+  async getChain(chainName: string) {
     try {
-      const url = `${this.baseUri}/api/chain/${chainName}/responses`;
-      return this.get<Record<string, any>>(url);
+      const response = await axios.get<{ chain: any }>(
+        `${this.baseUri}/api/chain/${chainName}`,
+        { headers: this.headers }
+      );
+      return response.data.chain;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async getChainArgs(chainName: string): Promise<Record<string, any>> {
+  async getChainResponses(chainName: string) {
     try {
-      const url = `${this.baseUri}/api/chain/${chainName}/args`;
-      return this.get<Record<string, any>>(url);
+      const response = await axios.get<{ chain: any }>(
+        `${this.baseUri}/api/chain/${chainName}/responses`,
+        { headers: this.headers }
+      );
+      return response.data.chain;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async runChain(
+  async getChainArgs(chainName: string) {
+    try {
+      const response = await axios.get<{ chain_args: string[] }>(
+        `${this.baseUri}/api/chain/${chainName}/args`,
+        { headers: this.headers }
+      );
+      return response.data.chain_args;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async runChain(
     chainName: string,
     userInput: string,
-    agentName: string = "",
-    allResponses: boolean = false,
-    fromStep: number = 1,
-    chainArgs: Record<string, any> = {}
-  ): Promise<string> {
+    agentName = "",
+    allResponses = false,
+    fromStep = 1,
+    chainArgs = {}
+  ) {
     try {
-      const url = `${this.baseUri}/api/chain/${chainName}/run`;
-      const data = {
-        prompt: userInput,
-        agent_override: agentName,
-        all_responses: allResponses,
-        from_step: fromStep,
-        chain_args: chainArgs,
-      };
-      return this.post<string>(url, data);
+      const response = await axios.post<any>(
+        `${this.baseUri}/api/chain/${chainName}/run`,
+        {
+          prompt: userInput,
+          agent_override: agentName,
+          all_responses: allResponses,
+          from_step: fromStep,
+          chain_args: chainArgs,
+        },
+        { headers: this.headers }
+      );
+      return response.data;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
-  public async runChainStep(
+
+  async runChainStep(
     chainName: string,
+    stepNumber: number,
     userInput: string,
-    agentName: string = "",
-    stepNumber: number = 1,
-    chainArgs: Record<string, any> = {}
-  ): Promise<string> {
+    agentName?: string,
+    chainArgs = {}
+  ) {
     try {
-      const url = `${this.baseUri}/api/chain/${chainName}/run/step/${stepNumber}`;
-      const data = {
-        prompt: userInput,
-        agent_override: agentName,
-        chain_args: chainArgs,
-      };
-      return this.post<string>(url, data);
+      const response = await axios.post<any>(
+        `${this.baseUri}/api/chain/${chainName}/run/step/${stepNumber}`,
+        {
+          prompt: userInput,
+          agent_override: agentName,
+          chain_args: chainArgs,
+        },
+        { headers: this.headers }
+      );
+      return response.data;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async addChain(chainName: string): Promise<string> {
+  async addChain(chainName: string) {
     try {
-      const url = `${this.baseUri}/api/chain`;
-      const data = { chain_name: chainName };
-      return this.post<string>(url, data);
+      const response = await axios.post(
+        `${this.baseUri}/api/chain`,
+        { chain_name: chainName },
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async importChain(
-    chainName: string,
-    steps: Record<string, any>
-  ): Promise<string> {
+  async importChain(chainName: string, steps: any) {
     try {
-      const url = `${this.baseUri}/api/chain/import`;
-      const data = { chain_name: chainName, steps };
-      return this.post<string>(url, data);
+      const response = await axios.post(
+        `${this.baseUri}/api/chain/import`,
+        {
+          chain_name: chainName,
+          steps,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async renameChain(
-    chainName: string,
-    newName: string
-  ): Promise<string> {
+  async renameChain(chainName: string, newName: string) {
     try {
-      const url = `${this.baseUri}/api/chain/${chainName}`;
-      const data = { new_name: newName };
-      return this.put<string>(url, data);
+      const response = await axios.put(
+        `${this.baseUri}/api/chain/${chainName}`,
+        { new_name: newName },
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async deleteChain(chainName: string): Promise<string> {
+  async deleteChain(chainName: string) {
     try {
-      const url = `${this.baseUri}/api/chain/${chainName}`;
-      return this.delete<string>(url);
+      const response = await axios.delete(
+        `${this.baseUri}/api/chain/${chainName}`,
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async addStep(
+  async addStep(
     chainName: string,
     stepNumber: number,
     agentName: string,
     promptType: string,
-    prompt: PromptArgs
-  ): Promise<string> {
+    prompt: any
+  ) {
     try {
-      const url = `${this.baseUri}/api/chain/${chainName}/step`;
-      const data = {
-        step_number: stepNumber,
-        agent_name: agentName,
-        prompt_type: promptType,
-        prompt,
-      };
-      return this.post<string>(url, data);
+      const response = await axios.post(
+        `${this.baseUri}/api/chain/${chainName}/step`,
+        {
+          step_number: stepNumber,
+          agent_name: agentName,
+          prompt_type: promptType,
+          prompt,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async updateStep(
+  async updateStep(
     chainName: string,
     stepNumber: number,
     agentName: string,
     promptType: string,
-    prompt: PromptArgs
-  ): Promise<string> {
+    prompt: any
+  ) {
     try {
-      const url = `${this.baseUri}/api/chain/${chainName}/step/${stepNumber}`;
-      const data = {
-        step_number: stepNumber,
-        agent_name: agentName,
-        prompt_type: promptType,
-        prompt,
-      };
-      return this.put<string>(url, data);
+      const response = await axios.put(
+        `${this.baseUri}/api/chain/${chainName}/step/${stepNumber}`,
+        {
+          step_number: stepNumber,
+          agent_name: agentName,
+          prompt_type: promptType,
+          prompt,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async moveStep(
+  async moveStep(
     chainName: string,
     oldStepNumber: number,
     newStepNumber: number
-  ): Promise<string> {
+  ) {
     try {
-      const url = `${this.baseUri}/api/chain/${chainName}/step/move`;
-      const data = {
-        old_step_number: oldStepNumber,
-        new_step_number: newStepNumber,
-      };
-      return this.patch<string>(url, data);
+      const response = await axios.patch(
+        `${this.baseUri}/api/chain/${chainName}/step/move`,
+        {
+          old_step_number: oldStepNumber,
+          new_step_number: newStepNumber,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async deleteStep(
-    chainName: string,
-    stepNumber: number
-  ): Promise<string> {
+  async deleteStep(chainName: string, stepNumber: number) {
     try {
-      const url = `${this.baseUri}/api/chain/${chainName}/step/${stepNumber}`;
-      return this.delete<string>(url);
+      const response = await axios.delete(
+        `${this.baseUri}/api/chain/${chainName}/step/${stepNumber}`,
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async addPrompt(
+  async addPrompt(
     promptName: string,
     prompt: string,
-    promptCategory: string = "Default"
-  ): Promise<string> {
+    promptCategory = "Default"
+  ) {
     try {
-      const url = `${this.baseUri}/api/prompt/${promptCategory}`;
-      const data = {
-        prompt_name: promptName,
-        prompt: prompt,
-      };
-      return this.post<string>(url, data);
+      const response = await axios.post(
+        `${this.baseUri}/api/prompt/${promptCategory}`,
+        {
+          prompt_name: promptName,
+          prompt,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async getPrompt(
-    promptName: string,
-    promptCategory: string = "Default"
-  ): Promise<Record<string, any>> {
+  async getPrompt(promptName: string, promptCategory = "Default") {
     try {
-      const url = `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`;
-      return this.get<Record<string, any>>(url);
+      const response = await axios.get<{ prompt: any }>(
+        `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`,
+        { headers: this.headers }
+      );
+      return response.data.prompt;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async getPrompts(
-    promptCategory: string = "Default"
-  ): Promise<string[]> {
+  async getPrompts(promptCategory = "Default") {
     try {
-      const url = `${this.baseUri}/api/prompt/${promptCategory}`;
-      return this.get<string[]>(url);
+      const response = await axios.get<{ prompts: string[] }>(
+        `${this.baseUri}/api/prompt/${promptCategory}`,
+        { headers: this.headers }
+      );
+      return response.data.prompts;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async getPromptCategrories(): Promise<string[]> {
+  async getPromptCategories() {
     try {
-      const url = `${this.baseUri}/api/prompt/categories`;
-      return this.get<string[]>(url);
+      const response = await axios.get<{ prompt_categories: string[] }>(
+        `${this.baseUri}/api/prompt/categories`,
+        { headers: this.headers }
+      );
+      return response.data.prompt_categories;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async getPromptArgs(
-    promptName: string,
-    promptCategory: string = "Default"
-  ): Promise<Record<string, any>> {
+  async getPromptArgs(promptName: string, promptCategory = "Default") {
     try {
-      const url = `${this.baseUri}/api/prompt/${promptCategory}/${promptName}/args`;
-      return this.get<Record<string, any>>(url);
+      const response = await axios.get<{ prompt_args: any }>(
+        `${this.baseUri}/api/prompt/${promptCategory}/${promptName}/args`,
+        { headers: this.headers }
+      );
+      return response.data.prompt_args;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async deletePrompt(
-    promptName: string,
-    promptCategory: string = "Default"
-  ): Promise<string> {
+  async deletePrompt(promptName: string, promptCategory = "Default") {
     try {
-      const url = `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`;
-      return this.delete<string>(url);
+      const response = await axios.delete(
+        `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`,
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async updatePrompt(
+  async updatePrompt(
     promptName: string,
     prompt: string,
-    promptCategory: string = "Default"
-  ): Promise<string> {
+    promptCategory = "Default"
+  ) {
     try {
-      const url = `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`;
-      const data = { prompt, prompt_name: promptName };
-      return this.put<string>(url, data);
+      const response = await axios.put(
+        `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`,
+        {
+          prompt,
+          prompt_name: promptName,
+          prompt_category: promptCategory,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async renamePrompt(
+  async renamePrompt(
     promptName: string,
     newName: string,
-    promptCategory: string = "Default"
-  ): Promise<string> {
+    promptCategory = "Default"
+  ) {
     try {
-      const url = `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`;
-      const data = { prompt_name: newName };
-      return this.patch<string>(url, data);
+      const response = await axios.patch(
+        `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`,
+        { prompt_name: newName },
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async getExtensionSettings(): Promise<Record<string, any>> {
+  async getExtensionSettings() {
     try {
-      const url = `${this.baseUri}/api/extensions/settings`;
-      return this.get<Record<string, any>>(url);
+      const response = await axios.get<{ extension_settings: any }>(
+        `${this.baseUri}/api/extensions/settings`,
+        { headers: this.headers }
+      );
+      return response.data.extension_settings;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async getExtensions(): Promise<Record<string, any>[]> {
+  async getExtensions() {
     try {
-      const url = `${this.baseUri}/api/extensions`;
-      return this.get<Record<string, any>[]>(url);
+      const response = await axios.get<{ extensions: any[] }>(
+        `${this.baseUri}/api/extensions`,
+        { headers: this.headers }
+      );
+      return response.data.extensions;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async getCommandArgs(
-    commandName: string
-  ): Promise<Record<string, any>> {
+  async getCommandArgs(commandName: string) {
     try {
-      const url = `${this.baseUri}/api/extensions/${commandName}/args`;
-      return this.get<Record<string, any>>(url);
+      const response = await axios.get<{ command_args: any }>(
+        `${this.baseUri}/api/extensions/${commandName}/args`,
+        { headers: this.headers }
+      );
+      return response.data.command_args;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async learnUrl(agentName: string, url: string): Promise<string> {
+  async learnUrl(agentName: string, url: string) {
     try {
-      const url = `${this.baseUri}/api/agent/${agentName}/learn/url`;
-      const data = { url };
-      return this.post<string>(url, data);
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/learn/url`,
+        { url },
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 
-  public async learnFile(
+  async learnFile(agentName: string, fileName: string, fileContent: string) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/learn/file`,
+        { file_name: fileName, file_content: fileContent },
+        { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async learnGithubRepo(
     agentName: string,
-    fileName: string,
-    fileContent: string
-  ): Promise<string> {
+    githubRepo: string,
+    githubUser?: string,
+    githubToken?: string,
+    githubBranch = "main"
+  ) {
     try {
-      const url = `${this.baseUri}/api/agent/${agentName}/learn/file`;
-      const data = { file_name: fileName, file_content: fileContent };
-      return this.post<string>(url, data);
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/learn/github`,
+        {
+          github_repo: githubRepo,
+          github_user: githubUser,
+          github_token: githubToken,
+          github_branch: githubBranch,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
     } catch (error) {
-      throw new Error(this.handleError(error));
-    }
-  }
-
-  public async learnGithubRepo(
-    agent_name: string,
-    github_repo: string,
-    github_user: string = "",
-    github_token: string = "",
-    github_branch: string = "main"
-  ): Promise<string> {
-    try {
-      const url = `${this.baseUri}/api/agent/${agent_name}/learn/github`;
-      const data = {
-        github_repo: github_repo,
-        github_user: github_user,
-        github_token: github_token,
-        github_branch: github_branch,
-      };
-      return this.post<string>(url, data);
-    } catch (error) {
-      throw new Error(this.handleError(error));
+      return this.handleError(error);
     }
   }
 }
-
-export default AGiXTSDK;
