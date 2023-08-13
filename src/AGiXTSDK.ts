@@ -566,46 +566,73 @@ class AGiXTSDK {
     }
   }
 
-  public async addPrompt(promptName: string, prompt: string): Promise<string> {
+  public async addPrompt(
+    promptName: string,
+    prompt: string,
+    promptCategory: string = "Default"
+  ): Promise<string> {
     try {
-      const url = `${this.baseUri}/api/prompt`;
-      const data = { prompt_name: promptName, prompt };
+      const url = `${this.baseUri}/api/prompt/${promptCategory}`;
+      const data = {
+        prompt_name: promptName,
+        prompt: prompt,
+      };
       return this.post<string>(url, data);
     } catch (error) {
       throw new Error(this.handleError(error));
     }
   }
 
-  public async getPrompt(promptName: string): Promise<Record<string, any>> {
+  public async getPrompt(
+    promptName: string,
+    promptCategory: string = "Default"
+  ): Promise<Record<string, any>> {
     try {
-      const url = `${this.baseUri}/api/prompt/${promptName}`;
+      const url = `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`;
       return this.get<Record<string, any>>(url);
     } catch (error) {
       throw new Error(this.handleError(error));
     }
   }
 
-  public async getPrompts(): Promise<string[]> {
+  public async getPrompts(
+    promptCategory: string = "Default"
+  ): Promise<string[]> {
     try {
-      const url = `${this.baseUri}/api/prompt`;
+      const url = `${this.baseUri}/api/prompt/${promptCategory}`;
       return this.get<string[]>(url);
     } catch (error) {
       throw new Error(this.handleError(error));
     }
   }
 
-  public async getPromptArgs(promptName: string): Promise<Record<string, any>> {
+  public async getPromptCategrories(): Promise<string[]> {
     try {
-      const url = `${this.baseUri}/api/prompt/${promptName}/args`;
+      const url = `${this.baseUri}/api/prompt/categories`;
+      return this.get<string[]>(url);
+    } catch (error) {
+      throw new Error(this.handleError(error));
+    }
+  }
+
+  public async getPromptArgs(
+    promptName: string,
+    promptCategory: string = "Default"
+  ): Promise<Record<string, any>> {
+    try {
+      const url = `${this.baseUri}/api/prompt/${promptCategory}/${promptName}/args`;
       return this.get<Record<string, any>>(url);
     } catch (error) {
       throw new Error(this.handleError(error));
     }
   }
 
-  public async deletePrompt(promptName: string): Promise<string> {
+  public async deletePrompt(
+    promptName: string,
+    promptCategory: string = "Default"
+  ): Promise<string> {
     try {
-      const url = `${this.baseUri}/api/prompt/${promptName}`;
+      const url = `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`;
       return this.delete<string>(url);
     } catch (error) {
       throw new Error(this.handleError(error));
@@ -614,10 +641,11 @@ class AGiXTSDK {
 
   public async updatePrompt(
     promptName: string,
-    prompt: string
+    prompt: string,
+    promptCategory: string = "Default"
   ): Promise<string> {
     try {
-      const url = `${this.baseUri}/api/prompt/${promptName}`;
+      const url = `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`;
       const data = { prompt, prompt_name: promptName };
       return this.put<string>(url, data);
     } catch (error) {
@@ -627,10 +655,11 @@ class AGiXTSDK {
 
   public async renamePrompt(
     promptName: string,
-    newName: string
+    newName: string,
+    promptCategory: string = "Default"
   ): Promise<string> {
     try {
-      const url = `${this.baseUri}/api/prompt/${promptName}`;
+      const url = `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`;
       const data = { prompt_name: newName };
       return this.patch<string>(url, data);
     } catch (error) {
@@ -685,6 +714,27 @@ class AGiXTSDK {
     try {
       const url = `${this.baseUri}/api/agent/${agentName}/learn/file`;
       const data = { file_name: fileName, file_content: fileContent };
+      return this.post<string>(url, data);
+    } catch (error) {
+      throw new Error(this.handleError(error));
+    }
+  }
+
+  public async learnGithubRepo(
+    agent_name: string,
+    github_repo: string,
+    github_user: string = "",
+    github_token: string = "",
+    github_branch: string = "main"
+  ): Promise<string> {
+    try {
+      const url = `${this.baseUri}/api/agent/${agent_name}/learn/github`;
+      const data = {
+        github_repo: github_repo,
+        github_user: github_user,
+        github_token: github_token,
+        github_branch: github_branch,
+      };
       return this.post<string>(url, data);
     } catch (error) {
       throw new Error(this.handleError(error));
