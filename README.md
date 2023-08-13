@@ -15,9 +15,6 @@
 [![Logo](https://josh-xt.github.io/AGiXT/images/AGiXT-gradient-flat.svg)](https://josh-xt.github.io/AGiXT/)
 
 This repository is for the [AGiXT](https://github.com/Josh-XT/AGiXT) SDK for TypeScript. https://www.npmjs.com/package/agixt
-Here is an improved README.md with updated documentation for the AGiXT SDK:
-
-# AGiXT SDK for TypeScript
 
 The AGiXT SDK for TypeScript provides an easy way to interact with AGiXT APIs from your Node.js and browser applications.
 
