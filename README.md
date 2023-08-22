@@ -29,7 +29,7 @@ npm install agixt
 Import the SDK:
 
 ```typescript
-import { AGiXTSDK } from 'agixt';
+import AGiXTSDK from 'agixt';
 ```
 
 Create an SDK instance:
@@ -57,10 +57,13 @@ const agixt = new AGiXTSDK({
 - `deleteAgent(agentName)` - Delete an agent
 - `getAgents()` - Get all agents
 - `getAgentConfig(agentName)` - Get config for an agent
-- `learnUrl(agentName, url)` - Learn from a URL
-- `learnFile(agentName, fileName, fileContent)` - Learn from a file
-- `learnGithubRepo(agentName, repo, user, token, branch)` - Learn from a GitHub repo
-
+- `getAgentMemories(agentName, userInput, limit, minRelevanceScore, collectionNumber)` - Get memories for an agent
+- `learnUrl(agentName, url, collectionNumber)` - Learn from a URL
+- `learnFile(agentName, fileName, fileContent, collectionNumber)` - Learn from a file
+- `learnGithubRepo(agentName, repo, user, token, branch, collectionNumber)` - Learn from a GitHub repo
+- `wipeAgentMemories(agentName, collectionNumber)` - Wipe an agent's memories
+- `deleteAgentMemory(agentName, memoryId, collectionNumber)` - Delete a memory
+  
 ### Conversations
 
 - `getConversations(agentName)` - Get conversations for an agent or all agents
@@ -68,7 +71,6 @@ const agixt = new AGiXTSDK({
 - `newConversation(agentName, conversationName)` - Start a new conversation
 - `deleteConversation(agentName, conversationName)` - Delete a conversation
 - `deleteConversationMessage(agentName, conversationName, message)` - Delete a message
-- `wipeAgentMemories(agentName)` - Wipe an agent's memories
 
 ### Prompting
 
@@ -82,6 +84,7 @@ const agixt = new AGiXTSDK({
 
 - `getCommands(agentName)` - Get commands for an agent
 - `toggleCommand(agentName, commandName, enable)` - Enable/disable a command
+- `executeCommand(agentName, commandName, commandArgs, conversation)` - Execute a command
 
 ### Chains
 
