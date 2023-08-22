@@ -276,10 +276,10 @@ export default class AGiXTSDK {
     }
   }
 
-  async wipeAgentMemories(agentName: string) {
+  async wipeAgentMemories(agentName: string, collectionNumber: number = 0) {
     try {
       const response = await axios.delete(
-        `${this.baseUri}/api/agent/${agentName}/memory`,
+        `${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}`,
         { headers: this.headers }
       );
       return response.data.message;
@@ -356,6 +356,27 @@ export default class AGiXTSDK {
     }
   }
 
+  async executeCommand(
+    agentName: string,
+    commandName: string,
+    commandArgs: any,
+    conversation: string
+  ) {
+    try {
+      const response = await axios.post<{ response: string }>(
+        `${this.baseUri}/api/agent/${agentName}/command`,
+        {
+          command_name: commandName,
+          command_args: commandArgs,
+          conversation_name: conversation,
+        },
+        { headers: this.headers }
+      );
+      return response.data.response;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
   async toggleCommand(agentName: string, commandName: string, enable: boolean) {
     try {
       const response = await axios.patch(
@@ -753,11 +774,20 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnUrl(agentName: string, url: string) {
+  async learnText(
+    agentName: string,
+    userInput: string,
+    text: string,
+    collectionNumber: number = 0
+  ) {
     try {
       const response = await axios.post(
-        `${this.baseUri}/api/agent/${agentName}/learn/url`,
-        { url },
+        `${this.baseUri}/api/agent/${agentName}/learn/text`,
+        {
+          user_input: userInput,
+          text: text,
+          collection_number: collectionNumber,
+        },
         { headers: this.headers }
       );
       return response.data.message;
@@ -766,11 +796,33 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnFile(agentName: string, fileName: string, fileContent: string) {
+  async learnUrl(agentName: string, url: string, collectionNumber: number = 0) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/learn/url`,
+        { url: url, collection_number: collectionNumber },
+        { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async learnFile(
+    agentName: string,
+    fileName: string,
+    fileContent: string,
+    collectionNumber: number = 0
+  ) {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/learn/file`,
-        { file_name: fileName, file_content: fileContent },
+        {
+          file_name: fileName,
+          file_content: fileContent,
+          collection_number: collectionNumber,
+        },
         { headers: this.headers }
       );
       return response.data.message;
@@ -784,7 +836,8 @@ export default class AGiXTSDK {
     githubRepo: string,
     githubUser?: string,
     githubToken?: string,
-    githubBranch = "main"
+    githubBranch = "main",
+    collectionNumber: number = 0
   ) {
     try {
       const response = await axios.post(
@@ -794,8 +847,50 @@ export default class AGiXTSDK {
           github_user: githubUser,
           github_token: githubToken,
           github_branch: githubBranch,
+          collection_number: collectionNumber,
         },
         { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getAgentMemories(
+    agentName: string,
+    userInput: string,
+    limit: number = 5,
+    minRelevanceScore: number = 0.5,
+    collectionNumber: number = 0
+  ) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}/query`,
+        {
+          user_input: userInput,
+          limit: limit,
+          min_relevance_score: minRelevanceScore,
+        },
+        { headers: this.headers }
+      );
+      return response.data.memories;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async deleteAgentMemory(
+    agentName: string,
+    memoryId: string,
+    collectionNumber: number = 0
+  ) {
+    try {
+      const response = await axios.delete(
+        `${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}/${memoryId}`,
+        {
+          headers: this.headers,
+        }
       );
       return response.data.message;
     } catch (error) {
