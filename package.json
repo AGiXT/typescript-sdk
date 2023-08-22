@@ -1,6 +1,6 @@
 {
   "name": "agixt",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "AGiXT Typescript SDK",
   "main": "index.ts",
   "scripts": {
