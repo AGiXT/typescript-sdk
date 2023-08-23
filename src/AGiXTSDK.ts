@@ -1,15 +1,10 @@
 import axios, { AxiosRequestConfig } from "axios";
 
-export interface AGiXTSDKConfig {
-  baseUri?: string;
-  apiKey?: string;
-}
-
 export default class AGiXTSDK {
   private baseUri: string;
   private headers: AxiosRequestConfig["headers"];
 
-  constructor(config: AGiXTSDKConfig = {}) {
+  constructor(config: { baseUri: string; apiKey?: string }) {
     this.baseUri = config.baseUri || "http://localhost:7437";
     if (config.apiKey) {
       this.headers = {
