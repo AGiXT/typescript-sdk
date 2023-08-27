@@ -1,0 +1,420 @@
+{
+    "cells": [
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst providers = await sdk.getProviders();\nconsole.log(providers);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[",
+                                "  'perplexity',  'gpt4free',",
+                                "  'azure',       'chatgpt',",
+                                "  'runpod',      'poe',",
+                                "  'oobabooga',   'openai',",
+                                "  'huggingface', 'pipeline',",
+                                "  'fastchat',    'agixt',",
+                                "  'palm',        'claude',",
+                                "  'huggingchat', 'llamacppapi',",
+                                "  'petal',       'kobold',",
+                                "  'llamacpp',    'custom',",
+                                "  'bard'",
+                                "]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst embedding_providers = await sdk.getEmbedProviders();\nconsole.log(embedding_providers);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[",
+                                "  'default',",
+                                "  'azure',",
+                                "  'openai',",
+                                "  'google_palm',",
+                                "  'google_vertex',",
+                                "  'cohere'",
+                                "]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompts = await sdk.getPrompts();\nconsole.log(prompts);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[",
+                                "  'Pseudo Code',",
+                                "  'Chat with Commands',",
+                                "  'Convert OpenAPI Endpoint',",
+                                "  'Ask for Help',",
+                                "  'SmartInstruct-Researcher',",
+                                "  'Custom Input',",
+                                "  'Title a Poem',",
+                                "  'ValidationFailed',",
+                                "  'SmartTask-CleanResponse',",
+                                "  'Create a Skeleton',",
+                                "  'Proofreader',",
+                                "  'SmartChat-Researcher',",
+                                "  'Evaluate Code',",
+                                "  'Get ezsession Auth Type',",
+                                "  'Expert Determination',",
+                                "  'Tell Me How',",
+                                "  'New Extension Format',",
+                                "  'Execution',",
+                                "  'Score Response',",
+                                "  'Get Task Description',",
+                                "  'Validation',",
+                                "  'Write a Haiku',",
+                                "  'SmartInstruct-Resolver',",
+                                "  'SmartInstruct-CleanResponse',",
+                                "  'AGiXT SD Generator_V3',",
+                                "  'Translate Math to Python',",
+                                "  'SmartInstruct-StepByStep',",
+                                "  'instruct',",
+                                "  'Pick a Poem Subject',",
+                                "  'Task Execution',",
+                                "  'Prompt Generator',",
+                                "  'Check-Instruction',",
+                                "  'Mindmap',",
+                                "  'Get Clarification',",
+                                "  'SmartTask-Execution',",
+                                "  'SmartChat-Resolver',",
+                                "  'Chat',",
+                                "  'Create New Command',",
+                                "  'SmartChat-CleanResponse',",
+                                "  'Prioritize',",
+                                "  'Pick-a-Link',",
+                                "  'SmartInstruct-Execution',",
+                                "  'Write a Poem',",
+                                "  'JSONFormatter',",
+                                "  'SmartTask-StepByStep',",
+                                "  'Title a Chain',",
+                                "  'Instruction',",
+                                "  'WebSearch',",
+                                "  'SmartChat-StepByStep',",
+                                "  'Summarize Web Content',",
+                                "  'Get Task List',",
+                                "  'Break into steps'",
+                                "]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_data = await sdk.getPrompt(\"Chat\");\nconsole.log(prompt_data);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                " {context} ",
+                                "You are {agent_name}, an expert at answering the users question.  Use available context help answer the users questions.",
+                                "",
+                                "Recent conversation history for context: ",
+                                " {conversation_history} ",
+                                "",
+                                "User's latest input: {user_input} ",
+                                "",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agents = await sdk.getAgents();\nconsole.log(agents);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[",
+                                "  { name: 'FreeAgent', status: false },",
+                                "  { name: 'gpt4free', status: false },",
+                                "  { name: 'OpenOrca', status: false },",
+                                "  { name: 'OpenOrca-13B', status: false },",
+                                "  { name: 'easychat', status: false },",
+                                "  { name: 'Vicuna', status: false },",
+                                "  { name: 'OpenAI', status: false },",
+                                "  { name: 'Starchat', status: false },",
+                                "  { name: '[object Object]', status: false }",
+                                "]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst extension_settings = await sdk.getExtensionSettings();\nconsole.log(extension_settings);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{",
+                                "  macostts: { USE_MAC_OS_TTS: false },",
+                                "  file_system: {",
+                                "    WORKING_DIRECTORY: './WORKSPACE',",
+                                "    WORKING_DIRECTORY_RESTRICTED: true",
+                                "  },",
+                                "  streamlabs_tts: { USE_STREAMLABS_TTS: true, STREAMLABS_VOICE: 'Brian' },",
+                                "  whisper_stt: { WHISPER_MODEL: 'base.en' },",
+                                "  huggingface: {",
+                                "    HUGGINGFACE_API_KEY: '',",
+                                "    HUGGINGFACE_AUDIO_TO_TEXT_MODEL: 'facebook/wav2vec2-large-960h-lv60-self'",
+                                "  },",
+                                "  discord: { DISCORD_API_KEY: '', DISCORD_COMMAND_PREFIX: '/AGiXT' },",
+                                "  dalle: { OPENAI_API_KEY: '' },",
+                                "  google: { GOOGLE_API_KEY: '' },",
+                                "  github: { GITHUB_USERNAME: '', GITHUB_API_KEY: '' },",
+                                "  stable_diffusion: {",
+                                "    STABLE_DIFFUSION_API_URL: 'https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5',",
+                                "    HUGGINGFACE_API_KEY: ''",
+                                "  },",
+                                "  gtts: { USE_GTTS: false },",
+                                "  elevenlabs: { ELEVENLABS_API_KEY: '', ELEVENLABS_VOICE: 'Josh' },",
+                                "  sendgrid_email: { SENDGRID_API_KEY: '', SENDGRID_EMAIL: '' },",
+                                "  searxng: { SEARXNG_INSTANCE_URL: '' },",
+                                "  twitter: {",
+                                "    TW_CONSUMER_KEY: '',",
+                                "    TW_CONSUMER_SECRET: '',",
+                                "    TW_ACCESS_TOKEN: '',",
+                                "    TW_ACCESS_TOKEN_SECRET: ''",
+                                "  }",
+                                "}",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_config = await sdk.getAgentConfig(\"OpenOrca\");\nconsole.log(agent_config);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{",
+                                "  commands: {",
+                                "    'Scrape Text with Playwright': false,",
+                                "    'Scrape Links with Playwright': false,",
+                                "    'Take Screenshot with Playwright': false,",
+                                "    'Create Task Chain': false,",
+                                "    'Generate Extension from OpenAPI': false,",
+                                "    'Generate Agent Helper Chain': false,",
+                                "    'Ask for Help or Further Clarification to Complete Task': false,",
+                                "    'Create a new command': false,",
+                                "    'Execute Python Code': false,",
+                                "    'Get Python Code from Response': false,",
+                                "    'Get Mindmap for task to break it down': false,",
+                                "    'Speak with MacOS TTS': false,",
+                                "    'Write to File': false,",
+                                "    'Read File': false,",
+                                "    'Search Files': false,",
+                                "    'Append to File': false,",
+                                "    'Execute Python File': false,",
+                                "    'Delete File': false,",
+                                "    'Execute Shell': false,",
+                                "    'Indent String for Python Code': false,",
+                                "    'Generate Commands Dictionary': false,",
+                                "    'Speak with TTS with Streamlabs Text to Speech': false,",
+                                "    'Read Audio from File': false,",
+                                "    'Read Audio from File with Huggingface': false,",
+                                "    'Read Audio with Huggingface': false,",
+                                "    'Clone Github Repository': false,",
+                                "    'Generate Image with Stable Diffusion': false,",
+                                "    'Get Datetime': false,",
+                                "    'Speak with TTS Using Elevenlabs': false,",
+                                "    'Use The Search Engine': false",
+                                "  },",
+                                "  settings: {",
+                                "    provider: 'oobabooga',",
+                                "    embedder: 'default',",
+                                "    AI_MODEL: 'OpenOrca-Platypus2-13B',",
+                                "    AI_TEMPERATURE: '1.31',",
+                                "    AI_TOP_P: '1',",
+                                "    MAX_TOKENS: '16384',",
+                                "    helper_agent_name: 'gpt4free',",
+                                "    WEBSEARCH_TIMEOUT: 0,",
+                                "    WAIT_BETWEEN_REQUESTS: 1,",
+                                "    WAIT_AFTER_FAILURE: 3,",
+                                "    stream: false,",
+                                "    WORKING_DIRECTORY: './WORKSPACE',",
+                                "    WORKING_DIRECTORY_RESTRICTED: true,",
+                                "    AUTONOMOUS_EXECUTION: false,",
+                                "    AI_PROVIDER_URI: 'http://text-generation-webui:5000',",
+                                "    DO_SAMPLE: '',",
+                                "    TOP_P: '0.14',",
+                                "    TYPICAL_P: '1',",
+                                "    EPSILON_CUTOFF: '0',",
+                                "    ETA_CUTOFF: '0',",
+                                "    TFS: '1',",
+                                "    TOP_A: '0',",
+                                "    REPETITION_PENALTY: '1.17',",
+                                "    ENCODER_REPETITION_PENALTY: '1',",
+                                "    TOP_K: '',",
+                                "    MIN_LENGTH: '',",
+                                "    NO_REPEAT_NGRAM_SIZE: '0',",
+                                "    NUM_BEAMS: '1',",
+                                "    PENALTY_ALPHA: '0',",
+                                "    LENGTH_PENALTY: '1',",
+                                "    MIROSTAT_MODE: '1',",
+                                "    MIROSTAT_TAU: '5',",
+                                "    MIROSTAT_ETA: '0.1',",
+                                "    TRUNCATION_LENGTH: '16384',",
+                                "    PROMPT_PREFIX: '### Instruction:',",
+                                "    PROMPT_SUFFIX: '### Response: ',",
+                                "    STOP_STRING: '</s>',",
+                                "    HUGGINGFACE_AUDIO_TO_TEXT_MODEL: 'facebook/wav2vec2-large-960h-lv60-self',",
+                                "    DISCORD_COMMAND_PREFIX: '/AGiXT',",
+                                "    USE_BRIAN_TTS: true,",
+                                "    ELEVENLABS_VOICE: 'Josh',",
+                                "    STABLE_DIFFUSION_API_URL: 'http://stable-diffusion:7860',",
+                                "    USE_STREAMLABS_TTS: true,",
+                                "    STREAMLABS_VOICE: 'Brian',",
+                                "    WHISPER_MODEL: 'base.en'",
+                                "  }",
+                                "}",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversations = await sdk.getConversations();\nconsole.log(conversations);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[",
+                                "  'Talk about chains',",
+                                "  'AGiXT Conversation',",
+                                "  'OpenAI History',",
+                                "  'gpt4free conversation',",
+                                "  'Stable diffusion chain',",
+                                "  'Test',",
+                                "  'AGiXT Chains',",
+                                "  'Talk about AGiXT with OpenOrca'",
+                                "]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await sdk.getConversation(\"gpt4free\", \"Test\", 100, 1);\n\nconsole.log(conversation);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Unable to retrieve data.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chains = await sdk.getChains();\nconsole.log(chains);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[",
+                                "  'Smart Instruct',",
+                                "  'Smart Prompt',",
+                                "  'Test_Commands',",
+                                "  'Generate and Run Smart Task Chain',",
+                                "  'Write a Poem',",
+                                "  'Generate and Run Task Chain',",
+                                "  'Smart Chat - No Research',",
+                                "  'Generate Task Chain',",
+                                "  'Generate Smart Task Chain',",
+                                "  'Smart Chat',",
+                                "  'Ask Helper Agent for Help',",
+                                "  'Generate Image with Stable Diffusion',",
+                                "  'Generate Smart Task Chain without Research',",
+                                "  'Generate Task Chain without Research',",
+                                "  'Create New Command',",
+                                "  'Solve Math Problem',",
+                                "  'Smart Instruct - No Research'",
+                                "]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

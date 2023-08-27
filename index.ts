@@ -199,16 +199,18 @@ export default class AGiXTSDK {
     page = 1
   ) {
     try {
-      const response = await axios.get<{ conversation_history: any[] }>(
+      const requestBody = {
+        conversation_name: conversationName,
+        agent_name: agentName,
+        limit: limit,
+        page: page,
+      };
+
+      const response = await axios.post<{ conversation_history: any[] }>(
         `${this.baseUri}/api/conversation`,
+        requestBody,
         {
           headers: this.headers,
-          params: {
-            conversation_name: conversationName,
-            agent_name: agentName,
-            limit,
-            page,
-          },
         }
       );
       return response.data.conversation_history;
