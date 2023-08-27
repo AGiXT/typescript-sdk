@@ -1943,7 +1943,7 @@
                         {
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
-                                "Unable to retrieve data.",
+                                "Prompt 'Short Story' deleted.",
                                 ""
                             ]
                         }
