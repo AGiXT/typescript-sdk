@@ -1,6 +1,13 @@
 {
     "cells": [
         {
+            "language": "markdown",
+            "source": [
+                "# AGiXT Typescript SDK Tests\n\n## Get a list of Providers\n\nThis will get a list of AI Providers available to use with AGiXT.\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "typescript",
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst providers = await sdk.getProviders();\nconsole.log(providers);\n"
@@ -30,6 +37,13 @@
                     ]
                 }
             ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Get Default Provider Settings\n\nChoose a provider from the list of AI providers and get the default settings for that provider. For this example, we're choosing to see the settings for the `openai` provider.\n"
+            ],
+            "outputs": []
         },
         {
             "language": "typescript",
@@ -62,6 +76,13 @@
             ]
         },
         {
+            "language": "markdown",
+            "source": [
+                "## Get Embedding Providers\n\nEmbedding providers are used to embed information to vectors to store in the vector database to be searched for context injection.\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "typescript",
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst embedding_providers = await sdk.getEmbedProviders();\nconsole.log(embedding_providers);\n"
@@ -86,6 +107,13 @@
                     ]
                 }
             ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Get Extension Settings\n\nThis is where we get all third party extension settings for the agent with defaults to fill in when there is nothing entered on the front end.\n"
+            ],
+            "outputs": []
         },
         {
             "language": "typescript",
@@ -137,6 +165,206 @@
             ]
         },
         {
+            "language": "markdown",
+            "source": [
+                "## Get Extension Commands\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst extensions = await sdk.getExtensions();\nconsole.log(extensions);\nconsole.log(extensions[0]);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[",
+                                "  {",
+                                "    extension_name: 'Web Playwright',",
+                                "    description: 'Web Playwright',",
+                                "    settings: [],",
+                                "    commands: [ [Object], [Object], [Object] ]",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Agixt Actions',",
+                                "    description: 'Agixt Actions',",
+                                "    settings: [],",
+                                "    commands: [",
+                                "      [Object], [Object],",
+                                "      [Object], [Object],",
+                                "      [Object], [Object],",
+                                "      [Object], [Object]",
+                                "    ]",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Macostts',",
+                                "    description: 'Macostts',",
+                                "    settings: [ 'USE_MAC_OS_TTS' ],",
+                                "    commands: [ [Object] ]",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'File System',",
+                                "    description: 'File System',",
+                                "    settings: [ 'WORKING_DIRECTORY', 'WORKING_DIRECTORY_RESTRICTED' ],",
+                                "    commands: [",
+                                "      [Object], [Object],",
+                                "      [Object], [Object],",
+                                "      [Object], [Object],",
+                                "      [Object], [Object],",
+                                "      [Object]",
+                                "    ]",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Streamlabs Tts',",
+                                "    description: 'Streamlabs Tts',",
+                                "    settings: [ 'USE_STREAMLABS_TTS', 'STREAMLABS_VOICE' ],",
+                                "    commands: [ [Object] ]",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Whisper Stt',",
+                                "    description: 'Whisper Stt',",
+                                "    settings: [ 'WHISPER_MODEL' ],",
+                                "    commands: [ [Object] ]",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Huggingface',",
+                                "    description: 'Huggingface',",
+                                "    settings: [ 'HUGGINGFACE_API_KEY', 'HUGGINGFACE_AUDIO_TO_TEXT_MODEL' ],",
+                                "    commands: [ [Object], [Object] ]",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Discord',",
+                                "    description: 'Discord',",
+                                "    settings: [ 'DISCORD_API_KEY', 'DISCORD_COMMAND_PREFIX' ],",
+                                "    commands: []",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Dalle',",
+                                "    description: 'Dalle',",
+                                "    settings: [ 'OPENAI_API_KEY' ],",
+                                "    commands: []",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Google',",
+                                "    description: 'Google',",
+                                "    settings: [ 'GOOGLE_API_KEY' ],",
+                                "    commands: []",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Github',",
+                                "    description: 'Github',",
+                                "    settings: [ 'GITHUB_USERNAME', 'GITHUB_API_KEY' ],",
+                                "    commands: [ [Object] ]",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Stable Diffusion',",
+                                "    description: 'Stable Diffusion',",
+                                "    settings: [ 'STABLE_DIFFUSION_API_URL', 'HUGGINGFACE_API_KEY' ],",
+                                "    commands: [ [Object] ]",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Gtts',",
+                                "    description: 'Gtts',",
+                                "    settings: [ 'USE_GTTS' ],",
+                                "    commands: []",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Times',",
+                                "    description: 'Times',",
+                                "    settings: [],",
+                                "    commands: [ [Object] ]",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Elevenlabs',",
+                                "    description: 'Elevenlabs',",
+                                "    settings: [ 'ELEVENLABS_API_KEY', 'ELEVENLABS_VOICE' ],",
+                                "    commands: [ [Object] ]",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Sendgrid Email',",
+                                "    description: 'Sendgrid Email',",
+                                "    settings: [ 'SENDGRID_API_KEY', 'SENDGRID_EMAIL' ],",
+                                "    commands: []",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Searxng',",
+                                "    description: 'Searxng',",
+                                "    settings: [ 'SEARXNG_INSTANCE_URL' ],",
+                                "    commands: [ [Object] ]",
+                                "  },",
+                                "  {",
+                                "    extension_name: 'Twitter',",
+                                "    description: 'Twitter',",
+                                "    settings: [",
+                                "      'TW_CONSUMER_KEY',",
+                                "      'TW_CONSUMER_SECRET',",
+                                "      'TW_ACCESS_TOKEN',",
+                                "      'TW_ACCESS_TOKEN_SECRET'",
+                                "    ],",
+                                "    commands: []",
+                                "  }",
+                                "]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "### Details of Extension Commands\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst extensions = await sdk.getExtensions();\n// Example of data under commands for the Playwright extension.\nconsole.log(extensions[0].commands);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[",
+                                "  {",
+                                "    friendly_name: 'Scrape Text with Playwright',",
+                                "    command_name: 'scrape_text_with_playwright',",
+                                "    command_args: { url: '' }",
+                                "  },",
+                                "  {",
+                                "    friendly_name: 'Scrape Links with Playwright',",
+                                "    command_name: 'scrape_links_with_playwright',",
+                                "    command_args: { url: '' }",
+                                "  },",
+                                "  {",
+                                "    friendly_name: 'Take Screenshot with Playwright',",
+                                "    command_name: 'take_screenshot_with_playwright',",
+                                "    command_args: { url: '', path: '' }",
+                                "  }",
+                                "]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Get a list of all current Agents\n\nAny agents that you have created will be listed here.\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "typescript",
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agents = await sdk.getAgents();\nconsole.log(agents);\n"
@@ -166,9 +394,68 @@
             ]
         },
         {
+            "language": "markdown",
+            "source": [
+                "## Create a new Agent\n\nCreates a new agent with the `openai` provider.\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_config = await sdk.getAgentConfig(\"OpenOrca\");\nconsole.log(agent_config);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst new_agent = await sdk.addAgent(\"Test Agent\", {\n  provider: \"openai\",\n  embedder: \"openai\",\n  AI_MODEL: \"gpt-3.5-turbo-16k-0613\",\n  AI_TEMPERATURE: \"0.7\",\n  AI_TOP_P: \"1\",\n  MAX_TOKENS: \"16000\",\n  helper_agent_name: \"OpenAI\",\n  WEBSEARCH_TIMEOUT: 0,\n  OPENAI_API_KEY: \"YOUR_OPENAI_API_KEY_HERE\",\n  WAIT_BETWEEN_REQUESTS: 1,\n  WAIT_AFTER_FAILURE: 3,\n  stream: false,\n  WORKING_DIRECTORY: \"./WORKSPACE\",\n  WORKING_DIRECTORY_RESTRICTED: true,\n  AUTONOMOUS_EXECUTION: false,\n});\nconsole.log(new_agent);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{ message: 'Agent Test Agent created.' }",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Rename the test agent\n\nWe will just rename it to `New Test Agent`.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst rename_agent = await sdk.renameAgent(\"Test Agent\", \"New Test Agent\");\nconsole.log(rename_agent);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{ message: 'Agent renamed.' }",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Get the agent's settings\n\nThis will get the settings for the agent we just created, this will tell you all commands available to the agent as well as all of the provider settings for the agent.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_config = await sdk.getAgentConfig(\"New Test Agent\");\nconsole.log(agent_config);\n"
             ],
             "outputs": [
                 {
@@ -210,51 +497,21 @@
                                 "    'Use The Search Engine': false",
                                 "  },",
                                 "  settings: {",
-                                "    provider: 'oobabooga',",
-                                "    embedder: 'default',",
-                                "    AI_MODEL: 'OpenOrca-Platypus2-13B',",
-                                "    AI_TEMPERATURE: '1.31',",
+                                "    provider: 'openai',",
+                                "    embedder: 'openai',",
+                                "    AI_MODEL: 'gpt-3.5-turbo-16k-0613',",
+                                "    AI_TEMPERATURE: '0.7',",
                                 "    AI_TOP_P: '1',",
-                                "    MAX_TOKENS: '16384',",
-                                "    helper_agent_name: 'gpt4free',",
+                                "    MAX_TOKENS: '16000',",
+                                "    helper_agent_name: 'OpenAI',",
                                 "    WEBSEARCH_TIMEOUT: 0,",
+                                "    OPENAI_API_KEY: 'YOUR_OPENAI_API_KEY_HERE',",
                                 "    WAIT_BETWEEN_REQUESTS: 1,",
                                 "    WAIT_AFTER_FAILURE: 3,",
                                 "    stream: false,",
                                 "    WORKING_DIRECTORY: './WORKSPACE',",
                                 "    WORKING_DIRECTORY_RESTRICTED: true,",
-                                "    AUTONOMOUS_EXECUTION: false,",
-                                "    AI_PROVIDER_URI: 'http://text-generation-webui:5000',",
-                                "    DO_SAMPLE: '',",
-                                "    TOP_P: '0.14',",
-                                "    TYPICAL_P: '1',",
-                                "    EPSILON_CUTOFF: '0',",
-                                "    ETA_CUTOFF: '0',",
-                                "    TFS: '1',",
-                                "    TOP_A: '0',",
-                                "    REPETITION_PENALTY: '1.17',",
-                                "    ENCODER_REPETITION_PENALTY: '1',",
-                                "    TOP_K: '',",
-                                "    MIN_LENGTH: '',",
-                                "    NO_REPEAT_NGRAM_SIZE: '0',",
-                                "    NUM_BEAMS: '1',",
-                                "    PENALTY_ALPHA: '0',",
-                                "    LENGTH_PENALTY: '1',",
-                                "    MIROSTAT_MODE: '1',",
-                                "    MIROSTAT_TAU: '5',",
-                                "    MIROSTAT_ETA: '0.1',",
-                                "    TRUNCATION_LENGTH: '16384',",
-                                "    PROMPT_PREFIX: '### Instruction:',",
-                                "    PROMPT_SUFFIX: '### Response: ',",
-                                "    STOP_STRING: '</s>',",
-                                "    HUGGINGFACE_AUDIO_TO_TEXT_MODEL: 'facebook/wav2vec2-large-960h-lv60-self',",
-                                "    DISCORD_COMMAND_PREFIX: '/AGiXT',",
-                                "    USE_BRIAN_TTS: true,",
-                                "    ELEVENLABS_VOICE: 'Josh',",
-                                "    STABLE_DIFFUSION_API_URL: 'http://stable-diffusion:7860',",
-                                "    USE_STREAMLABS_TTS: true,",
-                                "    STREAMLABS_VOICE: 'Brian',",
-                                "    WHISPER_MODEL: 'base.en'",
+                                "    AUTONOMOUS_EXECUTION: false",
                                 "  }",
                                 "}",
                                 ""
@@ -265,37 +522,177 @@
             ]
         },
         {
-            "language": "typescript",
+            "language": "markdown",
             "source": [
-                "// Add Agent\n"
+                "## Update the agent's settings\n\nWe'll just update the temperature from the default `0.7` to `0.8` to confirm that we can modify a setting.\n"
             ],
             "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "// Rename Agent\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_config = await sdk.getAgentConfig(\"New Test Agent\");\nagent_config.settings.AI_TEMPERATURE = \"0.8\";\nconst update_agent_config = await sdk.updateAgentSettings(\n  \"New Test Agent\",\n  agent_config.settings\n);\nconsole.log(update_agent_config);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Agent New Test Agent configuration updated.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Get a list of the agent's commands\n\nThis will get a list of all commands available to the agent.\n"
             ],
             "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "// Update Agent Settings\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_commands = await sdk.getCommands(\"New Test Agent\");\nconsole.log(agent_commands);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{",
+                                "  'Scrape Text with Playwright': false,",
+                                "  'Scrape Links with Playwright': false,",
+                                "  'Take Screenshot with Playwright': false,",
+                                "  'Create Task Chain': false,",
+                                "  'Generate Extension from OpenAPI': false,",
+                                "  'Generate Agent Helper Chain': false,",
+                                "  'Ask for Help or Further Clarification to Complete Task': false,",
+                                "  'Create a new command': false,",
+                                "  'Execute Python Code': false,",
+                                "  'Get Python Code from Response': false,",
+                                "  'Get Mindmap for task to break it down': false,",
+                                "  'Speak with MacOS TTS': false,",
+                                "  'Write to File': false,",
+                                "  'Read File': false,",
+                                "  'Search Files': false,",
+                                "  'Append to File': false,",
+                                "  'Execute Python File': false,",
+                                "  'Delete File': false,",
+                                "  'Execute Shell': false,",
+                                "  'Indent String for Python Code': false,",
+                                "  'Generate Commands Dictionary': false,",
+                                "  'Speak with TTS with Streamlabs Text to Speech': false,",
+                                "  'Read Audio from File': false,",
+                                "  'Read Audio from File with Huggingface': false,",
+                                "  'Read Audio with Huggingface': false,",
+                                "  'Clone Github Repository': false,",
+                                "  'Generate Image with Stable Diffusion': false,",
+                                "  'Get Datetime': false,",
+                                "  'Speak with TTS Using Elevenlabs': false,",
+                                "  'Use The Search Engine': false",
+                                "}",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Toggle a Command for the Agent\n\nWe'll toggle the `Write to File` command to `true` to confirm that we can toggle a command.\n"
             ],
             "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "// Update Agent Commands\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst toggle_command = await sdk.toggleCommand(\n  \"New Test Agent\",\n  \"Write to File\",\n  true\n);\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Update Agent Commands\n\nIn this example, we'll only change the `Write to File` command to `False`, but we could change any (or all) of the commands with this API call.\n"
             ],
             "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "// Delete Agent\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_config = await sdk.getAgentConfig(\"New Test Agent\");\n// Change agent_config.commands command of \"Write to File\" to false.\nagent_config.commands[\"Write to File\"] = false;\nconst update_agent_config = await sdk.updateAgentCommands(\n  \"New Test Agent\",\n  agent_config.commands\n);\nconsole.log(update_agent_config);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{",
+                                "  'Scrape Text with Playwright': false,",
+                                "  'Scrape Links with Playwright': false,",
+                                "  'Take Screenshot with Playwright': false,",
+                                "  'Create Task Chain': false,",
+                                "  'Generate Extension from OpenAPI': false,",
+                                "  'Generate Agent Helper Chain': false,",
+                                "  'Ask for Help or Further Clarification to Complete Task': false,",
+                                "  'Create a new command': false,",
+                                "  'Execute Python Code': false,",
+                                "  'Get Python Code from Response': false,",
+                                "  'Get Mindmap for task to break it down': false,",
+                                "  'Speak with MacOS TTS': false,",
+                                "  'Write to File': false,",
+                                "  'Read File': false,",
+                                "  'Search Files': false,",
+                                "  'Append to File': false,",
+                                "  'Execute Python File': false,",
+                                "  'Delete File': false,",
+                                "  'Execute Shell': false,",
+                                "  'Indent String for Python Code': false,",
+                                "  'Generate Commands Dictionary': false,",
+                                "  'Speak with TTS with Streamlabs Text to Speech': false,",
+                                "  'Read Audio from File': false,",
+                                "  'Read Audio from File with Huggingface': false,",
+                                "  'Read Audio with Huggingface': false,",
+                                "  'Clone Github Repository': false,",
+                                "  'Generate Image with Stable Diffusion': false,",
+                                "  'Get Datetime': false,",
+                                "  'Speak with TTS Using Elevenlabs': false,",
+                                "  'Use The Search Engine': false",
+                                "}",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Create a new conversation\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await sdk.newConversation(\n  \"New Test Agent\",\n  \"New Test Conversation\"\n);\nconsole.log(conversation);\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Get Conversations\n"
             ],
             "outputs": []
         },
@@ -328,9 +725,16 @@
             ]
         },
         {
+            "language": "markdown",
+            "source": [
+                "## Get Conversation Details\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await sdk.getConversation(\"gpt4free\", \"Test\", 100, 1);\n\nconsole.log(conversation);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await sdk.getConversation(\"gpt4free\", \"Test\", 100, 1);\nconsole.log(conversation);\n"
             ],
             "outputs": [
                 {
@@ -358,44 +762,177 @@
             ]
         },
         {
-            "language": "typescript",
+            "language": "markdown",
             "source": [
-                "// New Conversation\n"
+                "## Delete Message from Conversation\n"
             ],
             "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "// Delete Conversation Message\n"
+                "// Delete Conversation Message\nimport AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await sdk.getConveration(\"gpt4free\", \"Test\", 100, 1);\nconst delete_message = await sdk.deleteConversationMessage(\n  \"gpt4free\",\n  \"Test\",\n  conversation[0].message\n);\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Delete a Conversation\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Have the Agent Learn from specified Text\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Have the Agent Learn from a File\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Have the Agent Learn from a URL\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Get the Agents Memories\n\nGet some relevant memories from the agent about AGiXT.\n"
             ],
             "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "// Delete Conversation\n"
+                "// Get Agent Memories\nimport AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst memories = await sdk.getAgentMemories(\n  \"OpenAI\",\n  \"What can you tell me about AGiXT?\",\n  1,\n  0.2,\n  0\n);\nconsole.log(memories);\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Chat with the Agent\n\nChat about the learned information with the agent.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Delete a Memory\n\nDelete a specific memory by Memory ID.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Wipe the agents memories\n\nThis is necessary if you want the agent to serve a different purpose than its original intent after it has learned things. It may inject unnecessary context into the conversation if you don't wipe its memory and try to give it a different purpose, even temporarily.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Instruct the Agent to do something\n\nWe'll do something simple with it for the sake of the basic example, we'll just tell it to `Tell me the capital of France`.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Prompt the Agent\n\nUse a custom Prompt Template to prompt the agent. For our example, we'll use our \"Write a Poem\" prompt template to have the agent write a poem for us about dragons.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Chains\n\n## Get a list of Chains available to use\n"
             ],
             "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "// Get Agent Memories\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chains = await sdk.getChains();\nconsole.log(chains);\n"
             ],
             "outputs": []
         },
         {
-            "language": "typescript",
+            "language": "markdown",
             "source": [
-                "// Delete Agent Memory\n"
+                "## Create a new chain\n"
             ],
             "outputs": []
         },
         {
-            "language": "typescript",
+            "language": "markdown",
             "source": [
-                "// Wipe Agent Memories\n"
+                "## Rename the chain\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Add Chain Steps\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Get the content of the chain\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Modify a Chain Step\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Move a Chain Step\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Delete a step from the chain\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Add a Command to the Chain\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Run the chain\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Get the responses from the chain running\n"
             ],
             "outputs": []
         },
@@ -490,43 +1027,6 @@
                                 "",
                                 "User's latest input: {user_input} ",
                                 "",
-                                ""
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "language": "typescript",
-            "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chains = await sdk.getChains();\nconsole.log(chains);\n"
-            ],
-            "outputs": [
-                {
-                    "items": [
-                        {
-                            "mime": "application/vnd.code.notebook.stdout",
-                            "value": [
-                                "[",
-                                "  'Smart Instruct',",
-                                "  'Smart Prompt',",
-                                "  'Test_Commands',",
-                                "  'Generate and Run Smart Task Chain',",
-                                "  'Write a Poem',",
-                                "  'Generate and Run Task Chain',",
-                                "  'Smart Chat - No Research',",
-                                "  'Generate Task Chain',",
-                                "  'Generate Smart Task Chain',",
-                                "  'Smart Chat',",
-                                "  'Ask Helper Agent for Help',",
-                                "  'Generate Image with Stable Diffusion',",
-                                "  'Generate Smart Task Chain without Research',",
-                                "  'Generate Task Chain without Research',",
-                                "  'Create New Command',",
-                                "  'Solve Math Problem',",
-                                "  'Smart Instruct - No Research'",
-                                "]",
                                 ""
                             ]
                         }
