@@ -895,6 +895,13 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.getChain(\"Smart Chat\");\nconsole.log(chain.steps);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
                 "## Modify a Chain Step\n"
@@ -933,6 +940,20 @@
             "language": "markdown",
             "source": [
                 "## Get the responses from the chain running\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Delete the chain\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Prompts\n\n## Get a list of prompts available to use\n"
             ],
             "outputs": []
         },
@@ -1009,6 +1030,13 @@
             ]
         },
         {
+            "language": "markdown",
+            "source": [
+                "## Get the content of a prompt\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "typescript",
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_data = await sdk.getPrompt(\"Chat\");\nconsole.log(prompt_data);\n"
@@ -1027,58 +1055,6 @@
                                 "",
                                 "User's latest input: {user_input} ",
                                 "",
-                                ""
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "language": "typescript",
-            "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.getChain(\"Smart Chat\");\nconsole.log(chain.steps);\n"
-            ],
-            "outputs": [
-                {
-                    "items": [
-                        {
-                            "mime": "application/vnd.code.notebook.stdout",
-                            "value": [
-                                "[",
-                                "  {",
-                                "    step: 1,",
-                                "    agent_name: 'gpt4free',",
-                                "    prompt_type: 'Prompt',",
-                                "    prompt: {",
-                                "      prompt_name: 'SmartChat-StepByStep',",
-                                "      websearch: true,",
-                                "      websearch_depth: 3,",
-                                "      context_results: 5,",
-                                "      shots: 3",
-                                "    }",
-                                "  },",
-                                "  {",
-                                "    step: 2,",
-                                "    agent_name: 'gpt4free',",
-                                "    prompt_type: 'Prompt',",
-                                "    prompt: {",
-                                "      prompt_name: 'SmartChat-Researcher',",
-                                "      shot_count: '3',",
-                                "      task: '{STEP1}'",
-                                "    }",
-                                "  },",
-                                "  {",
-                                "    step: 3,",
-                                "    agent_name: 'gpt4free',",
-                                "    prompt_type: 'Prompt',",
-                                "    prompt: {",
-                                "      prompt_name: 'SmartChat-Resolver',",
-                                "      shot_count: '3',",
-                                "      task: '{STEP2}'",
-                                "    }",
-                                "  }",
-                                "]",
                                 ""
                             ]
                         }
