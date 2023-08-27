@@ -199,20 +199,18 @@ export default class AGiXTSDK {
     page = 1
   ) {
     try {
-      const requestBody = {
-        conversation_name: conversationName,
-        agent_name: agentName,
-        limit: limit,
-        page: page,
-      };
+      const response = await axios({
+        method: "get",
+        url: `${this.baseUri}/api/conversation`,
+        headers: this.headers,
+        data: {
+          conversation_name: conversationName,
+          agent_name: agentName,
+          limit,
+          page,
+        },
+      });
 
-      const response = await axios.post<{ conversation_history: any[] }>(
-        `${this.baseUri}/api/conversation`,
-        requestBody,
-        {
-          headers: this.headers,
-        }
-      );
       return response.data.conversation_history;
     } catch (error) {
       return this.handleError(error);
