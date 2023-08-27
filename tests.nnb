@@ -308,6 +308,28 @@
                                 "    commands: []",
                                 "  }",
                                 "]",
+                                "{",
+                                "  extension_name: 'Web Playwright',",
+                                "  description: 'Web Playwright',",
+                                "  settings: [],",
+                                "  commands: [",
+                                "    {",
+                                "      friendly_name: 'Scrape Text with Playwright',",
+                                "      command_name: 'scrape_text_with_playwright',",
+                                "      command_args: [Object]",
+                                "    },",
+                                "    {",
+                                "      friendly_name: 'Scrape Links with Playwright',",
+                                "      command_name: 'scrape_links_with_playwright',",
+                                "      command_args: [Object]",
+                                "    },",
+                                "    {",
+                                "      friendly_name: 'Take Screenshot with Playwright',",
+                                "      command_name: 'take_screenshot_with_playwright',",
+                                "      command_args: [Object]",
+                                "    }",
+                                "  ]",
+                                "}",
                                 ""
                             ]
                         }
@@ -369,7 +391,19 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst command_args = await ApiClient.getCommandArgs(\"Write to File\");\nconsole.log(command_args);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{ filename: '', text: '' }",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -390,6 +424,7 @@
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
                                 "[",
+                                "  { name: 'New Test Agent', status: false },",
                                 "  { name: 'FreeAgent', status: false },",
                                 "  { name: 'gpt4free', status: false },",
                                 "  { name: 'OpenOrca', status: false },",
@@ -410,14 +445,14 @@
         {
             "language": "markdown",
             "source": [
-                "## Create a new Agent\n\nCreates a new agent with the `openai` provider.\n"
+                "## Create a new Agent\n\nCreates a new agent with the `openai` provider. If you want any of the agent interaction functions to work in the tests, replace the `OPENAI_API_KEY` with your own key.\n"
             ],
             "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst new_agent = await ApiClient.addAgent(\"Test Agent\", {\n  provider: \"openai\",\n  embedder: \"openai\",\n  AI_MODEL: \"gpt-3.5-turbo-16k-0613\",\n  AI_TEMPERATURE: \"0.7\",\n  AI_TOP_P: \"1\",\n  MAX_TOKENS: \"16000\",\n  helper_agent_name: \"OpenAI\",\n  WEBSEARCH_TIMEOUT: 0,\n  OPENAI_API_KEY: \"YOUR_OPENAI_API_KEY_HERE\",\n  WAIT_BETWEEN_REQUESTS: 1,\n  WAIT_AFTER_FAILURE: 3,\n  stream: false,\n  WORKING_DIRECTORY: \"./WORKSPACE\",\n  WORKING_DIRECTORY_RESTRICTED: true,\n  AUTONOMOUS_EXECUTION: false,\n});\nconsole.log(new_agent);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\n\n// If you want any of the agent interactions to work in the tests, replace the key below with your own.\n/****************************************************************/\nconst OPENAI_API_KEY = \"YOUR_OPENAI_API_KEY_HERE\";\n/****************************************************************/\n\nconst new_agent = await ApiClient.addAgent(\"Test Agent\", {\n  provider: \"openai\",\n  embedder: \"default\",\n  AI_MODEL: \"gpt-3.5-turbo-16k-0613\",\n  AI_TEMPERATURE: \"0.7\",\n  AI_TOP_P: \"1\",\n  MAX_TOKENS: \"16000\",\n  helper_agent_name: \"OpenAI\",\n  WEBSEARCH_TIMEOUT: 0,\n  OPENAI_API_KEY: OPENAI_API_KEY,\n  WAIT_BETWEEN_REQUESTS: 1,\n  WAIT_AFTER_FAILURE: 3,\n  stream: false,\n  WORKING_DIRECTORY: \"./WORKSPACE\",\n  WORKING_DIRECTORY_RESTRICTED: true,\n  AUTONOMOUS_EXECUTION: false,\n});\nconsole.log(new_agent);\n"
             ],
             "outputs": [
                 {
@@ -491,7 +526,7 @@
                                 "    'Get Python Code from Response': false,",
                                 "    'Get Mindmap for task to break it down': false,",
                                 "    'Speak with MacOS TTS': false,",
-                                "    'Write to File': false,",
+                                "    'Write to File': true,",
                                 "    'Read File': false,",
                                 "    'Search Files': false,",
                                 "    'Append to File': false,",
@@ -514,7 +549,7 @@
                                 "    provider: 'openai',",
                                 "    embedder: 'openai',",
                                 "    AI_MODEL: 'gpt-3.5-turbo-16k-0613',",
-                                "    AI_TEMPERATURE: '0.7',",
+                                "    AI_TEMPERATURE: '0.8',",
                                 "    AI_TOP_P: '1',",
                                 "    MAX_TOKENS: '16000',",
                                 "    helper_agent_name: 'OpenAI',",
@@ -592,7 +627,7 @@
                                 "  'Get Python Code from Response': false,",
                                 "  'Get Mindmap for task to break it down': false,",
                                 "  'Speak with MacOS TTS': false,",
-                                "  'Write to File': false,",
+                                "  'Write to File': true,",
                                 "  'Read File': false,",
                                 "  'Search Files': false,",
                                 "  'Append to File': false,",
@@ -628,9 +663,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst toggle_command = await ApiClient.toggleCommand(\n  \"New Test Agent\",\n  \"Write to File\",\n  true\n);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst toggle_command = await ApiClient.toggleCommand(\n  \"New Test Agent\",\n  \"Write to File\",\n  true\n);\nconsole.log(toggle_command);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Command 'Write to File' toggled for agent 'New Test Agent'.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -650,38 +697,7 @@
                         {
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
-                                "{",
-                                "  'Scrape Text with Playwright': false,",
-                                "  'Scrape Links with Playwright': false,",
-                                "  'Take Screenshot with Playwright': false,",
-                                "  'Create Task Chain': false,",
-                                "  'Generate Extension from OpenAPI': false,",
-                                "  'Generate Agent Helper Chain': false,",
-                                "  'Ask for Help or Further Clarification to Complete Task': false,",
-                                "  'Create a new command': false,",
-                                "  'Execute Python Code': false,",
-                                "  'Get Python Code from Response': false,",
-                                "  'Get Mindmap for task to break it down': false,",
-                                "  'Speak with MacOS TTS': false,",
-                                "  'Write to File': false,",
-                                "  'Read File': false,",
-                                "  'Search Files': false,",
-                                "  'Append to File': false,",
-                                "  'Execute Python File': false,",
-                                "  'Delete File': false,",
-                                "  'Execute Shell': false,",
-                                "  'Indent String for Python Code': false,",
-                                "  'Generate Commands Dictionary': false,",
-                                "  'Speak with TTS with Streamlabs Text to Speech': false,",
-                                "  'Read Audio from File': false,",
-                                "  'Read Audio from File with Huggingface': false,",
-                                "  'Read Audio with Huggingface': false,",
-                                "  'Clone Github Repository': false,",
-                                "  'Generate Image with Stable Diffusion': false,",
-                                "  'Get Datetime': false,",
-                                "  'Speak with TTS Using Elevenlabs': false,",
-                                "  'Use The Search Engine': false",
-                                "}",
+                                "Agent New Test Agent configuration updated.",
                                 ""
                             ]
                         }
@@ -701,7 +717,19 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await ApiClient.newConversation(\n  \"New Test Agent\",\n  \"New Test Conversation\"\n);\nconsole.log(conversation);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -726,6 +754,7 @@
                                 "  'AGiXT Conversation',",
                                 "  'OpenAI History',",
                                 "  'gpt4free conversation',",
+                                "  'New Test Conversation',",
                                 "  'Stable diffusion chain',",
                                 "  'Test',",
                                 "  'AGiXT Chains',",
@@ -748,7 +777,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await ApiClient.getConversation(\n  \"gpt4free\",\n  \"Test\",\n  100,\n  1\n);\nconsole.log(conversation);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await ApiClient.getConversation(\n  \"New Test Agent\",\n  \"Test\",\n  100,\n  1\n);\nconsole.log(conversation);\n"
             ],
             "outputs": [
                 {
@@ -785,9 +814,33 @@
         {
             "language": "typescript",
             "source": [
-                "// Delete Conversation Message\nimport AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await ApiClient.getConveration(\"gpt4free\", \"Test\", 100, 1);\nconst delete_message = await ApiClient.deleteConversationMessage(\n  \"gpt4free\",\n  \"Test\",\n  conversation[0].message\n);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await ApiClient.getConversation(\n  \"New Test Agent\",\n  \"Test\",\n  100,\n  1\n);\nconsole.log(conversation);\n\nconst delete_message = await ApiClient.deleteConversationMessage(\n  \"New Test Agent\",\n  \"Test\",\n  conversation[0].message\n);\nconsole.log(delete_message);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[",
+                                "  {",
+                                "    message: 'What can you tell me about AGiXT?',",
+                                "    role: 'USER',",
+                                "    timestamp: 'August 09, 2023 05:17 PM'",
+                                "  },",
+                                "  {",
+                                "    message: 'AGiXT is a dynamic Artificial Intelligence Automation Platform designed to manage AI instruction and task execution across various providers. It uses adaptive memory handling and a wide range of commands to enhance AI understanding and responsiveness. AGiXT features Smart Instruct and Smart Chat, which integrate web search, planning strategies, and conversation continuity to improve task completion. It also supports multiple AI providers, code evaluation, comprehensive chain management, and platform interoperability. AGiXT aims to push the boundaries of AI and contribute to the development of Artificial General Intelligence (AGI).',",
+                                "    role: 'OpenAI',",
+                                "    timestamp: 'August 09, 2023 05:17 PM'",
+                                "  }",
+                                "]",
+                                "Message deleted.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -799,9 +852,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await ApiClient.deleteConversation(\"gpt4free\", \"Test\");\nconsole.log(conversation);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await ApiClient.deleteConversation(\n  \"New Test Agent\",\n  \"Test\"\n);\nconsole.log(conversation);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Conversation `Test` for agent gpt4free deleted.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -813,9 +878,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst text_learning = await ApiClient.learnText(\n  \"gpt4free\",\n  \"What is AGiXT?\",\n  \"AGiXT is an open-source artificial intelligence automation platform.\",\n  0\n);\nconsole.log(text_learning);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst text_learning = await ApiClient.learnText(\n  \"New Test Agent\",\n  \"What is AGiXT?\",\n  \"AGiXT is an open-source artificial intelligence automation platform.\",\n  0\n);\nconsole.log(text_learning);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Agent learned the content from the text assocated with the user input.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -827,9 +904,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst file_learning = await ApiClient.learnFile(\n  \"gpt4free\",\n  \"text.txt\",\n  \"Test content of test.txt\",\n  0\n);\nconsole.log(file_learning);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst file_learning = await ApiClient.learnFile(\n  \"New Test Agent\",\n  \"text.txt\",\n  \"Test content of test.txt\",\n  0\n);\nconsole.log(file_learning);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Agent learned the content from the file.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -841,9 +930,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst url_learning = await ApiClient.learnUrl(\n  \"gpt4free\",\n  \"https://josh-xt.github.io/AGiXT/\",\n  0\n);\nconsole.log(url_learning);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst url_learning = await ApiClient.learnUrl(\n  \"New Test Agent\",\n  \"https://josh-xt.github.io/AGiXT/\",\n  0\n);\nconsole.log(url_learning);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Agent learned the content from the url.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -855,9 +956,166 @@
         {
             "language": "typescript",
             "source": [
-                "// Get Agent Memories\nimport AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst memories = await ApiClient.getAgentMemories(\n  \"gpt4free\",\n  \"What can you tell me about AGiXT?\",\n  5,\n  0.2,\n  0\n);\nconsole.log(memories);\n"
+                "// Get Agent Memories\nimport AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst memories = await ApiClient.getAgentMemories(\n  \"New Test Agent\",\n  \"What can you tell me about AGiXT?\",\n  5,\n  0.2,\n  0\n);\nconsole.log(memories);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[",
+                                "  {",
+                                "    is_reference: false,",
+                                "    external_source_name: 'user input',",
+                                "    id: '8ad623a743cd9925814bce5e3fd31d842b9fd0151e8988542f6dded42b00e176',",
+                                "    description: 'What is AGiXT?',",
+                                "    text: 'AGiXT is an open - source artificial intelligence automation platform .',",
+                                "    embedding: [",
+                                "       -0.024438004940748215,    -0.01262328214943409,    0.003391069592908025,",
+                                "      -0.0077370754443109035,      0.0174816083163023,    0.028201987966895103,",
+                                "       -0.017802244052290916,   0.0019813186954706907,    0.018067115917801857,",
+                                "      -0.0063848295249044895,    0.028397157788276672,    0.008050740696489811,",
+                                "       -0.009131142869591713,   -0.010901608504354954,    0.004589967895299196,",
+                                "       -0.007179448381066322,    0.005987520329654217,    0.025162920355796814,",
+                                "      -0.0020719331223517656,   0.0010002434719353914,    0.005123198498040438,",
+                                "         0.03490745276212692,   -0.006398770492523909,   -0.004715433809906244,",
+                                "       -0.010755231603980064,   -0.003272573696449399,  -0.0016833366826176643,",
+                                "        -0.03404313325881958,    0.003012928646057844,   0.0011553335934877396,",
+                                "       -0.003913844935595989,   -0.015195337124168873,   -0.010113961063325405,",
+                                "       -0.002901403233408928,   -0.009110231883823872,   -0.019210251048207283,",
+                                "        0.014386777766048908,   -0.005590211134403944,    0.005935242865234613,",
+                                "      -0.0003448139177635312,    0.030446436256170273, -0.00005339388007996604,",
+                                "        0.002376885386183858,  -0.0024570440873503685,   -0.003920815419405699,",
+                                "        0.017523430287837982,    -0.01764889620244503,   -0.005639003589749336,",
+                                "       -0.005077891517430544,    -0.00570870703086257,     -0.0214547012001276,",
+                                "        0.021078303456306458,    -0.00961906649172306,   -0.004244936164468527,",
+                                "       0.0067368317395448685,   -0.012449024245142937,    0.004129925277084112,",
+                                "      -0.0007876481977291405,     0.02413131110370159,     0.00693200109526515,",
+                                "       -0.005060465540736914,   -0.011940189637243748,   -0.020715845748782158,",
+                                "        0.014651650562882423,    -0.01665910892188549,    0.003446832299232483,",
+                                "       -0.013738536275923252,    0.020311566069722176,   -0.003087859833613038,",
+                                "       -0.022137794643640518,    0.026069065555930138,    0.018290167674422264,",
+                                "       -0.027226140722632408,   -0.016910040751099586,     0.03242601454257965,",
+                                "        0.021398937329649925,  -0.0008634506375528872,   -0.014512243680655956,",
+                                "       -0.018262285739183426,    0.021357115358114243,   0.0009270549635402858,",
+                                "       -0.007757986430078745,    -0.01678457483649254,    0.012142329476773739,",
+                                "        0.012504786252975464,    0.006405740976333618,    -0.01658940501511097,",
+                                "        0.013857032172381878,    0.005851598922163248,    -0.02230508252978325,",
+                                "        0.011194363236427307,   -0.018499277532100677,    0.041487451642751694,",
+                                "         0.01801135390996933,    -0.01629665121436119,     0.02703097090125084,",
+                                "       -0.014247370883822441, -0.00014594144886359572,   -0.009152053855359554,",
+                                "        -0.03560448810458183,",
+                                "      ... 1436 more items",
+                                "    ],",
+                                "    additional_metadata: 'AGiXT is an open - source artificial intelligence automation platform .',",
+                                "    key: '8ad623a743cd9925814bce5e3fd31d842b9fd0151e8988542f6dded42b00e176',",
+                                "    timestamp: '2023-08-27T13:11:56.714343',",
+                                "    relevance_score: 0.8879368389976283",
+                                "  },",
+                                "  {",
+                                "    is_reference: false,",
+                                "    external_source_name: 'https://josh-xt.github.io/AGiXT/',",
+                                "    id: '50fe3b3c6418d6738c1425d97d1e83068e68cf3137be2b7cfd465f2b108fec03',",
+                                "    description: 'https://josh-xt.github.io/AGiXT/',",
+                                "    text: \"Introduction · AGiXT Getting Started Introduction Quick Start Environment Variables Install Options Examples Things To Consider Screenshots Support Concepts Core Concepts AGiXT Hubs Providers Agents Extension Commands Prompts Chains Conversations Agent Training Agent Interactions Smart Chat Smart Instruct Smart Task Chains Task Chains Providers Anthropic Claude Azure OpenAI ChatGPT Custom OpenAI Style Provider FastChat GPT4Free Google Bard Google Palm Hugging Face Transformers HuggingChat Kobold Oobabooga Text Generation Web UI OpenAI Poe Llamacpp API Llamacpp Images Published with HonKit AASerifSansWhiteSepiaNight Introduction AGiXT AGiXT is a dynamic Artificial Intelligence Automation Platform engineered to orchestrate efficient AI instruction management and task execution across a multitude of providers . Our solution infuses adaptive memory handling with a broad spectrum of commands to enhance AI 's understanding and responsiveness , leading to improved task completion . The platform 's smart features , like Smart Instruct and Smart Chat , seamlessly integrate web search , planning strategies , and conversation continuity , transforming the interaction between users and AI . By leveraging a powerful plugin system that includes web browsing and command execution , AGiXT stands as a versatile bridge between AI models and users . With an expanding roster of AI providers , code evaluation capabilities , comprehensive chain management , and platform interoperability , AGiXT is consistently evolving to drive a multitude of applications , affirming its place at the forefront of AI technology . Embracing the spirit of extremity in every facet of life , we introduce AGiXT . This advanced AI Automation Platform is our bold step towards the realization of Artificial General Intelligence ( AGI ) . Seamlessly orchestrating instruction management and executing complex tasks across diverse AI providers , AGiXT combines adaptive memory , smart features , and a versatile plugin system to maximize AI potential . With our unwavering commitment to innovation , we 're dedicated to pushing the boundaries of AI and bringing AGI closer to reality . AGiXT Setup and Usage Video Table of Contents 📖 AGiXT Table of Contents 📖 ⚠ ️ Disclaimers ! Monitor Your Usage ! Under Development ! Key Features 🗝 ️ Getting Started with Local Models and AGiXT Video Quick Start Guide Prerequisites Download and Install Environment Setup Install Options Running and Updating AGiXT Configuration Documentation Other Repositorities Contributing Donations and Sponsorships Our Team 🧑 ‍ 💻 History ⚠ ️ Disclaimers ! Monitor Your Usage ! Please note that using some AI providers ( such as OpenAI 's GPT-4 API ) can be expensive ! Monitor your usage carefully to avoid incurring unexpected costs . We 're NOT responsible for your usage under any circumstance . Under Development ! This project is under active development and may still have issues . We appreciate your understanding and patience . If you encounter any problems , please first check the open issues . If your issue is not listed , kindly create a new issue detailing the error or problem you experienced . Thank you for your support ! Key Features 🗝 ️ Context and Token Management : Adaptive handling of long - term and short - term memory for an optimized AI performance , allowing the software to process information more efficiently and accurately . Smart Instruct : An advanced feature enabling AI to comprehend , plan , and execute tasks effectively . The system leverages web search , planning strategies , and executes instructions while ensuring output accuracy . Interactive Chat & Smart Chat : User - friendly chat interface for dynamic conversational tasks . The Smart Chat feature integrates AI with web research to deliver accurate and contextually relevant responses . Task Execution & Smart Task Management : Efficient management and execution of complex tasks broken down into sub - tasks . The Smart Task feature employs AI - driven agents to dynamically handle tasks , optimizing efficiency and avoiding redundancy . Chain Management : Sophisticated handling of chains or a series of linked commands , enabling the automation of complex workflows and processes . Web Browsing & Command Execution : Advanced capabilities to browse the web and execute commands for a more interactive AI experience , opening a wide range of possibilities for AI assistance . Multi - Provider Compatibility : Seamless integration with leading AI providers such as OpenAI GPT series , Hugging Face Huggingchat , GPT4All , GPT4Free , Oobabooga Text Generation Web UI , Kobold , llama.cpp , FastChat , Google Bard , Bing , and more . Versatile Plugin System & Code Evaluation : Extensible command support for various AI models along with robust support for code evaluation , providing assistance in programming tasks . Docker Deployment : Simplified setup and maintenance through Docker deployment . Audio - to - Text & Text - to - Speech Options : Integration with Hugging Face for seamless audio - to - text transcription , and multiple TTS choices , featuring Brian TTS , Mac OS TTS , and ElevenLabs . Platform Interoperability & AI Agent Management : Streamlined creation , renaming , deletion , and updating of AI agent settings along with easy interaction with popular platforms like Twitter , GitHub , Google , DALL - E , and more . Custom Prompts & Command Control : Granular control over agent abilities through enabling or disabling specific commands , and easy creation , editing , and deletion of custom prompts to standardize user inputs . RESTful API : FastAPI - powered RESTful API for seamless integration with external applications and services . Expanding AI Support : Continually updated to include new AI providers and services , ensuring the software stays at the forefront of AI technology . Getting Started with Local Models and AGiXT Video This is a video that walks through the process of setting up and using AGiXT to interact with locally hosted language models . This is a great way to get started with AGiXT and see how it works .\",",
+                                "    embedding: [",
+                                "        -0.004706207662820816,   -0.002129411557689309,  0.0021224752999842167,",
+                                "        -0.023194633424282074, -0.00015313815674744546,   0.024221189320087433,",
+                                "          0.01645265333354473,    0.001546771265566349,   0.016535887494683266,",
+                                "        -0.023763401433825493,      0.0073038125410676,  0.0040680780075490475,",
+                                "        -0.032294921576976776,   -0.005202145781368017, 0.00002549593227740843,",
+                                "        -0.010494462214410305,    0.022112587466835976,    0.01771504059433937,",
+                                "          0.00434205774217844,   -0.017728911712765694,   -0.01598099060356617,",
+                                "         0.008871392346918583,   -0.011451656930148602,   0.014274687506258488,",
+                                "        -0.008760413154959679,    0.011146464385092258,   0.019532322883605957,",
+                                "         -0.03678957372903824,  -0.0055489554069936275,   0.004404483363032341,",
+                                "        -0.004269227385520935,   -0.015398351475596428,  -0.013081662356853485,",
+                                "         -0.00882283877581358,    0.006273787468671799,  -0.015245755203068256,",
+                                "         0.015037668868899345,   -0.013178768567740917,  0.0010464983060956001,",
+                                "        0.0076644946821033955,     0.02960367687046528,   0.012693235650658607,",
+                                "         0.007858707569539547,   -0.006495745852589607,   -0.00982858706265688,",
+                                "         0.013955622911453247,   -0.037621915340423584,    -0.0241379551589489,",
+                                "        0.0008262741030193865,   -0.022098714485764503,  -0.026191068813204765,",
+                                "           0.0210444126278162,   -0.013123279437422752,   0.010841271840035915,",
+                                "         0.010598504915833473,   -0.005066889803856611,  -0.016119714826345444,",
+                                "        -0.004605632741004229,     0.01328281220048666,   0.007928069680929184,",
+                                "        -0.011312932707369328,   -0.006343149580061436,   -0.02598298341035843,",
+                                "          0.01127131562680006,   -0.014177581295371056,  -0.005840275436639786,",
+                                "         -0.03212844952940941,    0.015328989364206791,  -0.009717607870697975,",
+                                "         -0.00819164514541626,   0.0022941462229937315,   0.021529946476221085,",
+                                "        -0.016230694949626923,   -0.028715843334794044,    0.02954818680882454,",
+                                "         0.008136156015098095,   -0.008371986448764801,  -0.013622685335576534,",
+                                "        -0.022611992433667183,    0.007241386920213699,   0.013296684250235558,",
+                                "      0.000022786482077208348,   0.0021623584907501936,   0.026260431855916977,",
+                                "         0.015620308928191662,     0.01609197072684765,   0.009433223865926266,",
+                                "       -0.0017695965943858027,  -0.0019265279406681657,   -0.03279432654380798,",
+                                "         0.016868824139237404,    -0.02248714119195938,    0.03529135510325432,",
+                                "         0.044696833938360214,   -0.013671238906681538,   0.019282620400190353,",
+                                "        0.0016343407332897186,  -0.0036206934601068497,  -0.012610000558197498,",
+                                "         -0.02316688932478428,",
+                                "      ... 1436 more items",
+                                "    ],",
+                                "    additional_metadata: \"Introduction · AGiXT Getting Started Introduction Quick Start Environment Variables Install Options Examples Things To Consider Screenshots Support Concepts Core Concepts AGiXT Hubs Providers Agents Extension Commands Prompts Chains Conversations Agent Training Agent Interactions Smart Chat Smart Instruct Smart Task Chains Task Chains Providers Anthropic Claude Azure OpenAI ChatGPT Custom OpenAI Style Provider FastChat GPT4Free Google Bard Google Palm Hugging Face Transformers HuggingChat Kobold Oobabooga Text Generation Web UI OpenAI Poe Llamacpp API Llamacpp Images Published with HonKit AASerifSansWhiteSepiaNight Introduction AGiXT AGiXT is a dynamic Artificial Intelligence Automation Platform engineered to orchestrate efficient AI instruction management and task execution across a multitude of providers . Our solution infuses adaptive memory handling with a broad spectrum of commands to enhance AI 's understanding and responsiveness , leading to improved task completion . The platform 's smart features , like Smart Instruct and Smart Chat , seamlessly integrate web search , planning strategies , and conversation continuity , transforming the interaction between users and AI . By leveraging a powerful plugin system that includes web browsing and command execution , AGiXT stands as a versatile bridge between AI models and users . With an expanding roster of AI providers , code evaluation capabilities , comprehensive chain management , and platform interoperability , AGiXT is consistently evolving to drive a multitude of applications , affirming its place at the forefront of AI technology . Embracing the spirit of extremity in every facet of life , we introduce AGiXT . This advanced AI Automation Platform is our bold step towards the realization of Artificial General Intelligence ( AGI ) . Seamlessly orchestrating instruction management and executing complex tasks across diverse AI providers , AGiXT combines adaptive memory , smart features , and a versatile plugin system to maximize AI potential . With our unwavering commitment to innovation , we 're dedicated to pushing the boundaries of AI and bringing AGI closer to reality . AGiXT Setup and Usage Video Table of Contents 📖 AGiXT Table of Contents 📖 ⚠ ️ Disclaimers ! Monitor Your Usage ! Under Development ! Key Features 🗝 ️ Getting Started with Local Models and AGiXT Video Quick Start Guide Prerequisites Download and Install Environment Setup Install Options Running and Updating AGiXT Configuration Documentation Other Repositorities Contributing Donations and Sponsorships Our Team 🧑 ‍ 💻 History ⚠ ️ Disclaimers ! Monitor Your Usage ! Please note that using some AI providers ( such as OpenAI 's GPT-4 API ) can be expensive ! Monitor your usage carefully to avoid incurring unexpected costs . We 're NOT responsible for your usage under any circumstance . Under Development ! This project is under active development and may still have issues . We appreciate your understanding and patience . If you encounter any problems , please first check the open issues . If your issue is not listed , kindly create a new issue detailing the error or problem you experienced . Thank you for your support ! Key Features 🗝 ️ Context and Token Management : Adaptive handling of long - term and short - term memory for an optimized AI performance , allowing the software to process information more efficiently and accurately . Smart Instruct : An advanced feature enabling AI to comprehend , plan , and execute tasks effectively . The system leverages web search , planning strategies , and executes instructions while ensuring output accuracy . Interactive Chat & Smart Chat : User - friendly chat interface for dynamic conversational tasks . The Smart Chat feature integrates AI with web research to deliver accurate and contextually relevant responses . Task Execution & Smart Task Management : Efficient management and execution of complex tasks broken down into sub - tasks . The Smart Task feature employs AI - driven agents to dynamically handle tasks , optimizing efficiency and avoiding redundancy . Chain Management : Sophisticated handling of chains or a series of linked commands , enabling the automation of complex workflows and processes . Web Browsing & Command Execution : Advanced capabilities to browse the web and execute commands for a more interactive AI experience , opening a wide range of possibilities for AI assistance . Multi - Provider Compatibility : Seamless integration with leading AI providers such as OpenAI GPT series , Hugging Face Huggingchat , GPT4All , GPT4Free , Oobabooga Text Generation Web UI , Kobold , llama.cpp , FastChat , Google Bard , Bing , and more . Versatile Plugin System & Code Evaluation : Extensible command support for various AI models along with robust support for code evaluation , providing assistance in programming tasks . Docker Deployment : Simplified setup and maintenance through Docker deployment . Audio - to - Text & Text - to - Speech Options : Integration with Hugging Face for seamless audio - to - text transcription , and multiple TTS choices , featuring Brian TTS , Mac OS TTS , and ElevenLabs . Platform Interoperability & AI Agent Management : Streamlined creation , renaming , deletion , and updating of AI agent settings along with easy interaction with popular platforms like Twitter , GitHub , Google , DALL - E , and more . Custom Prompts & Command Control : Granular control over agent abilities through enabling or disabling specific commands , and easy creation , editing , and deletion of custom prompts to standardize user inputs . RESTful API : FastAPI - powered RESTful API for seamless integration with external applications and services . Expanding AI Support : Continually updated to include new AI providers and services , ensuring the software stays at the forefront of AI technology . Getting Started with Local Models and AGiXT Video This is a video that walks through the process of setting up and using AGiXT to interact with locally hosted language models . This is a great way to get started with AGiXT and see how it works .\",",
+                                "    key: '50fe3b3c6418d6738c1425d97d1e83068e68cf3137be2b7cfd465f2b108fec03',",
+                                "    timestamp: '2023-08-27T13:12:10.419179',",
+                                "    relevance_score: 0.84956331348149",
+                                "  },",
+                                "  {",
+                                "    is_reference: false,",
+                                "    external_source_name: 'https://josh-xt.github.io/AGiXT/',",
+                                "    id: '873ad9666d5ba1670dbc412d8f910a315dafdb9fb596aea011c668e2f4b13de0',",
+                                "    description: 'https://josh-xt.github.io/AGiXT/',",
+                                "    text: `Quick Start Guide Prerequisites Git Docker Docker Compose Python 3.10 NVIDIA Container Toolkit ( if using local models on GPU ) If using Windows and trying to run locally , it is unsupported , but you will need Windows Subsystem for Linux and Docker Desktop at a minimum in addition to the above . Download and Install Open a terminal and run the following to download and install AGiXT : git clone https://github.com/Josh-XT/AGiXT cd AGiXT ./AGiXT.sh Environment Setup You can choose to skip the environment setup and accept default values by entering Y on the first question Quick Setup without advanced configuration ? ( Y for yes , N for No ) . If you chose N , see the Environment Variable Setup documentation for guidance on setup . Install Options You will be prompted to choose an install option . Choose Option 1 to get started quickly . Running and Updating AGiXT Any time you want to run or update AGiXT , run the following commands from your AGiXT directory : ./AGiXT.sh Access the web interface at http://localhost:8501 Access the AGiXT API documentation at http://localhost:7437 If you 're running with the option Run AGiXT and Text Generation Web UI with Docker ( NVIDIA Only ) , you can access the Text Generation Web UI at http://localhost:7860/?__theme = dark to download and and configure your models . The AI_PROVIDER_URI will be http://text - generation - webui:5000 for your AGiXT agents . Configuration Each AGiXT Agent has its own settings for interfacing with AI providers , and other configuration options . These settings can be set and modified through the web interface . Documentation Need more information ? Check out the documentation for more details to get a better understanding of the concepts and features of AGiXT . Other Repositorities Check out the other AGiXT repositories at https://github.com/orgs/AGiXT/repositories - these include the AGiXT Hubs , AGiXT Streamlit Web UI , AGiXT Python SDK , AGiXT TypeScript SDK , and more ! Contributing We welcome contributions to AGiXT ! If you 're interested in contributing , please check out our contributions guide the open issues on the backend , open issues on the frontend and pull requests , submit a pull request , or suggest new features . To stay updated on the project 's progress , and . Also feel free to join our . Donations and Sponsorships We appreciate any support for AGiXT 's development , including donations , sponsorships , and any other kind of assistance . If you would like to support us , please use one of the various methods listed at the top of the repository or contact us through our or . We 're always looking for ways to improve AGiXT and make it more useful for our users . Your support will help us continue to develop and enhance the application . Thank you for considering to support us ! Our Team 🧑 ‍ 💻 Josh ( @Josh - XT ) James ( @JamesonRGrieve ) History results matching \" \" No results matching \" \" AGiXTTable of Contents 📖 ⚠ ️ Disclaimers!Monitor Your Usage!Under Development!Key Features 🗝 ️Getting Started with Local Models and AGiXT VideoQuick Start GuidePrerequisitesDownload and InstallEnvironment SetupInstall OptionsRunning and Updating AGiXTConfigurationDocumentationOther RepositoritiesContributingDonations and SponsorshipsOur Team 🧑 ‍ 💻 History Submit an issue`,",
+                                "    embedding: [",
+                                "        0.005760710686445236,  -0.008287832140922546,   0.008540894836187363,",
+                                "       -0.036975398659706116,  -0.004207181744277477,   0.030958108603954315,",
+                                "        -0.01450897753238678,  -0.013278807513415813,    0.01226655300706625,",
+                                "        -0.01199240144342184,    0.03658174350857735,  0.0014665385242551565,",
+                                "       -0.026951270177960396,  -0.001687090378254652, -0.0024884582962840796,",
+                                "       -0.014122352935373783,   0.009996010921895504, -0.0017354185692965984,",
+                                "        0.006646433379501104,  -0.009011874906718731,  -0.023970743641257286,",
+                                "      -0.0013531871372833848,   0.011697160080075264,  -0.004509452264755964,",
+                                "        -0.00972185842692852,   0.013194452971220016,   0.007033057976514101,",
+                                "       -0.028821127489209175,  -0.002820604247972369,   0.008772870525717735,",
+                                "        0.015268168412148952,    0.00961641501635313,  -0.014452741481363773,",
+                                "        -0.01185883954167366,   0.009138406254351139, -0.0016457918100059032,",
+                                "         0.03197036311030388,  -0.008871283382177353,   0.007324784062802792,",
+                                "      -0.0028662963304668665,   0.009553149342536926,   0.009398499503731728,",
+                                "        0.011746367439627647, -0.0015596799785271287,  -0.009609385393559933,",
+                                "          0.0104599604383111,   -0.03840942680835724,   -0.01604141853749752,",
+                                "        0.004280991852283478,   -0.00939146988093853,  -0.017714450135827065,",
+                                "         0.01664595864713192,  -0.006052436772733927, -0.0014103021239861846,",
+                                "      -0.0004876745806541294,  -0.007556759286671877,  -0.012582882307469845,",
+                                "        0.018136221915483475,  -0.008252684026956558,   0.012892182916402817,",
+                                "        0.003245891770347953,   0.005707989446818829,   -0.02546100690960884,",
+                                "       -0.018614230677485466,   -0.02501111477613449,   0.011647953651845455,",
+                                "       -0.023816093802452087,   0.010663817636668682,  -0.012428232468664646,",
+                                "        0.002124679507687688,   0.014333238825201988,   0.017925335094332695,",
+                                "        -0.01341236848384142,   -0.01881105825304985,    0.02004825696349144,",
+                                "        0.018740762025117874,  -0.012575853615999222,   -0.00974997691810131,",
+                                "        -0.01691308058798313,   0.011563599109649658,  0.0033794529736042023,",
+                                "       0.0013584592379629612,  -0.008126151748001575,   0.010846585035324097,",
+                                "        0.013159304857254028,   0.019879547879099846,   0.004632469266653061,",
+                                "       0.0034690797328948975,  0.0057747699320316315,   -0.02329590730369091,",
+                                "        0.016660017892718315,   -0.00974997691810131,    0.03759399801492691,",
+                                "        0.035147715359926224, -0.0008488173480145633,   0.011155885644257069,",
+                                "        -0.00769032072275877,   0.004031443037092686,   -0.02801975980401039,",
+                                "       -0.027204332873225212,",
+                                "      ... 1436 more items",
+                                "    ],",
+                                "    additional_metadata: `Quick Start Guide Prerequisites Git Docker Docker Compose Python 3.10 NVIDIA Container Toolkit ( if using local models on GPU ) If using Windows and trying to run locally , it is unsupported , but you will need Windows Subsystem for Linux and Docker Desktop at a minimum in addition to the above . Download and Install Open a terminal and run the following to download and install AGiXT : git clone https://github.com/Josh-XT/AGiXT cd AGiXT ./AGiXT.sh Environment Setup You can choose to skip the environment setup and accept default values by entering Y on the first question Quick Setup without advanced configuration ? ( Y for yes , N for No ) . If you chose N , see the Environment Variable Setup documentation for guidance on setup . Install Options You will be prompted to choose an install option . Choose Option 1 to get started quickly . Running and Updating AGiXT Any time you want to run or update AGiXT , run the following commands from your AGiXT directory : ./AGiXT.sh Access the web interface at http://localhost:8501 Access the AGiXT API documentation at http://localhost:7437 If you 're running with the option Run AGiXT and Text Generation Web UI with Docker ( NVIDIA Only ) , you can access the Text Generation Web UI at http://localhost:7860/?__theme = dark to download and and configure your models . The AI_PROVIDER_URI will be http://text - generation - webui:5000 for your AGiXT agents . Configuration Each AGiXT Agent has its own settings for interfacing with AI providers , and other configuration options . These settings can be set and modified through the web interface . Documentation Need more information ? Check out the documentation for more details to get a better understanding of the concepts and features of AGiXT . Other Repositorities Check out the other AGiXT repositories at https://github.com/orgs/AGiXT/repositories - these include the AGiXT Hubs , AGiXT Streamlit Web UI , AGiXT Python SDK , AGiXT TypeScript SDK , and more ! Contributing We welcome contributions to AGiXT ! If you 're interested in contributing , please check out our contributions guide the open issues on the backend , open issues on the frontend and pull requests , submit a pull request , or suggest new features . To stay updated on the project 's progress , and . Also feel free to join our . Donations and Sponsorships We appreciate any support for AGiXT 's development , including donations , sponsorships , and any other kind of assistance . If you would like to support us , please use one of the various methods listed at the top of the repository or contact us through our or . We 're always looking for ways to improve AGiXT and make it more useful for our users . Your support will help us continue to develop and enhance the application . Thank you for considering to support us ! Our Team 🧑 ‍ 💻 Josh ( @Josh - XT ) James ( @JamesonRGrieve ) History results matching \" \" No results matching \" \" AGiXTTable of Contents 📖 ⚠ ️ Disclaimers!Monitor Your Usage!Under Development!Key Features 🗝 ️Getting Started with Local Models and AGiXT VideoQuick Start GuidePrerequisitesDownload and InstallEnvironment SetupInstall OptionsRunning and Updating AGiXTConfigurationDocumentationOther RepositoritiesContributingDonations and SponsorshipsOur Team 🧑 ‍ 💻 History Submit an issue`,",
+                                "    key: '873ad9666d5ba1670dbc412d8f910a315dafdb9fb596aea011c668e2f4b13de0',",
+                                "    timestamp: '2023-08-27T13:12:12.249602',",
+                                "    relevance_score: 0.8197783117938238",
+                                "  }",
+                                "]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -869,9 +1127,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chat_response = await ApiClient.chat(\n  \"gpt4free\",\n  \"What can you tell me about AGiXT?\",\n  \"New Test Conversation\",\n  6\n);\nconsole.log(chat_response);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chat_response = await ApiClient.chat(\n  \"New Test Agent\",\n  \"What can you tell me about AGiXT?\",\n  \"New Test Conversation\",\n  6\n);\nconsole.log(chat_response);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "AGiXT is an open-source artificial intelligence automation platform. It is designed to orchestrate efficient AI instruction management and task execution across various providers. AGiXT incorporates adaptive memory handling, smart features like Smart Instruct and Smart Chat, and a versatile plugin system to maximize AI potential. It supports multiple AI providers such as OpenAI GPT series, Hugging Face Huggingchat, GPT4All, GPT4Free, Oobabooga Text Generation Web UI, Kobold, llama.cpp, FastChat, Google Bard, Bing, and more. AGiXT also offers features like context and token management, task execution and management, chain management, web browsing and command execution, and platform interoperability. It aims to bring Artificial General Intelligence (AGI) closer to reality and is continually evolving to stay at the forefront of AI technology.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -883,9 +1153,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst memories = await ApiClient.getAgentMemories(\n  \"gpt4free\",\n  \"What can you tell me about AGiXT?\",\n  1,\n  0.2,\n  0\n);\n// Get the last memory id\nconst memory_id = memories[0].id;\nconst delete_memory = await ApiClient.deleteAgentMemory(\n  \"gpt4free\",\n  memory_id,\n  0\n);\nconsole.log(delete_memory);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst memories = await ApiClient.getAgentMemories(\n  \"New Test Agent\",\n  \"What can you tell me about AGiXT?\",\n  1,\n  0.2,\n  0\n);\n// Get the last memory id\nconst memory_id = memories[0].id;\nconst delete_memory = await ApiClient.deleteAgentMemory(\n  \"New Test Agent\",\n  memory_id,\n  0\n);\nconsole.log(delete_memory);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Memory 8ad623a743cd9925814bce5e3fd31d842b9fd0151e8988542f6dded42b00e176 for agent New Test Agent deleted.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -897,9 +1179,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst wipe_memories = await ApiClient.wipeAgentMemories(\"gpt4free\", 0);\nconsole.log(wipe_memories);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst wipe_memories = await ApiClient.wipeAgentMemories(\"New Test Agent\", 0);\nconsole.log(wipe_memories);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Memories for agent New Test Agent deleted.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -911,9 +1205,33 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst instruction = await ApiClient.instruct(\n  \"gpt4free\",\n  \"Save a file with the the capital of France in it called 'france.txt'.\",\n  \"New Test Conversation\"\n);\nconsole.log(instruction);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst instruction = await ApiClient.instruct(\n  \"New Test Agent\",\n  \"Save a file with the the capital of France in it called 'france.txt'.\",\n  \"New Test Conversation\"\n);\nconsole.log(instruction);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{",
+                                "    \"response\": \"The capital of France is Paris.\",",
+                                "    \"commands\": {",
+                                "        \"Write to File\": {",
+                                "            \"filename\": \"france.txt\",",
+                                "            \"text\": \"Paris\"",
+                                "        }",
+                                "    }",
+                                "}",
+                                "",
+                                "",
+                                "(\"Agent execution chain for command Write to File with args {'filename': 'france.txt', 'text': 'Paris'} updated.\",)",
+                                "",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -925,9 +1243,69 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_name = \"Write a Haiku\";\nconst prompt_args = {\n  user_input: \"Show me 2.\",\n  subject: \"dragons\",\n  websearch: false,\n  websearch_depth: 0,\n  context_results: 0,\n  shots: 1,\n  conversation_name: \"Talk for Tests\",\n};\nconst agent_prompt = await ApiClient.promptAgent(\n  \"gpt4free\",\n  prompt_name,\n  prompt_args\n);\nconsole.log(agent_prompt);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_name = \"Write a Haiku\";\nconst prompt_args = {\n  user_input: \"Show me 2.\",\n  subject: \"dragons\",\n  websearch: false,\n  websearch_depth: 0,\n  context_results: 0,\n  shots: 1,\n  conversation_name: \"Talk for Tests\",\n};\nconst agent_prompt = await ApiClient.promptAgent(\n  \"New Test Agent\",\n  prompt_name,\n  prompt_args\n);\nconsole.log(agent_prompt);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "In realms of fire and skies of gold,",
+                                "Where legends dwell and tales unfold,",
+                                "There lies a creature fierce and grand,",
+                                "A creature known as the dragon's band.",
+                                "",
+                                "With scales that shimmer in moonlit haze,",
+                                "And eyes that blaze with ancient ways,",
+                                "They soar through clouds with wings unfurled,",
+                                "Guardians of a mythical world.",
+                                "",
+                                "Oh, mighty dragon, guardian high,",
+                                "Your presence fills the endless sky,",
+                                "Your breath's a blaze that brings the night,",
+                                "And sparks the stars with purest light.",
+                                "",
+                                "From mountains high to valleys low,",
+                                "Wherever you roam, your power does show,",
+                                "Through forests deep and oceans wide,",
+                                "You leave your mark, as legends confide.",
+                                "",
+                                "But these guardians are not all the same,",
+                                "For within their ranks, a dragon untamed,",
+                                "A creature small, yet fierce in might,",
+                                "Known as the dragon of the night.",
+                                "",
+                                "With ebony wings that gleam like coal,",
+                                "And eyes that hold secrets untold,",
+                                "This dragon slumbers in shadows deep,",
+                                "Where darkness reigns and secrets keep.",
+                                "",
+                                "Yet when the moon shines bright and clear,",
+                                "The dragon awakes without fear,",
+                                "And spreads its wings in silent flight,",
+                                "Unleashing magic in the moon's soft light.",
+                                "",
+                                "Its scales reflect the starry sky,",
+                                "As it soars and dances way up high,",
+                                "A creature of elegance and grace,",
+                                "Defying all limits, in every chase.",
+                                "",
+                                "But the true beauty of dragons lies,",
+                                "Not in their strength or fiery eyes,",
+                                "But in their hearts, so wise and strong,",
+                                "For they protect, and right the wrong.",
+                                "",
+                                "So let us honor these mythical souls,",
+                                "The guardians who make us whole,",
+                                "For in their presence, we find our worth,",
+                                "Guided by the dragons of this Earth.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -941,7 +1319,38 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chains = await ApiClient.getChains();\nconsole.log(chains);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[",
+                                "  'Smart Instruct',",
+                                "  'Smart Prompt',",
+                                "  'Test_Commands',",
+                                "  'Generate and Run Smart Task Chain',",
+                                "  'Write a Poem',",
+                                "  'Generate and Run Task Chain',",
+                                "  'Smart Chat - No Research',",
+                                "  'Generate Task Chain',",
+                                "  'Generate Smart Task Chain',",
+                                "  'Smart Chat',",
+                                "  'Ask Helper Agent for Help',",
+                                "  'Generate Image with Stable Diffusion',",
+                                "  'Generate Smart Task Chain without Research',",
+                                "  'Generate Task Chain without Research',",
+                                "  'New Test Agent Command Suggestions',",
+                                "  'Create New Command',",
+                                "  'Solve Math Problem',",
+                                "  'Smart Instruct - No Research'",
+                                "]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -955,7 +1364,19 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.addChain(\"Write another Poem\");\nconsole.log(chain);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Chain 'Write another Poem' created.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -967,9 +1388,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.renameChain(\n  \"Write anotehr Poem\",\n  \"Poem Writing Chain\"\n);\nconsole.log(chain);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.renameChain(\n  \"Write another Poem\",\n  \"Poem Writing Chain\"\n);\nconsole.log(chain);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Chain 'Write another Poem' renamed to 'Poem Writing Chain'.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -981,9 +1414,22 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst add_step1 = await ApiClient.addStep(\n  \"Poem Writing Chain\",\n  1,\n  \"gpt4free\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Artificial Intelligence\" }\n);\nconsole.log(add_step1);\nconst add_step2 = await ApiClient.addStep(\n  \"Poem Writing Chain\",\n  2,\n  \"gpt4free\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Quantum Computers\" }\n);\nconsole.log(add_step2);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst add_step1 = await ApiClient.addStep(\n  \"Poem Writing Chain\",\n  1,\n  \"New Test Agent\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Artificial Intelligence\" }\n);\nconsole.log(add_step1);\nconst add_step2 = await ApiClient.addStep(\n  \"Poem Writing Chain\",\n  2,\n  \"New Test Agent\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Quantum Computers\" }\n);\nconsole.log(add_step2);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Step 1 added to chain 'Poem Writing Chain'.",
+                                "Step 2 added to chain 'Poem Writing Chain'.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -997,7 +1443,32 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.getChain(\"Poem Writing Chain\");\nconsole.log(chain.steps);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[",
+                                "  {",
+                                "    step: 1,",
+                                "    agent_name: 'New Test Agent',",
+                                "    prompt_type: 'Prompt',",
+                                "    prompt: { prompt_name: 'Write a Poem', subject: 'Artificial Intelligence' }",
+                                "  },",
+                                "  {",
+                                "    step: 2,",
+                                "    agent_name: 'New Test Agent',",
+                                "    prompt_type: 'Prompt',",
+                                "    prompt: { prompt_name: 'Write a Poem', subject: 'Quantum Computers' }",
+                                "  }",
+                                "]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -1035,9 +1506,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.updateStep(\n  \"Poem Writing Chain\",\n  1,\n  \"gpt4free\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Artificial General Intelligence\" }\n);\nconsole.log(chain);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.updateStep(\n  \"Poem Writing Chain\",\n  1,\n  \"New Test Agent\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Artificial General Intelligence\" }\n);\nconsole.log(chain);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Step 1 updated for chain 'Poem Writing Chain'.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -1051,7 +1534,19 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.moveStep(\"Poem Writing Chain\", 1, 2);\nconsole.log(chain);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Step 1 moved to 2 in chain 'Poem Writing Chain'.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -1065,7 +1560,19 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.deleteStep(\"Poem Writing Chain\", 2);\nconsole.log(chain);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Step 2 deleted from chain 'Poem Writing Chain'.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -1077,9 +1584,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.addStep(\n  \"Poem Writing Chain\",\n  2,\n  \"gpt4free\",\n  \"Command\",\n  {\n    command_name: \"Write to File\",\n    filename: \"{user_input}.txt\",\n    text: \"Poem:\\n{STEP1}\",\n  }\n);\nconsole.log(chain);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.addStep(\n  \"Poem Writing Chain\",\n  2,\n  \"New Test Agent\",\n  \"Command\",\n  {\n    command_name: \"Write to File\",\n    filename: \"{user_input}.txt\",\n    text: \"Poem:\\n{STEP1}\",\n  }\n);\nconsole.log(chain);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Step 2 added to chain 'Poem Writing Chain'.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -1091,9 +1610,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain_args = {\n  conversation_name: \"Talk for Tests\",\n};\nconst chain = await ApiClient.runChain(\n  \"Poem Writing Chain\",\n  \"Super Poems\",\n  \"gpt4free\",\n  false,\n  1,\n  chain_args\n);\nconsole.log(chain);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain_args = {\n  conversation_name: \"Talk for Tests\",\n};\nconst chain = await ApiClient.runChain(\n  \"Poem Writing Chain\",\n  \"Super Poems\",\n  \"New Test Agent\",\n  false,\n  1,\n  chain_args\n);\nconsole.log(chain);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "File written to successfully.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -1107,7 +1638,76 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain_response = await ApiClient.getChainResponses(\"Poem Writing Chain\");\nconsole.log(chain_response);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{",
+                                "  '1': {",
+                                "    agent_name: 'New Test Agent',",
+                                "    prompt_type: 'Prompt',",
+                                "    prompt: { prompt_name: 'Write a Poem', subject: 'Quantum Computers' },",
+                                "    step: 1,",
+                                "    response: \"In the realm of mystery and science's realm,\\n\" +",
+                                "      \"Where quantum's secrets lie and overwhelm,\\n\" +",
+                                "      'There lies a machine, a marvel to behold,\\n' +",
+                                "      'A quantum computer, a story yet untold.\\n' +",
+                                "      '\\n' +",
+                                "      'Its bits of information dance in quantum state,\\n' +",
+                                "      'A world of possibilities, a mind to captivate,\\n' +",
+                                "      'Where classical logic fails, quantum takes its stand,\\n' +",
+                                "      'A revolution born in this futuristic land.\\n' +",
+                                "      '\\n' +",
+                                "      'The qubits, tiny particles of boundless might,\\n' +",
+                                "      'Entangled in a dance, a cosmic light,\\n' +",
+                                "      'They can be ones and zeros all at once,\\n' +",
+                                "      'A dance of superposition, a quantum trounce.\\n' +",
+                                "      '\\n' +",
+                                "      'They entangle and entwine, a quantum web,\\n' +",
+                                "      'A tapestry of information, a cosmic ebb,\\n' +",
+                                "      'Where parallel universes merge and fuse,\\n' +",
+                                "      'A glimpse into the multiverse, the quantum muse.\\n' +",
+                                "      '\\n' +",
+                                "      'These quantum computers, a glimpse into the unknown,\\n' +",
+                                "      'They promise answers to questions that have grown,\\n' +",
+                                "      'Solving complex problems, cracking codes,\\n' +",
+                                "      'Unraveling the mysteries that the universe holds.\\n' +",
+                                "      '\\n' +",
+                                "      'From cryptography to drug discovery,\\n' +",
+                                "      \"Simulating quantum physics, it's a symphony,\\n\" +",
+                                "      'A tool of endless potential, a boundless sea,\\n' +",
+                                "      'Unlocking the secrets of the quantum decree.\\n' +",
+                                "      '\\n' +",
+                                "      'But challenges persist in this quantum sphere,\\n' +",
+                                "      'Noise and decoherence, a constant fear,\\n' +",
+                                "      'Yet scientists persist, their minds ablaze,\\n' +",
+                                "      'To harness the power of these quantum ways.\\n' +",
+                                "      '\\n' +",
+                                "      'So as we delve into this quantum realm,\\n' +",
+                                "      \"Let's marvel at the wonders science can overwhelm,\\n\" +",
+                                "      'For in the realm of mystery, where possibilities gleam,\\n' +",
+                                "      \"Lies the promise of quantum, the future's dream.\"",
+                                "  },",
+                                "  '2': {",
+                                "    agent_name: 'New Test Agent',",
+                                "    prompt_type: 'Command',",
+                                "    prompt: {",
+                                "      command_name: 'Write to File',",
+                                "      filename: '{user_input}.txt',",
+                                "      text: 'Poem:\\n{STEP1}'",
+                                "    },",
+                                "    step: 2,",
+                                "    response: 'File written to successfully.'",
+                                "  }",
+                                "}",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -1121,7 +1721,19 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.deleteChain(\"Poem Writing Chain\");\nconsole.log(chain);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Chain 'Poem Writing Chain' deleted.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -1247,7 +1859,19 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst new_prompt = await ApiClient.addPrompt(\n  \"Short Story\",\n  \"Tell me a short story about {subject}\",\n  \"Default\"\n);\nconsole.log(new_prompt);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Prompt 'Short Story' added.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -1261,7 +1885,19 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_args = await ApiClient.getPromptArgs(\"Short Story\", \"Default\");\nconsole.log(prompt_args);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[ 'subject' ]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -1275,7 +1911,19 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt = await ApiClient.updatePrompt(\n  \"Short Story\",\n  \"Tell me a short story about {subject} and make it funny.\",\n  \"Default\"\n);\nconsole.log(prompt);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Prompt 'Short Story' updated.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -1289,7 +1937,19 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt = await ApiClient.deletePrompt(\"Short Story\", \"Default\");\nconsole.log(prompt);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Unable to retrieve data.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
             "language": "markdown",
@@ -1303,7 +1963,19 @@
             "source": [
                 "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent = await ApiClient.deleteAgent(\"New Test Agent\");\nconsole.log(agent);\n"
             ],
-            "outputs": []
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Agent New Test Agent deleted.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
