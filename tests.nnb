@@ -360,6 +360,20 @@
         {
             "language": "markdown",
             "source": [
+                "## Get command arguments\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst command_args = await sdk.getCommandArgs(\"Write to File\");\nconsole.log(command_args);\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
                 "## Get a list of all current Agents\n\nAny agents that you have created will be listed here.\n"
             ],
             "outputs": []
@@ -783,9 +797,23 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await sdk.deleteConversation(\"gpt4free\", \"Test\");\nconsole.log(conversation);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
                 "## Have the Agent Learn from specified Text\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst text_learning = await sdk.learnText(\n  \"gpt4free\",\n  \"What is AGiXT?\",\n  \"AGiXT is an open-source artificial intelligence automation platform.\",\n  0\n);\nconsole.log(text_learning);\n"
             ],
             "outputs": []
         },
@@ -797,9 +825,23 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst file_learning = await sdk.learnFile(\n  \"gpt4free\",\n  \"text.txt\",\n  \"Test content of test.txt\",\n  0\n);\nconsole.log(file_learning);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
                 "## Have the Agent Learn from a URL\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst url_learning = await sdk.learnUrl(\n  \"gpt4free\",\n  \"https://josh-xt.github.io/AGiXT/\",\n  0\n);\nconsole.log(url_learning);\n"
             ],
             "outputs": []
         },
@@ -813,7 +855,7 @@
         {
             "language": "typescript",
             "source": [
-                "// Get Agent Memories\nimport AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst memories = await sdk.getAgentMemories(\n  \"OpenAI\",\n  \"What can you tell me about AGiXT?\",\n  1,\n  0.2,\n  0\n);\nconsole.log(memories);\n"
+                "// Get Agent Memories\nimport AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst memories = await sdk.getAgentMemories(\n  \"gpt4free\",\n  \"What can you tell me about AGiXT?\",\n  5,\n  0.2,\n  0\n);\nconsole.log(memories);\n"
             ],
             "outputs": []
         },
@@ -825,9 +867,23 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chat_response = await sdk.chat(\n  \"gpt4free\",\n  \"What can you tell me about AGiXT?\",\n  \"New Test Conversation\",\n  6\n);\nconsole.log(chat_response);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
                 "## Delete a Memory\n\nDelete a specific memory by Memory ID.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst memories = await sdk.getAgentMemories(\n  \"gpt4free\",\n  \"What can you tell me about AGiXT?\",\n  1,\n  0.2,\n  0\n);\n// Get the last memory id\nconst memory_id = memories[0].id;\nconst delete_memory = await sdk.deleteAgentMemory(\"gpt4free\", memory_id, 0);\nconsole.log(delete_memory);\n"
             ],
             "outputs": []
         },
@@ -839,6 +895,13 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst wipe_memories = await sdk.wipeAgentMemories(\"gpt4free\", 0);\nconsole.log(wipe_memories);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
                 "## Instruct the Agent to do something\n\nWe'll do something simple with it for the sake of the basic example, we'll just tell it to `Tell me the capital of France`.\n"
@@ -846,9 +909,23 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst instruction = await sdk.instruct(\n  \"gpt4free\",\n  \"Save a file with the the capital of France in it called 'france.txt'.\",\n  \"New Test Conversation\"\n);\nconsole.log(instruction);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
                 "## Prompt the Agent\n\nUse a custom Prompt Template to prompt the agent. For our example, we'll use our \"Write a Poem\" prompt template to have the agent write a poem for us about dragons.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_name = \"Write a Haiku\";\nconst prompt_args = {\n  user_input: \"Show me 2.\",\n  subject: \"dragons\",\n  websearch: false,\n  websearch_depth: 0,\n  context_results: 0,\n  shots: 1,\n  conversation_name: \"Talk for Tests\",\n};\nconst agent_prompt = await sdk.promptAgent(\n  \"gpt4free\",\n  prompt_name,\n  prompt_args\n);\nconsole.log(agent_prompt);\n"
             ],
             "outputs": []
         },
@@ -874,6 +951,13 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.addChain(\"Write another Poem\");\nconsole.log(chain);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
                 "## Rename the chain\n"
@@ -881,9 +965,23 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.renameChain(\"Write anotehr Poem\", \"Poem Writing Chain\");\nconsole.log(chain);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
                 "## Add Chain Steps\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst add_step1 = await sdk.addStep(\n  \"Poem Writing Chain\",\n  1,\n  \"gpt4free\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Artificial Intelligence\" }\n);\nconsole.log(add_step1);\nconst add_step2 = await sdk.addStep(\n  \"Poem Writing Chain\",\n  2,\n  \"gpt4free\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Quantum Computers\" }\n);\nconsole.log(add_step2);\n"
             ],
             "outputs": []
         },
@@ -897,14 +995,47 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.getChain(\"Smart Chat\");\nconsole.log(chain.steps);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.getChain(\"Poem Writing Chain\");\nconsole.log(chain.steps);\n"
             ],
             "outputs": []
         },
         {
             "language": "markdown",
             "source": [
+                "## Get Chain Arguments\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.getChainArgs(\"Smart Chat\");\nconsole.log(chain);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "[ 'user_input', 'shot_count', 'task' ]",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
                 "## Modify a Chain Step\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.updateStep(\n  \"Poem Writing Chain\",\n  1,\n  \"gpt4free\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Artificial General Intelligence\" }\n);\nconsole.log(chain);\n"
             ],
             "outputs": []
         },
@@ -916,9 +1047,23 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.moveStep(\"Poem Writing Chain\", 1, 2);\nconsole.log(chain);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
                 "## Delete a step from the chain\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.deleteStep(\"Poem Writing Chain\", 2);\nconsole.log(chain);\n"
             ],
             "outputs": []
         },
@@ -1063,61 +1208,60 @@
             ]
         },
         {
-            "language": "typescript",
+            "language": "markdown",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.getChainArgs(\"Smart Chat\");\nconsole.log(chain);\n"
+                "## Create a new prompt\n\nWe'll make a basic prompt that asks the AI to tell us a short story about a subject. The subject is not yet defined, it would be defined in a chain. Using `{variable_name}` in a prompt will allow you to define the variable in a chain and have it be used in the prompt.\n"
             ],
-            "outputs": [
-                {
-                    "items": [
-                        {
-                            "mime": "application/vnd.code.notebook.stdout",
-                            "value": [
-                                "[ 'user_input', 'shot_count', 'task' ]",
-                                ""
-                            ]
-                        }
-                    ]
-                }
-            ]
+            "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst command_args = await sdk.getCommandArgs(\"Write to File\");\nconsole.log(command_args);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst new_prompt = await sdk.addPrompt(\n  \"Short Story\",\n  \"Tell me a short story about {subject}\",\n  \"Default\"\n);\nconsole.log(new_prompt);\n"
             ],
-            "outputs": [
-                {
-                    "items": [
-                        {
-                            "mime": "application/vnd.code.notebook.stdout",
-                            "value": [
-                                "{ filename: '', text: '' }",
-                                ""
-                            ]
-                        }
-                    ]
-                }
-            ]
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Get the prompt variables\n"
+            ],
+            "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_args = await sdk.getPromptArgs(\"Chat\");\nconsole.log(prompt_args);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_args = await sdk.getPromptArgs(\"Short Story\", \"Default\");\nconsole.log(prompt_args);\n"
             ],
-            "outputs": [
-                {
-                    "items": [
-                        {
-                            "mime": "application/vnd.code.notebook.stdout",
-                            "value": [
-                                "[ 'context', 'conversation_history', 'user_input' ]",
-                                ""
-                            ]
-                        }
-                    ]
-                }
-            ]
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Update the prompt content\n\nWe'll ask it to `Add a dragon to the story somehow` in the prompt to make the short story more interesting.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt = sdk.updatePrompt(\n  \"Short Story\",\n  \"Tell me a short story about {subject} and make it funny.\",\n  \"Default\"\n);\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Delete the prompt\n\nIf you don't want the prompt anymore, delete it.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Delete the Agent\n\nIf you are done with the agent and don't want or need it anymore, you can delete it along with everything associated with it, such as its memories, settings, and history. The Agent isn't just fired, it is dead.\n"
+            ],
+            "outputs": []
         }
     ]
 }
