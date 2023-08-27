@@ -10,7 +10,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst providers = await sdk.getProviders();\nconsole.log(providers);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst providers = await ApiClient.getProviders();\nconsole.log(providers);\n"
             ],
             "outputs": [
                 {
@@ -48,7 +48,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst provider_settings = await sdk.getProviderSettings(\"openai\");\nconsole.log(provider_settings);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst provider_settings = await ApiClient.getProviderSettings(\"openai\");\nconsole.log(provider_settings);\n"
             ],
             "outputs": [
                 {
@@ -85,7 +85,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst embedding_providers = await sdk.getEmbedProviders();\nconsole.log(embedding_providers);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst embedding_providers = await ApiClient.getEmbedProviders();\nconsole.log(embedding_providers);\n"
             ],
             "outputs": [
                 {
@@ -118,7 +118,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst extension_settings = await sdk.getExtensionSettings();\nconsole.log(extension_settings);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst extension_settings = await ApiClient.getExtensionSettings();\nconsole.log(extension_settings);\n"
             ],
             "outputs": [
                 {
@@ -174,7 +174,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst extensions = await sdk.getExtensions();\nconsole.log(extensions);\nconsole.log(extensions[0]);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst extensions = await ApiClient.getExtensions();\nconsole.log(extensions);\nconsole.log(extensions[0]);\n"
             ],
             "outputs": [
                 {
@@ -325,7 +325,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst extensions = await sdk.getExtensions();\n// Example of data under commands for the Playwright extension.\nconsole.log(extensions[0].commands);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst extensions = await ApiClient.getExtensions();\n// Example of data under commands for the Playwright extension.\nconsole.log(extensions[0].commands);\n"
             ],
             "outputs": [
                 {
@@ -367,7 +367,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst command_args = await sdk.getCommandArgs(\"Write to File\");\nconsole.log(command_args);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst command_args = await ApiClient.getCommandArgs(\"Write to File\");\nconsole.log(command_args);\n"
             ],
             "outputs": []
         },
@@ -381,7 +381,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agents = await sdk.getAgents();\nconsole.log(agents);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agents = await ApiClient.getAgents();\nconsole.log(agents);\n"
             ],
             "outputs": [
                 {
@@ -417,7 +417,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst new_agent = await sdk.addAgent(\"Test Agent\", {\n  provider: \"openai\",\n  embedder: \"openai\",\n  AI_MODEL: \"gpt-3.5-turbo-16k-0613\",\n  AI_TEMPERATURE: \"0.7\",\n  AI_TOP_P: \"1\",\n  MAX_TOKENS: \"16000\",\n  helper_agent_name: \"OpenAI\",\n  WEBSEARCH_TIMEOUT: 0,\n  OPENAI_API_KEY: \"YOUR_OPENAI_API_KEY_HERE\",\n  WAIT_BETWEEN_REQUESTS: 1,\n  WAIT_AFTER_FAILURE: 3,\n  stream: false,\n  WORKING_DIRECTORY: \"./WORKSPACE\",\n  WORKING_DIRECTORY_RESTRICTED: true,\n  AUTONOMOUS_EXECUTION: false,\n});\nconsole.log(new_agent);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst new_agent = await ApiClient.addAgent(\"Test Agent\", {\n  provider: \"openai\",\n  embedder: \"openai\",\n  AI_MODEL: \"gpt-3.5-turbo-16k-0613\",\n  AI_TEMPERATURE: \"0.7\",\n  AI_TOP_P: \"1\",\n  MAX_TOKENS: \"16000\",\n  helper_agent_name: \"OpenAI\",\n  WEBSEARCH_TIMEOUT: 0,\n  OPENAI_API_KEY: \"YOUR_OPENAI_API_KEY_HERE\",\n  WAIT_BETWEEN_REQUESTS: 1,\n  WAIT_AFTER_FAILURE: 3,\n  stream: false,\n  WORKING_DIRECTORY: \"./WORKSPACE\",\n  WORKING_DIRECTORY_RESTRICTED: true,\n  AUTONOMOUS_EXECUTION: false,\n});\nconsole.log(new_agent);\n"
             ],
             "outputs": [
                 {
@@ -443,7 +443,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst rename_agent = await sdk.renameAgent(\"Test Agent\", \"New Test Agent\");\nconsole.log(rename_agent);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst rename_agent = await ApiClient.renameAgent(\n  \"Test Agent\",\n  \"New Test Agent\"\n);\nconsole.log(rename_agent);\n"
             ],
             "outputs": [
                 {
@@ -469,7 +469,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_config = await sdk.getAgentConfig(\"New Test Agent\");\nconsole.log(agent_config);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_config = await ApiClient.getAgentConfig(\"New Test Agent\");\nconsole.log(agent_config);\n"
             ],
             "outputs": [
                 {
@@ -545,7 +545,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_config = await sdk.getAgentConfig(\"New Test Agent\");\nagent_config.settings.AI_TEMPERATURE = \"0.8\";\nconst update_agent_config = await sdk.updateAgentSettings(\n  \"New Test Agent\",\n  agent_config.settings\n);\nconsole.log(update_agent_config);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_config = await ApiClient.getAgentConfig(\"New Test Agent\");\nagent_config.settings.AI_TEMPERATURE = \"0.8\";\nconst update_agent_config = await ApiClient.updateAgentSettings(\n  \"New Test Agent\",\n  agent_config.settings\n);\nconsole.log(update_agent_config);\n"
             ],
             "outputs": [
                 {
@@ -571,7 +571,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_commands = await sdk.getCommands(\"New Test Agent\");\nconsole.log(agent_commands);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_commands = await ApiClient.getCommands(\"New Test Agent\");\nconsole.log(agent_commands);\n"
             ],
             "outputs": [
                 {
@@ -628,7 +628,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst toggle_command = await sdk.toggleCommand(\n  \"New Test Agent\",\n  \"Write to File\",\n  true\n);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst toggle_command = await ApiClient.toggleCommand(\n  \"New Test Agent\",\n  \"Write to File\",\n  true\n);\n"
             ],
             "outputs": []
         },
@@ -642,7 +642,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_config = await sdk.getAgentConfig(\"New Test Agent\");\n// Change agent_config.commands command of \"Write to File\" to false.\nagent_config.commands[\"Write to File\"] = false;\nconst update_agent_config = await sdk.updateAgentCommands(\n  \"New Test Agent\",\n  agent_config.commands\n);\nconsole.log(update_agent_config);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_config = await ApiClient.getAgentConfig(\"New Test Agent\");\n// Change agent_config.commands command of \"Write to File\" to false.\nagent_config.commands[\"Write to File\"] = false;\nconst update_agent_config = await ApiClient.updateAgentCommands(\n  \"New Test Agent\",\n  agent_config.commands\n);\nconsole.log(update_agent_config);\n"
             ],
             "outputs": [
                 {
@@ -699,7 +699,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await sdk.newConversation(\n  \"New Test Agent\",\n  \"New Test Conversation\"\n);\nconsole.log(conversation);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await ApiClient.newConversation(\n  \"New Test Agent\",\n  \"New Test Conversation\"\n);\nconsole.log(conversation);\n"
             ],
             "outputs": []
         },
@@ -713,7 +713,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversations = await sdk.getConversations();\nconsole.log(conversations);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversations = await ApiClient.getConversations();\nconsole.log(conversations);\n"
             ],
             "outputs": [
                 {
@@ -748,7 +748,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await sdk.getConversation(\"gpt4free\", \"Test\", 100, 1);\nconsole.log(conversation);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await ApiClient.getConversation(\n  \"gpt4free\",\n  \"Test\",\n  100,\n  1\n);\nconsole.log(conversation);\n"
             ],
             "outputs": [
                 {
@@ -785,7 +785,7 @@
         {
             "language": "typescript",
             "source": [
-                "// Delete Conversation Message\nimport AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await sdk.getConveration(\"gpt4free\", \"Test\", 100, 1);\nconst delete_message = await sdk.deleteConversationMessage(\n  \"gpt4free\",\n  \"Test\",\n  conversation[0].message\n);\n"
+                "// Delete Conversation Message\nimport AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await ApiClient.getConveration(\"gpt4free\", \"Test\", 100, 1);\nconst delete_message = await ApiClient.deleteConversationMessage(\n  \"gpt4free\",\n  \"Test\",\n  conversation[0].message\n);\n"
             ],
             "outputs": []
         },
@@ -799,7 +799,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await sdk.deleteConversation(\"gpt4free\", \"Test\");\nconsole.log(conversation);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst conversation = await ApiClient.deleteConversation(\"gpt4free\", \"Test\");\nconsole.log(conversation);\n"
             ],
             "outputs": []
         },
@@ -813,7 +813,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst text_learning = await sdk.learnText(\n  \"gpt4free\",\n  \"What is AGiXT?\",\n  \"AGiXT is an open-source artificial intelligence automation platform.\",\n  0\n);\nconsole.log(text_learning);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst text_learning = await ApiClient.learnText(\n  \"gpt4free\",\n  \"What is AGiXT?\",\n  \"AGiXT is an open-source artificial intelligence automation platform.\",\n  0\n);\nconsole.log(text_learning);\n"
             ],
             "outputs": []
         },
@@ -827,7 +827,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst file_learning = await sdk.learnFile(\n  \"gpt4free\",\n  \"text.txt\",\n  \"Test content of test.txt\",\n  0\n);\nconsole.log(file_learning);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst file_learning = await ApiClient.learnFile(\n  \"gpt4free\",\n  \"text.txt\",\n  \"Test content of test.txt\",\n  0\n);\nconsole.log(file_learning);\n"
             ],
             "outputs": []
         },
@@ -841,7 +841,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst url_learning = await sdk.learnUrl(\n  \"gpt4free\",\n  \"https://josh-xt.github.io/AGiXT/\",\n  0\n);\nconsole.log(url_learning);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst url_learning = await ApiClient.learnUrl(\n  \"gpt4free\",\n  \"https://josh-xt.github.io/AGiXT/\",\n  0\n);\nconsole.log(url_learning);\n"
             ],
             "outputs": []
         },
@@ -855,7 +855,7 @@
         {
             "language": "typescript",
             "source": [
-                "// Get Agent Memories\nimport AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst memories = await sdk.getAgentMemories(\n  \"gpt4free\",\n  \"What can you tell me about AGiXT?\",\n  5,\n  0.2,\n  0\n);\nconsole.log(memories);\n"
+                "// Get Agent Memories\nimport AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst memories = await ApiClient.getAgentMemories(\n  \"gpt4free\",\n  \"What can you tell me about AGiXT?\",\n  5,\n  0.2,\n  0\n);\nconsole.log(memories);\n"
             ],
             "outputs": []
         },
@@ -869,7 +869,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chat_response = await sdk.chat(\n  \"gpt4free\",\n  \"What can you tell me about AGiXT?\",\n  \"New Test Conversation\",\n  6\n);\nconsole.log(chat_response);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chat_response = await ApiClient.chat(\n  \"gpt4free\",\n  \"What can you tell me about AGiXT?\",\n  \"New Test Conversation\",\n  6\n);\nconsole.log(chat_response);\n"
             ],
             "outputs": []
         },
@@ -883,7 +883,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst memories = await sdk.getAgentMemories(\n  \"gpt4free\",\n  \"What can you tell me about AGiXT?\",\n  1,\n  0.2,\n  0\n);\n// Get the last memory id\nconst memory_id = memories[0].id;\nconst delete_memory = await sdk.deleteAgentMemory(\"gpt4free\", memory_id, 0);\nconsole.log(delete_memory);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst memories = await ApiClient.getAgentMemories(\n  \"gpt4free\",\n  \"What can you tell me about AGiXT?\",\n  1,\n  0.2,\n  0\n);\n// Get the last memory id\nconst memory_id = memories[0].id;\nconst delete_memory = await ApiClient.deleteAgentMemory(\n  \"gpt4free\",\n  memory_id,\n  0\n);\nconsole.log(delete_memory);\n"
             ],
             "outputs": []
         },
@@ -897,7 +897,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst wipe_memories = await sdk.wipeAgentMemories(\"gpt4free\", 0);\nconsole.log(wipe_memories);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst wipe_memories = await ApiClient.wipeAgentMemories(\"gpt4free\", 0);\nconsole.log(wipe_memories);\n"
             ],
             "outputs": []
         },
@@ -911,7 +911,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst instruction = await sdk.instruct(\n  \"gpt4free\",\n  \"Save a file with the the capital of France in it called 'france.txt'.\",\n  \"New Test Conversation\"\n);\nconsole.log(instruction);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst instruction = await ApiClient.instruct(\n  \"gpt4free\",\n  \"Save a file with the the capital of France in it called 'france.txt'.\",\n  \"New Test Conversation\"\n);\nconsole.log(instruction);\n"
             ],
             "outputs": []
         },
@@ -925,21 +925,21 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_name = \"Write a Haiku\";\nconst prompt_args = {\n  user_input: \"Show me 2.\",\n  subject: \"dragons\",\n  websearch: false,\n  websearch_depth: 0,\n  context_results: 0,\n  shots: 1,\n  conversation_name: \"Talk for Tests\",\n};\nconst agent_prompt = await sdk.promptAgent(\n  \"gpt4free\",\n  prompt_name,\n  prompt_args\n);\nconsole.log(agent_prompt);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_name = \"Write a Haiku\";\nconst prompt_args = {\n  user_input: \"Show me 2.\",\n  subject: \"dragons\",\n  websearch: false,\n  websearch_depth: 0,\n  context_results: 0,\n  shots: 1,\n  conversation_name: \"Talk for Tests\",\n};\nconst agent_prompt = await ApiClient.promptAgent(\n  \"gpt4free\",\n  prompt_name,\n  prompt_args\n);\nconsole.log(agent_prompt);\n"
             ],
             "outputs": []
         },
         {
             "language": "markdown",
             "source": [
-                "# Chains\n\n## Get a list of Chains available to use\n"
+                "## Get a list of Chains available to use\n"
             ],
             "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chains = await sdk.getChains();\nconsole.log(chains);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chains = await ApiClient.getChains();\nconsole.log(chains);\n"
             ],
             "outputs": []
         },
@@ -953,7 +953,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.addChain(\"Write another Poem\");\nconsole.log(chain);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.addChain(\"Write another Poem\");\nconsole.log(chain);\n"
             ],
             "outputs": []
         },
@@ -967,7 +967,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.renameChain(\"Write anotehr Poem\", \"Poem Writing Chain\");\nconsole.log(chain);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.renameChain(\n  \"Write anotehr Poem\",\n  \"Poem Writing Chain\"\n);\nconsole.log(chain);\n"
             ],
             "outputs": []
         },
@@ -981,7 +981,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst add_step1 = await sdk.addStep(\n  \"Poem Writing Chain\",\n  1,\n  \"gpt4free\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Artificial Intelligence\" }\n);\nconsole.log(add_step1);\nconst add_step2 = await sdk.addStep(\n  \"Poem Writing Chain\",\n  2,\n  \"gpt4free\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Quantum Computers\" }\n);\nconsole.log(add_step2);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst add_step1 = await ApiClient.addStep(\n  \"Poem Writing Chain\",\n  1,\n  \"gpt4free\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Artificial Intelligence\" }\n);\nconsole.log(add_step1);\nconst add_step2 = await ApiClient.addStep(\n  \"Poem Writing Chain\",\n  2,\n  \"gpt4free\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Quantum Computers\" }\n);\nconsole.log(add_step2);\n"
             ],
             "outputs": []
         },
@@ -995,7 +995,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.getChain(\"Poem Writing Chain\");\nconsole.log(chain.steps);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.getChain(\"Poem Writing Chain\");\nconsole.log(chain.steps);\n"
             ],
             "outputs": []
         },
@@ -1009,7 +1009,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.getChainArgs(\"Smart Chat\");\nconsole.log(chain);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.getChainArgs(\"Smart Chat\");\nconsole.log(chain);\n"
             ],
             "outputs": [
                 {
@@ -1035,7 +1035,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.updateStep(\n  \"Poem Writing Chain\",\n  1,\n  \"gpt4free\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Artificial General Intelligence\" }\n);\nconsole.log(chain);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.updateStep(\n  \"Poem Writing Chain\",\n  1,\n  \"gpt4free\",\n  \"Prompt\",\n  { prompt_name: \"Write a Poem\", subject: \"Artificial General Intelligence\" }\n);\nconsole.log(chain);\n"
             ],
             "outputs": []
         },
@@ -1049,7 +1049,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.moveStep(\"Poem Writing Chain\", 1, 2);\nconsole.log(chain);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.moveStep(\"Poem Writing Chain\", 1, 2);\nconsole.log(chain);\n"
             ],
             "outputs": []
         },
@@ -1063,7 +1063,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await sdk.deleteStep(\"Poem Writing Chain\", 2);\nconsole.log(chain);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.deleteStep(\"Poem Writing Chain\", 2);\nconsole.log(chain);\n"
             ],
             "outputs": []
         },
@@ -1075,9 +1075,23 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.addStep(\n  \"Poem Writing Chain\",\n  2,\n  \"gpt4free\",\n  \"Command\",\n  {\n    command_name: \"Write to File\",\n    filename: \"{user_input}.txt\",\n    text: \"Poem:\\n{STEP1}\",\n  }\n);\nconsole.log(chain);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
                 "## Run the chain\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain_args = {\n  conversation_name: \"Talk for Tests\",\n};\nconst chain = await ApiClient.runChain(\n  \"Poem Writing Chain\",\n  \"Super Poems\",\n  \"gpt4free\",\n  false,\n  1,\n  chain_args\n);\nconsole.log(chain);\n"
             ],
             "outputs": []
         },
@@ -1089,6 +1103,13 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain_response = await ApiClient.getChainResponses(\"Poem Writing Chain\");\nconsole.log(chain_response);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
                 "## Delete the chain\n"
@@ -1096,16 +1117,23 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst chain = await ApiClient.deleteChain(\"Poem Writing Chain\");\nconsole.log(chain);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
-                "# Prompts\n\n## Get a list of prompts available to use\n"
+                "## Get a list of prompts available to use\n"
             ],
             "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompts = await sdk.getPrompts();\nconsole.log(prompts);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompts = await ApiClient.getPrompts();\nconsole.log(prompts);\n"
             ],
             "outputs": [
                 {
@@ -1184,7 +1212,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_data = await sdk.getPrompt(\"Chat\");\nconsole.log(prompt_data);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_data = await ApiClient.getPrompt(\"Chat\");\nconsole.log(prompt_data);\n"
             ],
             "outputs": [
                 {
@@ -1217,7 +1245,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst new_prompt = await sdk.addPrompt(\n  \"Short Story\",\n  \"Tell me a short story about {subject}\",\n  \"Default\"\n);\nconsole.log(new_prompt);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst new_prompt = await ApiClient.addPrompt(\n  \"Short Story\",\n  \"Tell me a short story about {subject}\",\n  \"Default\"\n);\nconsole.log(new_prompt);\n"
             ],
             "outputs": []
         },
@@ -1231,7 +1259,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_args = await sdk.getPromptArgs(\"Short Story\", \"Default\");\nconsole.log(prompt_args);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt_args = await ApiClient.getPromptArgs(\"Short Story\", \"Default\");\nconsole.log(prompt_args);\n"
             ],
             "outputs": []
         },
@@ -1245,7 +1273,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst sdk = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt = sdk.updatePrompt(\n  \"Short Story\",\n  \"Tell me a short story about {subject} and make it funny.\",\n  \"Default\"\n);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt = await ApiClient.updatePrompt(\n  \"Short Story\",\n  \"Tell me a short story about {subject} and make it funny.\",\n  \"Default\"\n);\nconsole.log(prompt);\n"
             ],
             "outputs": []
         },
@@ -1257,9 +1285,23 @@
             "outputs": []
         },
         {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst prompt = await ApiClient.deletePrompt(\"Short Story\", \"Default\");\nconsole.log(prompt);\n"
+            ],
+            "outputs": []
+        },
+        {
             "language": "markdown",
             "source": [
                 "## Delete the Agent\n\nIf you are done with the agent and don't want or need it anymore, you can delete it along with everything associated with it, such as its memories, settings, and history. The Agent isn't just fired, it is dead.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent = await ApiClient.deleteAgent(\"New Test Agent\");\nconsole.log(agent);\n"
             ],
             "outputs": []
         }
