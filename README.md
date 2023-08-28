@@ -32,7 +32,7 @@ The AGiXT SDK for TypeScript provides an easy way to interact with AGiXT APIs fr
     - [Chains](#chains)
     - [Prompts](#prompts)
     - [Extensions](#extensions)
-- [AGiXT Typescript SDK Usage Examples](#agixt-typescript-sdk-usage-examples)
+- [Usage Examples](#usage-examples)
   - [Get a list of Providers](#get-a-list-of-providers)
   - [Get Default Provider Settings](#get-default-provider-settings)
   - [Get Embedding Providers](#get-embedding-providers)
@@ -187,7 +187,7 @@ const agixt = new AGiXTSDK({
 - `getExtensions()` - Get all extensions
 - `getCommandArgs(commandName)` - Get args for an extension command
 
-# AGiXT Typescript SDK Usage Examples
+# Usage Examples
 The purpose of this documentation is to provide syntax and reponse examples for the AGiXT Typescript SDK to help developers get started with the SDK. If you have the [Node.js Notebooks](https://marketplace.visualstudio.com/items?itemName=donjayamanne.typescript-notebook) extension for VSCode, you can open the `tests.nnb` file in this directory to see the examples in action.
 
 ## Get a list of Providers
