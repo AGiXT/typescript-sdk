@@ -347,7 +347,7 @@
         {
             "language": "typescript",
             "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst extensions = await ApiClient.getExtensions();\n// Example of data under commands for the Playwright extension.\nconsole.log(extensions[0].commands);\n"
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst extensions = await ApiClient.getExtensions();\n// Example of data under commands for the File system extension.\nconsole.log(extensions[3].commands);\n"
             ],
             "outputs": [
                 {
@@ -357,19 +357,49 @@
                             "value": [
                                 "[",
                                 "  {",
-                                "    friendly_name: 'Scrape Text with Playwright',",
-                                "    command_name: 'scrape_text_with_playwright',",
-                                "    command_args: { url: '' }",
+                                "    friendly_name: 'Write to File',",
+                                "    command_name: 'write_to_file',",
+                                "    command_args: { filename: '', text: '' }",
                                 "  },",
                                 "  {",
-                                "    friendly_name: 'Scrape Links with Playwright',",
-                                "    command_name: 'scrape_links_with_playwright',",
-                                "    command_args: { url: '' }",
+                                "    friendly_name: 'Read File',",
+                                "    command_name: 'read_file',",
+                                "    command_args: { filename: '' }",
                                 "  },",
                                 "  {",
-                                "    friendly_name: 'Take Screenshot with Playwright',",
-                                "    command_name: 'take_screenshot_with_playwright',",
-                                "    command_args: { url: '', path: '' }",
+                                "    friendly_name: 'Search Files',",
+                                "    command_name: 'search_files',",
+                                "    command_args: { directory: '' }",
+                                "  },",
+                                "  {",
+                                "    friendly_name: 'Append to File',",
+                                "    command_name: 'append_to_file',",
+                                "    command_args: { filename: '', text: '' }",
+                                "  },",
+                                "  {",
+                                "    friendly_name: 'Execute Python File',",
+                                "    command_name: 'execute_python_file',",
+                                "    command_args: { file: '' }",
+                                "  },",
+                                "  {",
+                                "    friendly_name: 'Delete File',",
+                                "    command_name: 'delete_file',",
+                                "    command_args: { filename: '' }",
+                                "  },",
+                                "  {",
+                                "    friendly_name: 'Execute Shell',",
+                                "    command_name: 'execute_shell',",
+                                "    command_args: { command_line: '' }",
+                                "  },",
+                                "  {",
+                                "    friendly_name: 'Indent String for Python Code',",
+                                "    command_name: 'indent_string',",
+                                "    command_args: { string: '', indents: 1 }",
+                                "  },",
+                                "  {",
+                                "    friendly_name: 'Generate Commands Dictionary',",
+                                "    command_name: 'generate_commands_dict',",
+                                "    command_args: { python_file_content: '' }",
                                 "  }",
                                 "]",
                                 ""
@@ -408,6 +438,58 @@
         {
             "language": "markdown",
             "source": [
+                "## Create a new Agent\n\nCreates a new agent with the `gpt4free` provider.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\n\nconst new_agent = await ApiClient.addAgent(\"Test Agent\", {\n  provider: \"gpt4free\",\n  embedder: \"default\",\n  AI_MODEL: \"gpt-3.5-turbo\",\n  AI_TEMPERATURE: \"0.7\",\n  AI_TOP_P: \"1\",\n  MAX_TOKENS: \"4096\",\n  helper_agent_name: \"OpenAI\",\n  WEBSEARCH_TIMEOUT: 0,\n  OPENAI_API_KEY: OPENAI_API_KEY,\n  WAIT_BETWEEN_REQUESTS: 1,\n  WAIT_AFTER_FAILURE: 3,\n  stream: false,\n  WORKING_DIRECTORY: \"./WORKSPACE\",\n  WORKING_DIRECTORY_RESTRICTED: true,\n  AUTONOMOUS_EXECUTION: false,\n});\nconsole.log(new_agent);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{ message: 'Agent Test Agent created.' }",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## Execute a Command\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\nconst agent_name = \"Test Agent\";\nconst conversation_name = \"Command execution for testing\";\nconst command_name = \"Write to File\";\nconst command_args = {\n  filename: \"test file.txt\",\n  text: \"This is just a test!\",\n};\n\nconst command_execution = await ApiClient.executeCommand(\n  agent_name,\n  command_name,\n  command_args,\n  conversation_name\n);\nconsole.log(command_execution);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "Unable to retrieve data.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
                 "## Get a list of all current Agents\n\nAny agents that you have created will be listed here.\n"
             ],
             "outputs": []
@@ -435,32 +517,6 @@
                                 "  { name: 'Starchat', status: false },",
                                 "  { name: '[object Object]', status: false }",
                                 "]",
-                                ""
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "language": "markdown",
-            "source": [
-                "## Create a new Agent\n\nCreates a new agent with the `openai` provider. If you want any of the agent interaction functions to work in the tests, replace the `OPENAI_API_KEY` with your own key.\n"
-            ],
-            "outputs": []
-        },
-        {
-            "language": "typescript",
-            "source": [
-                "import AGiXTSDK from \"./index.ts\";\nconst ApiClient = new AGiXTSDK({\n  baseUri: \"http://localhost:7437\",\n  apiKey: \"\",\n});\n\n// If you want any of the agent interactions to work in the tests, replace the key below with your own.\n/****************************************************************/\nconst OPENAI_API_KEY = \"YOUR_OPENAI_API_KEY_HERE\";\n/****************************************************************/\n\nconst new_agent = await ApiClient.addAgent(\"Test Agent\", {\n  provider: \"openai\",\n  embedder: \"default\",\n  AI_MODEL: \"gpt-3.5-turbo-16k-0613\",\n  AI_TEMPERATURE: \"0.7\",\n  AI_TOP_P: \"1\",\n  MAX_TOKENS: \"16000\",\n  helper_agent_name: \"OpenAI\",\n  WEBSEARCH_TIMEOUT: 0,\n  OPENAI_API_KEY: OPENAI_API_KEY,\n  WAIT_BETWEEN_REQUESTS: 1,\n  WAIT_AFTER_FAILURE: 3,\n  stream: false,\n  WORKING_DIRECTORY: \"./WORKSPACE\",\n  WORKING_DIRECTORY_RESTRICTED: true,\n  AUTONOMOUS_EXECUTION: false,\n});\nconsole.log(new_agent);\n"
-            ],
-            "outputs": [
-                {
-                    "items": [
-                        {
-                            "mime": "application/vnd.code.notebook.stdout",
-                            "value": [
-                                "{ message: 'Agent Test Agent created.' }",
                                 ""
                             ]
                         }
