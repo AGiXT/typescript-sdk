@@ -1,5 +1,22 @@
 import axios, { AxiosRequestConfig } from "axios";
+class HistoryModel {
+  agentName: string;
+  conversationName: string;
+  limit: number;
+  page: number;
 
+  constructor(model: {
+    agentName: string;
+    conversationName: string;
+    limit?: number;
+    page?: number;
+  }) {
+    this.agentName = model.agentName;
+    this.conversationName = model.conversationName;
+    this.limit = model.limit || 100;
+    this.page = model.page || 1;
+  }
+}
 export default class AGiXTSDK {
   private baseUri: string;
   private headers: AxiosRequestConfig["headers"];
@@ -198,15 +215,19 @@ export default class AGiXTSDK {
     limit = 100,
     page = 1
   ) {
+    const history = new HistoryModel({
+      agentName,
+      conversationName,
+      limit,
+      page,
+    });
+
     try {
       const response = await axios.get(`${this.baseUri}/api/conversation`, {
-        data: {
-          conversation_name: conversationName,
-          agent_name: agentName,
-          limit: limit,
-          page: page,
-        },
+        headers: this.headers,
+        data: history,
       });
+
       return response.data.conversation_history;
     } catch (error) {
       return this.handleError(error);
