@@ -1,22 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-class HistoryModel {
-  agentName: string;
-  conversationName: string;
-  limit: number;
-  page: number;
 
-  constructor(model: {
-    agentName: string;
-    conversationName: string;
-    limit?: number;
-    page?: number;
-  }) {
-    this.agentName = model.agentName;
-    this.conversationName = model.conversationName;
-    this.limit = model.limit || 100;
-    this.page = model.page || 1;
-  }
-}
 export default class AGiXTSDK {
   private baseUri: string;
   private headers: AxiosRequestConfig["headers"];
@@ -41,7 +24,7 @@ export default class AGiXTSDK {
 
   private handleError(error: any) {
     //console.error(`Error: ${error}`);
-    return `Unable to retrieve data. ${error}`;
+    return "Unable to retrieve data.";
   }
 
   async getProviders(): Promise<string[]> {
@@ -215,17 +198,20 @@ export default class AGiXTSDK {
     limit = 100,
     page = 1
   ) {
-    const history = new HistoryModel({
-      agentName,
-      conversationName,
-      limit,
-      page,
-    });
-
     try {
-      const response = await axios.get(`${this.baseUri}/api/conversation`, {
-        headers: this.headers,
-        data: history,
+      const response = await axios.request({
+        method: "get",
+        url: `${this.baseUri}/api/conversation`,
+        headers: {
+          ...this.headers,
+          "Content-Type": "application/json", // Ensure the content type header is set
+        },
+        data: {
+          conversation_name: conversationName,
+          agent_name: agentName,
+          limit,
+          page,
+        },
       });
 
       return response.data.conversation_history;
