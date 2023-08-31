@@ -195,25 +195,21 @@ export default class AGiXTSDK {
   async getConversation(
     agentName: string,
     conversationName: string,
-    limit = 100,
-    page = 1
+    limit: number = 100,
+    page: number = 1
   ) {
     try {
       const response = await axios.request({
         method: "get",
         url: `${this.baseUri}/api/conversation`,
-        headers: {
-          ...this.headers,
-          "Content-Type": "application/json", // Ensure the content type header is set
-        },
+        headers: this.headers,
         data: {
           conversation_name: conversationName,
           agent_name: agentName,
-          limit,
-          page,
+          limit: limit,
+          page: page,
         },
       });
-
       return response.data.conversation_history;
     } catch (error) {
       return this.handleError(error);
