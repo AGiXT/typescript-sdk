@@ -193,20 +193,17 @@ export default class AGiXTSDK {
   }
 
   async getConversation(
-    agentName: string,
-    conversationName: string,
+    agentName: string = "",
+    conversationName: string = "",
     limit: number = 100,
     page: number = 1
   ) {
     try {
       const response = await axios.request({
         method: "get",
-        url: `${this.baseUri}/api/conversation`,
-        headers: this.headers?.Authorization
-          ? { Authorization: this.headers.Authorization }
-          : {},
-        data: {
-          conversation_name: conversationName,
+        url: `${this.baseUri}/api/conversation/${conversationName}`,
+        headers: this.headers,
+        params: {
           agent_name: agentName,
           limit: limit,
           page: page,
