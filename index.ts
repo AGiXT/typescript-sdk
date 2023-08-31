@@ -206,11 +206,11 @@ export default class AGiXTSDK {
           ...this.headers,
           "Content-Type": "application/json", // Ensure the content type header is set
         },
-        data: {
+        params: {
           conversation_name: conversationName,
           agent_name: agentName,
-          limit,
-          page,
+          limit: limit,
+          page: page,
         },
       });
 
