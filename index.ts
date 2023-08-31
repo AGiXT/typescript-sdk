@@ -203,7 +203,7 @@ export default class AGiXTSDK {
         conversation_history: any[];
       }>(`${this.baseUri}/api/conversation`, {
         headers: this.headers,
-        data: {
+        params: {
           conversation_name: conversationName,
           agent_name: agentName,
           limit: limit,
