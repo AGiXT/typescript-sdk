@@ -206,12 +206,12 @@ export default class AGiXTSDK {
           ...this.headers,
           "Content-Type": "application/json",
         },
-        data: {
+        data: JSON.stringify({
           conversation_name: conversationName,
           agent_name: agentName,
           limit: limit,
           page: page,
-        },
+        }),
       });
 
       return response.data.conversation_history;
