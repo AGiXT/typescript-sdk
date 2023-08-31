@@ -202,7 +202,9 @@ export default class AGiXTSDK {
       const response = await axios.request({
         method: "get",
         url: `${this.baseUri}/api/conversation`,
-        headers: this.headers,
+        headers: this.headers?.Authorization
+          ? { Authorization: this.headers.Authorization }
+          : {},
         data: {
           conversation_name: conversationName,
           agent_name: agentName,
