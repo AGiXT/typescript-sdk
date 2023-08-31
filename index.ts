@@ -24,7 +24,7 @@ export default class AGiXTSDK {
 
   private handleError(error: any) {
     //console.error(`Error: ${error}`);
-    return "Unable to retrieve data.";
+    return `Unable to retrieve data. ${error}`;
   }
 
   async getProviders(): Promise<string[]> {
@@ -199,21 +199,14 @@ export default class AGiXTSDK {
     page = 1
   ) {
     try {
-      const response = await axios.request({
-        method: "get",
-        url: `${this.baseUri}/api/conversation`,
-        headers: {
-          ...this.headers,
-          "Content-Type": "application/json",
-        },
-        data: JSON.stringify({
+      const response = await axios.get(`${this.baseUri}/api/conversation`, {
+        data: {
           conversation_name: conversationName,
           agent_name: agentName,
           limit: limit,
           page: page,
-        }),
+        },
       });
-
       return response.data.conversation_history;
     } catch (error) {
       return this.handleError(error);
