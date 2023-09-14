@@ -657,6 +657,18 @@ export default class AGiXTSDK {
     }
   }
 
+  async addPromptCategory(promptCategory: string) {
+    try {
+      const response = await axios.get<{ prompts: string[] }>(
+        `${this.baseUri}/api/prompt/${promptCategory}`,
+        { headers: this.headers }
+      );
+      return `Prompt category ${promptCategory} created.`;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
   async getPromptCategories() {
     try {
       const response = await axios.get<{ prompt_categories: string[] }>(
@@ -841,6 +853,53 @@ export default class AGiXTSDK {
           github_token: githubToken,
           github_branch: githubBranch,
           collection_number: collectionNumber,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async learnArxiv(
+    agentName: string,
+    query: string = "",
+    arxivIds: string = "",
+    max_results: number = 5,
+    collection_number: number = 0
+  ) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/learn/arxiv`,
+        {
+          query: query,
+          arxiv_ids: arxivIds,
+          max_results: max_results,
+          collection_number: collection_number,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async agentReader(
+    agentName: string,
+    readerName: string,
+    data: any,
+    collectionNumber: number = 0
+  ) {
+    if (!data.collection_number) {
+      data.collection_number = collectionNumber;
+    }
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/learn/reader/${readerName}`,
+        {
+          data: data,
         },
         { headers: this.headers }
       );
