@@ -215,13 +215,18 @@ export default class AGiXTSDK {
     }
   }
 
-  async newConversation(agentName: string, conversationName: string) {
+  async newConversation(
+    agentName: string,
+    conversationName: string,
+    conversationContent: any[] = []
+  ) {
     try {
       const response = await axios.post<{ conversation_history: any[] }>(
         `${this.baseUri}/api/conversation`,
         {
           conversation_name: conversationName,
           agent_name: agentName,
+          conversation_content: conversationContent,
         },
         { headers: this.headers }
       );
