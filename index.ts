@@ -286,6 +286,33 @@ export default class AGiXTSDK {
     }
   }
 
+  async importAgentMemories(agentName: string, memories: any[]) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/memory/import`,
+        {
+          memories: memories,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async exportAgentMemories(agentName: string) {
+    try {
+      const response = await axios.get(
+        `${this.baseUri}/api/agent/${agentName}/memory/export`,
+        { headers: this.headers }
+      );
+      return response.data.memories;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
   async wipeAgentMemories(agentName: string, collectionNumber: number = 0) {
     try {
       const response = await axios.delete(
