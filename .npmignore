@@ -1,0 +1,5 @@
+# .npmignore
+src/
+node_modules/
+*.ts
+!*.d.ts
