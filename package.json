@@ -4,7 +4,7 @@
   "description": "AGiXT Typescript SDK",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "compile": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
