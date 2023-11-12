@@ -7,6 +7,9 @@ export default class AGiXTSDK {
   constructor(config: { baseUri: string; apiKey?: string }) {
     this.baseUri = config.baseUri || "http://localhost:7437";
     if (config.apiKey) {
+      if (config.apiKey.includes("Bearer ")) {
+        config.apiKey = config.apiKey.replace("Bearer ", "");
+      }
       this.headers = {
         Authorization: `Bearer ${config.apiKey}`,
         "Content-Type": "application/json",
@@ -24,7 +27,7 @@ export default class AGiXTSDK {
 
   private handleError(error: any) {
     //console.error(`Error: ${error}`);
-    return "Unable to retrieve data.";
+    return `Error: ${error}`;
   }
 
   async getProviders(): Promise<string[]> {
