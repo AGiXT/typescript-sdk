@@ -996,4 +996,31 @@ export default class AGiXTSDK {
       return this.handleError(error);
     }
   }
+
+  async voiceChat(
+    agentName: string,
+    base64Audio: string,
+    conversationName: string,
+    conversationResults: number = 4,
+    contextResults: number = 4
+  ) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/command`,
+        {
+          command_name: "Chat with Voice",
+          command_args: {
+            base64_audio: base64Audio,
+            conversation_results: conversationResults,
+            context_results: contextResults,
+          },
+          conversation_name: conversationName,
+        },
+        { headers: this.headers }
+      );
+      return response.data.response;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
 }
