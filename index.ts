@@ -1002,7 +1002,8 @@ export default class AGiXTSDK {
     base64Audio: string,
     conversationName: string,
     conversationResults: number = 4,
-    contextResults: number = 4
+    contextResults: number = 4,
+    inject_memories_from_collection_number: number = 0
   ) {
     try {
       const response = await axios.post(
@@ -1013,6 +1014,8 @@ export default class AGiXTSDK {
             base64_audio: base64Audio,
             conversation_results: conversationResults,
             context_results: contextResults,
+            inject_memories_from_collection_number:
+              inject_memories_from_collection_number,
           },
           conversation_name: conversationName,
         },
