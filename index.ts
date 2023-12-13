@@ -1003,7 +1003,8 @@ export default class AGiXTSDK {
     conversationName: string,
     conversationResults: number = 4,
     contextResults: number = 4,
-    inject_memories_from_collection_number: number = 0
+    inject_memories_from_collection_number: number = 0,
+    tts: boolean = false
   ) {
     try {
       const response = await axios.post(
@@ -1016,6 +1017,7 @@ export default class AGiXTSDK {
             context_results: contextResults,
             inject_memories_from_collection_number:
               inject_memories_from_collection_number,
+            tts: tts,
           },
           conversation_name: conversationName,
         },
