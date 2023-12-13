@@ -997,6 +997,26 @@ export default class AGiXTSDK {
     }
   }
 
+  async createDataset(
+    agentName: string,
+    datasetName: string,
+    batchSize: number = 4
+  ) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/memory/dataset`,
+        {
+          dataset_name: datasetName,
+          batch_size: batchSize,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
   async voiceChat(
     agentName: string,
     base64Audio: string,
