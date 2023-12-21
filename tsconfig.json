@@ -1,10 +1,14 @@
 {
     "compilerOptions": {
       "target": "es5",
-      "module": "commonjs",
+      "module": "CommonJS",
       "outDir": "./dist",
       "strict": true,
       "esModuleInterop": true,
+      "forceConsistentCasingInFileNames": true,
+      "declaration": true,
+      "declarationMap": true,
+      "sourceMap": true,
       "lib": ["es2015", "es2015.promise"]
     },
     "include": ["index.ts"],
