@@ -7,6 +7,9 @@ export default class AGiXTSDK {
   constructor(config: { baseUri: string; apiKey?: string }) {
     this.baseUri = config.baseUri || "http://localhost:7437";
     if (config.apiKey) {
+      if (config.apiKey.includes("Bearer ")) {
+        config.apiKey = config.apiKey.replace("Bearer ", "");
+      }
       this.headers = {
         Authorization: `Bearer ${config.apiKey}`,
         "Content-Type": "application/json",
@@ -24,7 +27,7 @@ export default class AGiXTSDK {
 
   private handleError(error: any) {
     //console.error(`Error: ${error}`);
-    return "Unable to retrieve data.";
+    return `Error: ${error}`;
   }
 
   async getProviders(): Promise<string[]> {
@@ -989,6 +992,58 @@ export default class AGiXTSDK {
         }
       );
       return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async createDataset(
+    agentName: string,
+    datasetName: string,
+    batchSize: number = 4
+  ) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/memory/dataset`,
+        {
+          dataset_name: datasetName,
+          batch_size: batchSize,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async voiceChat(
+    agentName: string,
+    base64Audio: string,
+    conversationName: string,
+    conversationResults: number = 4,
+    contextResults: number = 4,
+    inject_memories_from_collection_number: number = 0,
+    tts: boolean = false
+  ) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/command`,
+        {
+          command_name: "Chat with Voice",
+          command_args: {
+            base64_audio: base64Audio,
+            conversation_results: conversationResults,
+            context_results: contextResults,
+            inject_memories_from_collection_number:
+              inject_memories_from_collection_number,
+            tts: tts,
+          },
+          conversation_name: conversationName,
+        },
+        { headers: this.headers }
+      );
+      return response.data.response;
     } catch (error) {
       return this.handleError(error);
     }
