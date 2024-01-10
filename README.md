@@ -102,8 +102,8 @@ Create an SDK instance:
 
 ```typescript
 const agixt = new AGiXTSDK({
-  baseUri: 'http://localhost:7437', 
-  apiKey: 'YOUR_API_KEY'
+  baseUri: 'http://localhost:7437',
+  apiKey: 'YOUR_API_KEY',
 });
 ```
 
@@ -117,7 +117,7 @@ const agixt = new AGiXTSDK({
 
 - `addAgent(agentName, settings)` - Add a new agent
 - `importAgent(agentName, settings, commands)` - Import an existing agent
-- `renameAgent(agentName, newName)` - Rename an agent 
+- `renameAgent(agentName, newName)` - Rename an agent
 - `updateAgentSettings(agentName, settings)` - Update agent settings
 - `updateAgentCommands(agentName, commands)` - Update agent commands
 - `deleteAgent(agentName)` - Delete an agent
@@ -129,7 +129,7 @@ const agixt = new AGiXTSDK({
 - `learnGithubRepo(agentName, repo, user, token, branch, collectionNumber)` - Learn from a GitHub repo
 - `wipeAgentMemories(agentName, collectionNumber)` - Wipe an agent's memories
 - `deleteAgentMemory(agentName, memoryId, collectionNumber)` - Delete a memory
-  
+
 ### Conversations
 
 - `getConversations(agentName)` - Get conversations for an agent or all agents
@@ -141,7 +141,7 @@ const agixt = new AGiXTSDK({
 ### Prompting
 
 - `promptAgent(agentName, promptName, promptArgs)` - Prompt an agent
-- `instruct(agentName, userInput, conversation)` - Instruct with no memory 
+- `instruct(agentName, userInput, conversation)` - Instruct with no memory
 - `chat(agentName, userInput, conversation, contextResults)` - Chat with no memory
 - `smartinstruct(agentName, userInput, conversation)` - Smart instruct with no memory
 - `smartchat(agentName, userInput, conversation)` - Smart chat with no memory
@@ -156,7 +156,7 @@ const agixt = new AGiXTSDK({
 
 - `getChains()` - Get all chains
 - `getChain(chainName)` - Get a chain
-- `getChainResponses(chainName)` - Get responses for a chain 
+- `getChainResponses(chainName)` - Get responses for a chain
 - `getChainArgs(chainName)` - Get args for a chain
 - `runChain(chainName, userInput, agentName, allResponses, fromStep, chainArgs)` - Run a chain
 - `runChainStep(chainName, stepNumber, userInput, agentName, chainArgs)` - Run a chain step
@@ -172,7 +172,7 @@ const agixt = new AGiXTSDK({
 ### Prompts
 
 - `addPrompt(promptName, prompt, promptCategory)` - Add a prompt
-- `getPrompt(promptName, promptCategory)` - Get a prompt 
+- `getPrompt(promptName, promptCategory)` - Get a prompt
 - `getPrompts(promptCategory)` - Get prompts in a category
 - `getPromptCategories()` - Get all prompt categories
 - `getPromptArgs(promptName, promptCategory)` - Get args for a prompt
@@ -187,6 +187,7 @@ const agixt = new AGiXTSDK({
 - `getCommandArgs(commandName)` - Get args for an extension command
 
 # Usage Examples
+
 The purpose of this documentation is to provide syntax and reponse examples for the AGiXT Typescript SDK to help developers get started with the SDK. If you have the [Node.js Notebooks](https://marketplace.visualstudio.com/items?itemName=donjayamanne.typescript-notebook) extension for VSCode, you can open the `tests.nnb` file in this directory to see the examples in action.
 
 ## Get a list of Providers
@@ -194,10 +195,10 @@ The purpose of this documentation is to provide syntax and reponse examples for 
 This will get a list of AI Providers available to use with AGiXT.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437", 
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const providers = await ApiClient.getProviders();
 console.log(providers);
@@ -215,7 +216,7 @@ console.log(providers);
   'huggingchat', 'llamacppapi',
   'petal',       'kobold',
   'llamacpp',    'custom',
-  'bard'  
+  'bard'
 ]
 ```
 
@@ -224,12 +225,12 @@ console.log(providers);
 Choose a provider from the list of AI providers and get the default settings for that provider. For this example, we're choosing to see the settings for the `openai` provider.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const provider_settings = await ApiClient.getProviderSettings("openai");
+const provider_settings = await ApiClient.getProviderSettings('openai');
 console.log(provider_settings);
 ```
 
@@ -253,10 +254,10 @@ console.log(provider_settings);
 Embedding providers are used to embed information to vectors to store in the vector database to be searched for context injection.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",  
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const embedding_providers = await ApiClient.getEmbedProviders();
 console.log(embedding_providers);
@@ -269,7 +270,7 @@ console.log(embedding_providers);
   'openai',
   'google_palm',
   'google_vertex',
-  'cohere'  
+  'cohere'
 ]
 ```
 
@@ -278,10 +279,10 @@ console.log(embedding_providers);
 This is where we get all third party extension settings for the agent with defaults to fill in when there is nothing entered on the front end.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const extension_settings = await ApiClient.getExtensionSettings();
 console.log(extension_settings);
@@ -324,10 +325,10 @@ console.log(extension_settings);
 ## Get Extension Commands
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const extensions = await ApiClient.getExtensions();
 console.log(extensions);
@@ -488,10 +489,10 @@ console.log(extensions[0]);
 ### Details of Extension Commands
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const extensions = await ApiClient.getExtensions();
 // Example of data under commands for the File system extension.
@@ -551,12 +552,12 @@ console.log(extensions[3].commands);
 ## Get command arguments
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const command_args = await ApiClient.getCommandArgs("Write to File");
+const command_args = await ApiClient.getCommandArgs('Write to File');
 console.log(command_args);
 ```
 
@@ -569,26 +570,26 @@ console.log(command_args);
 Creates a new agent with the `gpt4free` provider.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 
-const new_agent = await ApiClient.addAgent("Test Agent", {
-  provider: "gpt4free",
-  embedder: "default",
-  AI_MODEL: "gpt-3.5-turbo",
-  AI_TEMPERATURE: "0.7",
-  AI_TOP_P: "1",
-  MAX_TOKENS: "4096",
-  helper_agent_name: "OpenAI",
+const new_agent = await ApiClient.addAgent('Test Agent', {
+  provider: 'gpt4free',
+  embedder: 'default',
+  AI_MODEL: 'gpt-3.5-turbo',
+  AI_TEMPERATURE: '0.7',
+  AI_TOP_P: '1',
+  MAX_TOKENS: '4096',
+  helper_agent_name: 'OpenAI',
   WEBSEARCH_TIMEOUT: 0,
   OPENAI_API_KEY: OPENAI_API_KEY,
   WAIT_BETWEEN_REQUESTS: 1,
   WAIT_AFTER_FAILURE: 3,
   stream: false,
-  WORKING_DIRECTORY: "./WORKSPACE",
+  WORKING_DIRECTORY: './WORKSPACE',
   WORKING_DIRECTORY_RESTRICTED: true,
   AUTONOMOUS_EXECUTION: false,
 });
@@ -602,25 +603,20 @@ console.log(new_agent);
 ## Execute a Command
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",  
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const agent_name = "Test Agent";
-const conversation_name = "Command execution for testing";
-const command_name = "Write to File";
+const agent_name = 'Test Agent';
+const conversation_name = 'Command execution for testing';
+const command_name = 'Write to File';
 const command_args = {
-  filename: "test file.txt",
-  text: "This is just a test!",
+  filename: 'test file.txt',
+  text: 'This is just a test!',
 };
 
-const command_execution = await ApiClient.executeCommand(
-  agent_name,
-  command_name,
-  command_args,
-  conversation_name
-);
+const command_execution = await ApiClient.executeCommand(agent_name, command_name, command_args, conversation_name);
 console.log(command_execution);
 ```
 
@@ -633,10 +629,10 @@ Unable to retrieve data.
 Any agents that you have created will be listed here.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const agents = await ApiClient.getAgents();
 console.log(agents);
@@ -653,7 +649,7 @@ console.log(agents);
   { name: 'Vicuna', status: false },
   { name: 'OpenAI', status: false },
   { name: 'Starchat', status: false },
-  { name: '[object Object]', status: false }  
+  { name: '[object Object]', status: false }
 ]
 ```
 
@@ -662,15 +658,12 @@ console.log(agents);
 We will just rename it to `New Test Agent`.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const rename_agent = await ApiClient.renameAgent(
-  "Test Agent",
-  "New Test Agent"
-);
+const rename_agent = await ApiClient.renameAgent('Test Agent', 'New Test Agent');
 console.log(rename_agent);
 ```
 
@@ -683,12 +676,12 @@ console.log(rename_agent);
 This will get the settings for the agent we just created, this will tell you all commands available to the agent as well as all of the provider settings for the agent.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const agent_config = await ApiClient.getAgentConfig("New Test Agent");
+const agent_config = await ApiClient.getAgentConfig('New Test Agent');
 console.log(agent_config);
 ```
 
@@ -735,7 +728,7 @@ console.log(agent_config);
     MAX_TOKENS: '16000',
     helper_agent_name: 'OpenAI',
     WEBSEARCH_TIMEOUT: 0,
-    OPENAI_API_KEY: 'YOUR_OPENAI_API_KEY_HERE', 
+    OPENAI_API_KEY: 'YOUR_OPENAI_API_KEY_HERE',
     WAIT_BETWEEN_REQUESTS: 1,
     WAIT_AFTER_FAILURE: 3,
     stream: false,
@@ -751,17 +744,14 @@ console.log(agent_config);
 We'll just update the temperature from the default `0.7` to `0.8` to confirm that we can modify a setting.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const agent_config = await ApiClient.getAgentConfig("New Test Agent");
-agent_config.settings.AI_TEMPERATURE = "0.8";
-const update_agent_config = await ApiClient.updateAgentSettings(
-  "New Test Agent",
-  agent_config.settings
-);
+const agent_config = await ApiClient.getAgentConfig('New Test Agent');
+agent_config.settings.AI_TEMPERATURE = '0.8';
+const update_agent_config = await ApiClient.updateAgentSettings('New Test Agent', agent_config.settings);
 console.log(update_agent_config);
 ```
 
@@ -773,13 +763,13 @@ Agent New Test Agent configuration updated.
 
 This will get a list of all commands available to the agent.
 
-```typescript 
-import AGiXTSDK from "./index.ts";
+```typescript
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const agent_commands = await ApiClient.getCommands("New Test Agent");
+const agent_commands = await ApiClient.getCommands('New Test Agent');
 console.log(agent_commands);
 ```
 
@@ -814,7 +804,7 @@ console.log(agent_commands);
   'Generate Image with Stable Diffusion': false,
   'Get Datetime': false,
   'Speak with TTS Using Elevenlabs': false,
-  'Use The Search Engine': false  
+  'Use The Search Engine': false
 }
 ```
 
@@ -823,16 +813,12 @@ console.log(agent_commands);
 We'll toggle the `Write to File` command to `true` to confirm that we can toggle a command.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const toggle_command = await ApiClient.toggleCommand(
-  "New Test Agent",
-  "Write to File",
-  true
-);
+const toggle_command = await ApiClient.toggleCommand('New Test Agent', 'Write to File', true);
 console.log(toggle_command);
 ```
 
@@ -845,18 +831,15 @@ Command 'Write to File' toggled for agent 'New Test Agent'.
 In this example, we'll only change the `Write to File` command to `False`, but we could change any (or all) of the commands with this API call.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const agent_config = await ApiClient.getAgentConfig("New Test Agent");
-// Change agent_config.commands command of "Write to File" to false.  
-agent_config.commands["Write to File"] = false;
-const update_agent_config = await ApiClient.updateAgentCommands(
-  "New Test Agent",
-  agent_config.commands
-);
+const agent_config = await ApiClient.getAgentConfig('New Test Agent');
+// Change agent_config.commands command of "Write to File" to false.
+agent_config.commands['Write to File'] = false;
+const update_agent_config = await ApiClient.updateAgentCommands('New Test Agent', agent_config.commands);
 console.log(update_agent_config);
 ```
 
@@ -867,15 +850,12 @@ Agent New Test Agent configuration updated.
 ## Create a new conversation
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const conversation = await ApiClient.newConversation(
-  "New Test Agent",
-  "New Test Conversation"
-);
+const conversation = await ApiClient.newConversation('New Test Agent', 'New Test Conversation');
 console.log(conversation);
 ```
 
@@ -886,10 +866,10 @@ console.log(conversation);
 ## Get Conversations
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const conversations = await ApiClient.getConversations();
 console.log(conversations);
@@ -912,17 +892,12 @@ console.log(conversations);
 ## Get Conversation Details
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const conversation = await ApiClient.getConversation(
-  "New Test Agent",
-  "Test",
-  100,
-  1  
-);
+const conversation = await ApiClient.getConversation('New Test Agent', 'Test', 100, 1);
 console.log(conversation);
 ```
 
@@ -933,7 +908,7 @@ console.log(conversation);
     role: 'USER',
     timestamp: 'August 09, 2023 05:17 PM'
   },
-  {  
+  {
     message: 'AGiXT is a dynamic Artificial Intelligence Automation Platform designed to manage AI instruction and task execution across various providers. It uses adaptive memory handling and a wide range of commands to enhance AI understanding and responsiveness. AGiXT features Smart Instruct and Smart Chat, which integrate web search, planning strategies, and conversation continuity to improve task completion. It also supports multiple AI providers, code evaluation, comprehensive chain management, and platform interoperability. AGiXT aims to push the boundaries of AI and contribute to the development of Artificial General Intelligence (AGI).',
     role: 'OpenAI',
     timestamp: 'August 09, 2023 05:17 PM'
@@ -944,24 +919,15 @@ console.log(conversation);
 ## Delete Message from Conversation
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const conversation = await ApiClient.getConversation(
-  "New Test Agent",
-  "Test",
-  100,
-  1
-);
+const conversation = await ApiClient.getConversation('New Test Agent', 'Test', 100, 1);
 console.log(conversation);
 
-const delete_message = await ApiClient.deleteConversationMessage(
-  "New Test Agent",
-  "Test",
-  conversation[0].message
-);
+const delete_message = await ApiClient.deleteConversationMessage('New Test Agent', 'Test', conversation[0].message);
 console.log(delete_message);
 ```
 
@@ -985,15 +951,12 @@ Message deleted.
 ## Delete a Conversation
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const conversation = await ApiClient.deleteConversation(
-  "New Test Agent",
-  "Test"
-);
+const conversation = await ApiClient.deleteConversation('New Test Agent', 'Test');
 console.log(conversation);
 ```
 
@@ -1004,16 +967,16 @@ Conversation `Test` for agent gpt4free deleted.
 ## Have the Agent Learn from specified Text
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const text_learning = await ApiClient.learnText(
-  "New Test Agent",
-  "What is AGiXT?",
-  "AGiXT is an open-source artificial intelligence automation platform.",
-  0
+  'New Test Agent',
+  'What is AGiXT?',
+  'AGiXT is an open-source artificial intelligence automation platform.',
+  0,
 );
 console.log(text_learning);
 ```
@@ -1025,17 +988,12 @@ Agent learned the content from the text assocated with the user input.
 ## Have the Agent Learn from a File
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const file_learning = await ApiClient.learnFile(
-  "New Test Agent",
-  "text.txt",
-  "Test content of test.txt",
-  0
-);
+const file_learning = await ApiClient.learnFile('New Test Agent', 'text.txt', 'Test content of test.txt', 0);
 console.log(file_learning);
 ```
 
@@ -1046,16 +1004,12 @@ Agent learned the content from the file.
 ## Have the Agent Learn from a URL
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "", 
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const url_learning = await ApiClient.learnUrl(
-  "New Test Agent",
-  "https://josh-xt.github.io/AGiXT/",
-  0
-);
+const url_learning = await ApiClient.learnUrl('New Test Agent', 'https://josh-xt.github.io/AGiXT/', 0);
 console.log(url_learning);
 ```
 
@@ -1069,18 +1023,12 @@ Get some relevant memories from the agent about AGiXT.
 
 ```typescript
 // Get Agent Memories
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const memories = await ApiClient.getAgentMemories(
-  "New Test Agent",
-  "What can you tell me about AGiXT?",
-  5,
-  0.2,
-  0
-);
+const memories = await ApiClient.getAgentMemories('New Test Agent', 'What can you tell me about AGiXT?', 5, 0.2, 0);
 console.log(memories);
 ```
 
@@ -1137,21 +1085,22 @@ console.log(memories);
 ]
 # Removed other results for brevity
 ```
-## Chat with the Agent  
+
+## Chat with the Agent
 
 Chat about the learned information with the agent.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const chat_response = await ApiClient.chat(
-  "New Test Agent",
-  "What can you tell me about AGiXT?", 
-  "New Test Conversation",
-  6
+  'New Test Agent',
+  'What can you tell me about AGiXT?',
+  'New Test Conversation',
+  6,
 );
 console.log(chat_response);
 ```
@@ -1165,25 +1114,15 @@ AGiXT is an open-source artificial intelligence automation platform. It is desig
 Delete a specific memory by Memory ID.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const memories = await ApiClient.getAgentMemories(
-  "New Test Agent",
-  "What can you tell me about AGiXT?",
-  1,
-  0.2,
-  0
-);
+const memories = await ApiClient.getAgentMemories('New Test Agent', 'What can you tell me about AGiXT?', 1, 0.2, 0);
 // Get the last memory id
 const memory_id = memories[0].id;
-const delete_memory = await ApiClient.deleteAgentMemory(
-  "New Test Agent",
-  memory_id,
-  0
-);
+const delete_memory = await ApiClient.deleteAgentMemory('New Test Agent', memory_id, 0);
 console.log(delete_memory);
 ```
 
@@ -1195,14 +1134,13 @@ Memory 8ad623a743cd9925814bce5e3fd31d842b9fd0151e8988542f6dded42b00e176 for agen
 
 This is necessary if you want the agent to serve a different purpose than its original intent after it has learned things. It may inject unnecessary context into the conversation if you don't wipe its memory and try to give it a different purpose, even temporarily.
 
-
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const wipe_memories = await ApiClient.wipeAgentMemories("New Test Agent", 0);
+const wipe_memories = await ApiClient.wipeAgentMemories('New Test Agent', 0);
 console.log(wipe_memories);
 ```
 
@@ -1215,15 +1153,15 @@ Memories for agent New Test Agent deleted.
 We'll do something simple with it for the sake of the basic example, we'll just tell it to `Tell me the capital of France`.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const instruction = await ApiClient.instruct(
-  "New Test Agent",
+  'New Test Agent',
   "Save a file with the the capital of France in it called 'france.txt'.",
-  "New Test Conversation"
+  'New Test Conversation',
 );
 console.log(instruction);
 ```
@@ -1242,83 +1180,79 @@ console.log(instruction);
 ("Agent execution chain for command Write to File with args {'filename': 'france.txt', 'text': 'Paris'} updated.",)
 ```
 
-## Prompt the Agent  
+## Prompt the Agent
 
 Use a custom Prompt Template to prompt the agent. For our example, we'll use our "Write a Poem" prompt template to have the agent write a poem for us about dragons.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const prompt_name = "Write a Haiku";
+const prompt_name = 'Write a Haiku';
 const prompt_args = {
-  user_input: "Show me 2.",
-  subject: "dragons",
+  user_input: 'Show me 2.',
+  subject: 'dragons',
   websearch: false,
   websearch_depth: 0,
   context_results: 0,
   shots: 1,
-  conversation_name: "Talk for Tests",  
+  conversation_name: 'Talk for Tests',
 };
-const agent_prompt = await ApiClient.promptAgent(
-  "New Test Agent",
-  prompt_name,
-  prompt_args
-);
+const agent_prompt = await ApiClient.promptAgent('New Test Agent', prompt_name, prompt_args);
 console.log(agent_prompt);
 ```
 
 ```
 In realms of fire and skies of gold,
-Where legends dwell and tales unfold,  
+Where legends dwell and tales unfold,
 There lies a creature fierce and grand,
 A creature known as the dragon's band.
 
-With scales that shimmer in moonlit haze,  
+With scales that shimmer in moonlit haze,
 And eyes that blaze with ancient ways,
 They soar through clouds with wings unfurled,
 Guardians of a mythical world.
-  
+
 Oh, mighty dragon, guardian high,
 Your presence fills the endless sky,
 Your breath's a blaze that brings the night,
 And sparks the stars with purest light.
 
-From mountains high to valleys low, 
+From mountains high to valleys low,
 Wherever you roam, your power does show,
 Through forests deep and oceans wide,
 You leave your mark, as legends confide.
-  
+
 But these guardians are not all the same,
 For within their ranks, a dragon untamed,
 A creature small, yet fierce in might,
 Known as the dragon of the night.
-  
+
 With ebony wings that gleam like coal,
-And eyes that hold secrets untold, 
+And eyes that hold secrets untold,
 This dragon slumbers in shadows deep,
 Where darkness reigns and secrets keep.
-  
+
 Yet when the moon shines bright and clear,
 The dragon awakes without fear,
 And spreads its wings in silent flight,
 Unleashing magic in the moon's soft light.
-  
+
 Its scales reflect the starry sky,
 As it soars and dances way up high,
 A creature of elegance and grace,
 Defying all limits, in every chase.
-  
+
 But the true beauty of dragons lies,
-Not in their strength or fiery eyes,  
+Not in their strength or fiery eyes,
 But in their hearts, so wise and strong,
 For they protect, and right the wrong.
-  
+
 So let us honor these mythical souls,
 The guardians who make us whole,
-For in their presence, we find our worth,  
+For in their presence, we find our worth,
 Guided by the dragons of this Earth.
 
 ```
@@ -1326,10 +1260,10 @@ Guided by the dragons of this Earth.
 ## Get a list of Chains available to use
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "", 
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const chains = await ApiClient.getChains();
 console.log(chains);
@@ -1349,24 +1283,24 @@ console.log(chains);
   'Smart Chat',
   'Ask Helper Agent for Help',
   'Generate Image with Stable Diffusion',
-  'Generate Smart Task Chain without Research', 
+  'Generate Smart Task Chain without Research',
   'Generate Task Chain without Research',
   'New Test Agent Command Suggestions',
   'Create New Command',
   'Solve Math Problem',
-  'Smart Instruct - No Research'  
+  'Smart Instruct - No Research'
 ]
 ```
 
 ## Create a new chain
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "", 
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const chain = await ApiClient.addChain("Write another Poem");
+const chain = await ApiClient.addChain('Write another Poem');
 console.log(chain);
 ```
 
@@ -1377,15 +1311,12 @@ Chain 'Write another Poem' created.
 ## Rename the chain
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const chain = await ApiClient.renameChain(
-  "Write another Poem",
-  "Poem Writing Chain"
-);
+const chain = await ApiClient.renameChain('Write another Poem', 'Poem Writing Chain');
 console.log(chain);
 ```
 
@@ -1396,26 +1327,20 @@ Chain 'Write another Poem' renamed to 'Poem Writing Chain'.
 ## Add Chain Steps
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "", 
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const add_step1 = await ApiClient.addStep(
-  "Poem Writing Chain",
-  1,
-  "New Test Agent",
-  "Prompt",
-  { prompt_name: "Write a Poem", subject: "Artificial Intelligence" }  
-);
+const add_step1 = await ApiClient.addStep('Poem Writing Chain', 1, 'New Test Agent', 'Prompt', {
+  prompt_name: 'Write a Poem',
+  subject: 'Artificial Intelligence',
+});
 console.log(add_step1);
-const add_step2 = await ApiClient.addStep(
-  "Poem Writing Chain",
-  2,
-  "New Test Agent",
-  "Prompt",
-  { prompt_name: "Write a Poem", subject: "Quantum Computers" }
-);
+const add_step2 = await ApiClient.addStep('Poem Writing Chain', 2, 'New Test Agent', 'Prompt', {
+  prompt_name: 'Write a Poem',
+  subject: 'Quantum Computers',
+});
 console.log(add_step2);
 ```
 
@@ -1427,12 +1352,12 @@ Step 2 added to chain 'Poem Writing Chain'.
 ## Get the content of the chain
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const chain = await ApiClient.getChain("Poem Writing Chain");
+const chain = await ApiClient.getChain('Poem Writing Chain');
 console.log(chain.steps);
 ```
 
@@ -1444,7 +1369,7 @@ console.log(chain.steps);
     prompt_type: 'Prompt',
     prompt: { prompt_name: 'Write a Poem', subject: 'Artificial Intelligence' }
   },
-  { 
+  {
     step: 2,
     agent_name: 'New Test Agent',
     prompt_type: 'Prompt',
@@ -1456,12 +1381,12 @@ console.log(chain.steps);
 ## Get Chain Arguments
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const chain = await ApiClient.getChainArgs("Smart Chat");
+const chain = await ApiClient.getChainArgs('Smart Chat');
 console.log(chain);
 ```
 
@@ -1472,18 +1397,15 @@ console.log(chain);
 ## Modify a Chain Step
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const chain = await ApiClient.updateStep(
-  "Poem Writing Chain",
-  1,
-  "New Test Agent",
-  "Prompt",
-  { prompt_name: "Write a Poem", subject: "Artificial General Intelligence" }
-);
+const chain = await ApiClient.updateStep('Poem Writing Chain', 1, 'New Test Agent', 'Prompt', {
+  prompt_name: 'Write a Poem',
+  subject: 'Artificial General Intelligence',
+});
 console.log(chain);
 ```
 
@@ -1494,12 +1416,12 @@ Step 1 updated for chain 'Poem Writing Chain'.
 ## Move a Chain Step
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const chain = await ApiClient.moveStep("Poem Writing Chain", 1, 2);
+const chain = await ApiClient.moveStep('Poem Writing Chain', 1, 2);
 console.log(chain);
 ```
 
@@ -1510,12 +1432,12 @@ Step 1 moved to 2 in chain 'Poem Writing Chain'.
 ## Delete a step from the chain
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const chain = await ApiClient.deleteStep("Poem Writing Chain", 2);
+const chain = await ApiClient.deleteStep('Poem Writing Chain', 2);
 console.log(chain);
 ```
 
@@ -1526,22 +1448,16 @@ Step 2 deleted from chain 'Poem Writing Chain'.
 ## Add a Command to the Chain
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const chain = await ApiClient.addStep(
-  "Poem Writing Chain",
-  2,
-  "New Test Agent",
-  "Command",
-  {
-    command_name: "Write to File",
-    filename: "{user_input}.txt",  
-    text: "Poem:\n{STEP1}",
-  }
-);
+const chain = await ApiClient.addStep('Poem Writing Chain', 2, 'New Test Agent', 'Command', {
+  command_name: 'Write to File',
+  filename: '{user_input}.txt',
+  text: 'Poem:\n{STEP1}',
+});
 console.log(chain);
 ```
 
@@ -1552,22 +1468,15 @@ Step 2 added to chain 'Poem Writing Chain'.
 ## Run the chain
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const chain_args = {
-  conversation_name: "Talk for Tests",  
+  conversation_name: 'Talk for Tests',
 };
-const chain = await ApiClient.runChain(
-  "Poem Writing Chain",
-  "Super Poems",
-  "New Test Agent",
-  false,
-  1,
-  chain_args
-);
+const chain = await ApiClient.runChain('Poem Writing Chain', 'Super Poems', 'New Test Agent', false, 1, chain_args);
 console.log(chain);
 ```
 
@@ -1575,26 +1484,26 @@ console.log(chain);
 File written to successfully.
 ```
 
-## Get the responses from the chain running  
+## Get the responses from the chain running
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const chain_response = await ApiClient.getChainResponses("Poem Writing Chain");
+const chain_response = await ApiClient.getChainResponses('Poem Writing Chain');
 console.log(chain_response);
 ```
 
 ```
 {
   '1': {
-    agent_name: 'New Test Agent', 
+    agent_name: 'New Test Agent',
     prompt_type: 'Prompt',
     prompt: { prompt_name: 'Write a Poem', subject: 'Quantum Computers' },
     step: 1,
-    response: "In the realm of mystery and science's realm,\n" +  
+    response: "In the realm of mystery and science's realm,\n" +
       "Where quantum's secrets lie and overwhelm,\n" +
       'There lies a machine, a marvel to behold,\n' +
       'A quantum computer, a story yet untold.\n' +
@@ -1605,7 +1514,7 @@ console.log(chain_response);
       'A revolution born in this futuristic land.\n' +
       '\n' +
       'The qubits, tiny particles of boundless might,\n' +
-      'Entangled in a dance, a cosmic light,\n' +  
+      'Entangled in a dance, a cosmic light,\n' +
       'They can be ones and zeros all at once,\n' +
       'A dance of superposition, a quantum trounce.\n' +
       '\n' +
@@ -1621,14 +1530,14 @@ console.log(chain_response);
       '\n' +
       'From cryptography to drug discovery,\n' +
       "Simulating quantum physics, it's a symphony,\n" +
-      'A tool of endless potential, a boundless sea,\n' + 
+      'A tool of endless potential, a boundless sea,\n' +
       'Unlocking the secrets of the quantum decree.\n' +
       '\n' +
       'But challenges persist in this quantum sphere,\n' +
       'Noise and decoherence, a constant fear,\n' +
       'Yet scientists persist, their minds ablaze,\n' +
       'To harness the power of these quantum ways.\n' +
-      '\n' + 
+      '\n' +
       "So as we delve into this quantum realm,\n" +
       "Let's marvel at the wonders science can overwhelm,\n" +
       'For in the realm of mystery, where possibilities gleam,\n' +
@@ -1640,7 +1549,7 @@ console.log(chain_response);
     prompt: {
       command_name: 'Write to File',
       filename: '{user_input}.txt',
-      text: 'Poem:\n{STEP1}'  
+      text: 'Poem:\n{STEP1}'
     },
     step: 2,
     response: 'File written to successfully.'
@@ -1651,13 +1560,13 @@ console.log(chain_response);
 ## Delete the chain
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const chain = await ApiClient.deleteChain("Poem Writing Chain");
-console.log(chain); 
+const chain = await ApiClient.deleteChain('Poem Writing Chain');
+console.log(chain);
 ```
 
 ```
@@ -1667,10 +1576,10 @@ Chain 'Poem Writing Chain' deleted.
 ## Get a list of prompts available to use
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const prompts = await ApiClient.getPrompts();
 console.log(prompts);
@@ -1686,7 +1595,7 @@ console.log(prompts);
   'Custom Input',
   'Title a Poem',
   'ValidationFailed',
-  'SmartTask-CleanResponse', 
+  'SmartTask-CleanResponse',
   'Create a Skeleton',
   'Proofreader',
   'SmartChat-Researcher',
@@ -1736,21 +1645,21 @@ console.log(prompts);
 ## Get the content of a prompt
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const prompt_data = await ApiClient.getPrompt("Chat");
+const prompt_data = await ApiClient.getPrompt('Chat');
 console.log(prompt_data);
 ```
 
 ```
- {context}  
+ {context}
 You are {agent_name}, an expert at answering the users question.  Use available context help answer the users questions.
 
-Recent conversation history for context:  
-{conversation_history}  
+Recent conversation history for context:
+{conversation_history}
 
 User's latest input: {user_input}
 
@@ -1761,16 +1670,12 @@ User's latest input: {user_input}
 We'll make a basic prompt that asks the AI to tell us a short story about a subject. The subject is not yet defined, it would be defined in a chain. Using `{variable_name}` in a prompt will allow you to define the variable in a chain and have it be used in the prompt.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const new_prompt = await ApiClient.addPrompt(
-  "Short Story", 
-  "Tell me a short story about {subject}",
-  "Default"
-);
+const new_prompt = await ApiClient.addPrompt('Short Story', 'Tell me a short story about {subject}', 'Default');
 console.log(new_prompt);
 ```
 
@@ -1781,12 +1686,12 @@ Prompt 'Short Story' added.
 ## Get the prompt variables
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const prompt_args = await ApiClient.getPromptArgs("Short Story", "Default");
+const prompt_args = await ApiClient.getPromptArgs('Short Story', 'Default');
 console.log(prompt_args);
 ```
 
@@ -1794,20 +1699,20 @@ console.log(prompt_args);
 [ 'subject' ]
 ```
 
-## Update the prompt content  
+## Update the prompt content
 
 We'll ask it to `Add a dragon to the story somehow` in the prompt to make the short story more interesting.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
 const prompt = await ApiClient.updatePrompt(
-  "Short Story",
-  "Tell me a short story about {subject} and make it funny.",
-  "Default"
+  'Short Story',
+  'Tell me a short story about {subject} and make it funny.',
+  'Default',
 );
 console.log(prompt);
 ```
@@ -1816,17 +1721,17 @@ console.log(prompt);
 Prompt 'Short Story' updated.
 ```
 
-## Delete the prompt  
+## Delete the prompt
 
 If you don't want the prompt anymore, delete it.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const prompt = await ApiClient.deletePrompt("Short Story", "Default");
+const prompt = await ApiClient.deletePrompt('Short Story', 'Default');
 console.log(prompt);
 ```
 
@@ -1839,12 +1744,12 @@ Prompt 'Short Story' deleted.
 If you are done with the agent and don't want or need it anymore, you can delete it along with everything associated with it, such as its memories, settings, and history. The Agent isn't just fired, it is dead.
 
 ```typescript
-import AGiXTSDK from "./index.ts";
+import AGiXTSDK from './index.ts';
 const ApiClient = new AGiXTSDK({
-  baseUri: "http://localhost:7437",
-  apiKey: "",
+  baseUri: 'http://localhost:7437',
+  apiKey: '',
 });
-const agent = await ApiClient.deleteAgent("New Test Agent");
+const agent = await ApiClient.deleteAgent('New Test Agent');
 console.log(agent);
 ```
 
@@ -1853,4 +1758,5 @@ Agent New Test Agent deleted.
 ```
 
 ## More Documentation
-Want to know more about AGiXT?  Check out our [documentation](https://josh-xt.github.io/AGiXT/) or [GitHub](https://github.com/Josh-XT/AGiXT) page.
+
+Want to know more about AGiXT? Check out our [documentation](https://josh-xt.github.io/AGiXT/) or [GitHub](https://github.com/Josh-XT/AGiXT) page.

@@ -1,26 +1,26 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig } from 'axios';
 
 export default class AGiXTSDK {
   private baseUri: string;
-  private headers: AxiosRequestConfig["headers"];
+  private headers: AxiosRequestConfig['headers'];
 
   constructor(config: { baseUri: string; apiKey?: string }) {
-    this.baseUri = config.baseUri || "http://localhost:7437";
+    this.baseUri = config.baseUri || 'http://localhost:7437';
     if (config.apiKey) {
-      if (config.apiKey.includes("Bearer ")) {
-        config.apiKey = config.apiKey.replace("Bearer ", "");
+      if (config.apiKey.includes('Bearer ')) {
+        config.apiKey = config.apiKey.replace('Bearer ', '');
       }
       this.headers = {
         Authorization: `Bearer ${config.apiKey}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       };
     } else {
       this.headers = {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       };
     }
 
-    if (this.baseUri.slice(-1) === "/") {
+    if (this.baseUri.slice(-1) === '/') {
       this.baseUri = this.baseUri.slice(0, -1);
     }
   }
@@ -32,10 +32,7 @@ export default class AGiXTSDK {
 
   async getProviders(): Promise<string[]> {
     try {
-      const response = await axios.get<{ providers: string[] }>(
-        `${this.baseUri}/api/provider`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ providers: string[] }>(`${this.baseUri}/api/provider`, { headers: this.headers });
       return response.data.providers;
     } catch (error) {
       return [this.handleError(error)];
@@ -44,10 +41,7 @@ export default class AGiXTSDK {
 
   async getAllProviders(): Promise<string[]> {
     try {
-      const response = await axios.get<{ providers: any[] }>(
-        `${this.baseUri}/api/providers`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ providers: any[] }>(`${this.baseUri}/api/providers`, { headers: this.headers });
       return response.data.providers;
     } catch (error) {
       return [this.handleError(error)];
@@ -56,10 +50,9 @@ export default class AGiXTSDK {
 
   async getProviderSettings(providerName: string) {
     try {
-      const response = await axios.get<{ settings: any }>(
-        `${this.baseUri}/api/provider/${providerName}`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ settings: any }>(`${this.baseUri}/api/provider/${providerName}`, {
+        headers: this.headers,
+      });
       return response.data.settings;
     } catch (error) {
       return this.handleError(error);
@@ -68,10 +61,9 @@ export default class AGiXTSDK {
 
   async getEmbedProviders(): Promise<string[]> {
     try {
-      const response = await axios.get<{ providers: string[] }>(
-        `${this.baseUri}/api/embedding_providers`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ providers: string[] }>(`${this.baseUri}/api/embedding_providers`, {
+        headers: this.headers,
+      });
       return response.data.providers;
     } catch (error) {
       return [this.handleError(error)];
@@ -86,7 +78,7 @@ export default class AGiXTSDK {
           agent_name: agentName,
           settings,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data;
     } catch (error) {
@@ -103,7 +95,7 @@ export default class AGiXTSDK {
           settings,
           commands,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data;
     } catch (error) {
@@ -116,7 +108,7 @@ export default class AGiXTSDK {
       const response = await axios.patch(
         `${this.baseUri}/api/agent/${agentName}`,
         { new_name: newName },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data;
     } catch (error) {
@@ -132,7 +124,7 @@ export default class AGiXTSDK {
           settings,
           agent_name: agentName,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -148,7 +140,7 @@ export default class AGiXTSDK {
           commands,
           agent_name: agentName,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -158,10 +150,7 @@ export default class AGiXTSDK {
 
   async deleteAgent(agentName: string) {
     try {
-      const response = await axios.delete(
-        `${this.baseUri}/api/agent/${agentName}`,
-        { headers: this.headers }
-      );
+      const response = await axios.delete(`${this.baseUri}/api/agent/${agentName}`, { headers: this.headers });
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
@@ -170,10 +159,7 @@ export default class AGiXTSDK {
 
   async getAgents() {
     try {
-      const response = await axios.get<{ agents: any[] }>(
-        `${this.baseUri}/api/agent`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ agents: any[] }>(`${this.baseUri}/api/agent`, { headers: this.headers });
       return response.data.agents;
     } catch (error) {
       return this.handleError(error);
@@ -182,20 +168,15 @@ export default class AGiXTSDK {
 
   async getAgentConfig(agentName: string) {
     try {
-      const response = await axios.get<{ agent: any }>(
-        `${this.baseUri}/api/agent/${agentName}`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ agent: any }>(`${this.baseUri}/api/agent/${agentName}`, { headers: this.headers });
       return response.data.agent;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getConversations(agentName = "") {
-    const url = agentName
-      ? `${this.baseUri}/api/${agentName}/conversations`
-      : `${this.baseUri}/api/conversations`;
+  async getConversations(agentName = '') {
+    const url = agentName ? `${this.baseUri}/api/${agentName}/conversations` : `${this.baseUri}/api/conversations`;
 
     try {
       const response = await axios.get<{ conversations: string[] }>(url, {
@@ -207,15 +188,10 @@ export default class AGiXTSDK {
     }
   }
 
-  async getConversation(
-    agentName: string = "",
-    conversationName: string = "",
-    limit: number = 100,
-    page: number = 1
-  ) {
+  async getConversation(agentName = '', conversationName = '', limit = 100, page = 1) {
     try {
       const response = await axios.request({
-        method: "get",
+        method: 'get',
         url: `${this.baseUri}/api/conversation/${conversationName}`,
         headers: this.headers,
         params: {
@@ -230,11 +206,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async newConversation(
-    agentName: string,
-    conversationName: string,
-    conversationContent: any[] = []
-  ) {
+  async newConversation(agentName: string, conversationName: string, conversationContent: any[] = []) {
     try {
       const response = await axios.post<{ conversation_history: any[] }>(
         `${this.baseUri}/api/conversation`,
@@ -243,7 +215,7 @@ export default class AGiXTSDK {
           agent_name: agentName,
           conversation_content: conversationContent,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.conversation_history;
     } catch (error) {
@@ -266,23 +238,16 @@ export default class AGiXTSDK {
     }
   }
 
-  async deleteConversationMessage(
-    agentName: string,
-    conversationName: string,
-    message: string
-  ) {
+  async deleteConversationMessage(agentName: string, conversationName: string, message: string) {
     try {
-      const response = await axios.delete(
-        `${this.baseUri}/api/conversation/message`,
-        {
-          headers: this.headers,
-          data: {
-            message,
-            agent_name: agentName,
-            conversation_name: conversationName,
-          },
-        }
-      );
+      const response = await axios.delete(`${this.baseUri}/api/conversation/message`, {
+        headers: this.headers,
+        data: {
+          message,
+          agent_name: agentName,
+          conversation_name: conversationName,
+        },
+      });
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
@@ -296,7 +261,7 @@ export default class AGiXTSDK {
         {
           memories: memories,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -306,22 +271,18 @@ export default class AGiXTSDK {
 
   async exportAgentMemories(agentName: string) {
     try {
-      const response = await axios.get(
-        `${this.baseUri}/api/agent/${agentName}/memory/export`,
-        { headers: this.headers }
-      );
+      const response = await axios.get(`${this.baseUri}/api/agent/${agentName}/memory/export`, { headers: this.headers });
       return response.data.memories;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async wipeAgentMemories(agentName: string, collectionNumber: number = 0) {
+  async wipeAgentMemories(agentName: string, collectionNumber = 0) {
     try {
-      const response = await axios.delete(
-        `${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}`,
-        { headers: this.headers }
-      );
+      const response = await axios.delete(`${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}`, {
+        headers: this.headers,
+      });
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
@@ -336,7 +297,7 @@ export default class AGiXTSDK {
           prompt_name: promptName,
           prompt_args: promptArgs,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.response;
     } catch (error) {
@@ -345,20 +306,15 @@ export default class AGiXTSDK {
   }
 
   async instruct(agentName: string, userInput: string, conversation: string) {
-    return this.promptAgent(agentName, "instruct", {
+    return this.promptAgent(agentName, 'instruct', {
       user_input: userInput,
       disable_memory: true,
       conversation_name: conversation,
     });
   }
 
-  async chat(
-    agentName: string,
-    userInput: string,
-    conversation: string,
-    contextResults = 4
-  ) {
-    return this.promptAgent(agentName, "Chat", {
+  async chat(agentName: string, userInput: string, conversation: string, contextResults = 4) {
+    return this.promptAgent(agentName, 'Chat', {
       user_input: userInput,
       context_results: contextResults,
       conversation_name: conversation,
@@ -366,19 +322,15 @@ export default class AGiXTSDK {
     });
   }
 
-  async smartinstruct(
-    agentName: string,
-    userInput: string,
-    conversation: string
-  ) {
-    return this.runChain("Smart Instruct", userInput, agentName, false, 1, {
+  async smartinstruct(agentName: string, userInput: string, conversation: string) {
+    return this.runChain('Smart Instruct', userInput, agentName, false, 1, {
       conversation_name: conversation,
       disable_memory: true,
     });
   }
 
   async smartchat(agentName: string, userInput: string, conversation: string) {
-    return this.runChain("Smart Chat", userInput, agentName, false, 1, {
+    return this.runChain('Smart Chat', userInput, agentName, false, 1, {
       conversation_name: conversation,
       disable_memory: true,
     });
@@ -386,22 +338,16 @@ export default class AGiXTSDK {
 
   async getCommands(agentName: string) {
     try {
-      const response = await axios.get<{ commands: any }>(
-        `${this.baseUri}/api/agent/${agentName}/command`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ commands: any }>(`${this.baseUri}/api/agent/${agentName}/command`, {
+        headers: this.headers,
+      });
       return response.data.commands;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async executeCommand(
-    agentName: string,
-    commandName: string,
-    commandArgs: any,
-    conversation: string
-  ) {
+  async executeCommand(agentName: string, commandName: string, commandArgs: any, conversation: string) {
     try {
       const response = await axios.post<{ response: string }>(
         `${this.baseUri}/api/agent/${agentName}/command`,
@@ -410,7 +356,7 @@ export default class AGiXTSDK {
           command_args: commandArgs,
           conversation_name: conversation,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.response;
     } catch (error) {
@@ -422,7 +368,7 @@ export default class AGiXTSDK {
       const response = await axios.patch(
         `${this.baseUri}/api/agent/${agentName}/command`,
         { command_name: commandName, enable },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -443,10 +389,7 @@ export default class AGiXTSDK {
 
   async getChain(chainName: string) {
     try {
-      const response = await axios.get<{ chain: any }>(
-        `${this.baseUri}/api/chain/${chainName}`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ chain: any }>(`${this.baseUri}/api/chain/${chainName}`, { headers: this.headers });
       return response.data.chain;
     } catch (error) {
       return this.handleError(error);
@@ -455,10 +398,9 @@ export default class AGiXTSDK {
 
   async getChainResponses(chainName: string) {
     try {
-      const response = await axios.get<{ chain: any }>(
-        `${this.baseUri}/api/chain/${chainName}/responses`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ chain: any }>(`${this.baseUri}/api/chain/${chainName}/responses`, {
+        headers: this.headers,
+      });
       return response.data.chain;
     } catch (error) {
       return this.handleError(error);
@@ -467,24 +409,16 @@ export default class AGiXTSDK {
 
   async getChainArgs(chainName: string) {
     try {
-      const response = await axios.get<{ chain_args: string[] }>(
-        `${this.baseUri}/api/chain/${chainName}/args`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ chain_args: string[] }>(`${this.baseUri}/api/chain/${chainName}/args`, {
+        headers: this.headers,
+      });
       return response.data.chain_args;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async runChain(
-    chainName: string,
-    userInput: string,
-    agentName = "",
-    allResponses = false,
-    fromStep = 1,
-    chainArgs = {}
-  ) {
+  async runChain(chainName: string, userInput: string, agentName = '', allResponses = false, fromStep = 1, chainArgs = {}) {
     try {
       const response = await axios.post<any>(
         `${this.baseUri}/api/chain/${chainName}/run`,
@@ -495,7 +429,7 @@ export default class AGiXTSDK {
           from_step: fromStep,
           chain_args: chainArgs,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data;
     } catch (error) {
@@ -503,13 +437,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async runChainStep(
-    chainName: string,
-    stepNumber: number,
-    userInput: string,
-    agentName?: string,
-    chainArgs = {}
-  ) {
+  async runChainStep(chainName: string, stepNumber: number, userInput: string, agentName?: string, chainArgs = {}) {
     try {
       const response = await axios.post<any>(
         `${this.baseUri}/api/chain/${chainName}/run/step/${stepNumber}`,
@@ -518,7 +446,7 @@ export default class AGiXTSDK {
           agent_override: agentName,
           chain_args: chainArgs,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data;
     } catch (error) {
@@ -528,11 +456,7 @@ export default class AGiXTSDK {
 
   async addChain(chainName: string) {
     try {
-      const response = await axios.post(
-        `${this.baseUri}/api/chain`,
-        { chain_name: chainName },
-        { headers: this.headers }
-      );
+      const response = await axios.post(`${this.baseUri}/api/chain`, { chain_name: chainName }, { headers: this.headers });
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
@@ -547,7 +471,7 @@ export default class AGiXTSDK {
           chain_name: chainName,
           steps,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -560,7 +484,7 @@ export default class AGiXTSDK {
       const response = await axios.put(
         `${this.baseUri}/api/chain/${chainName}`,
         { new_name: newName },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -570,23 +494,14 @@ export default class AGiXTSDK {
 
   async deleteChain(chainName: string) {
     try {
-      const response = await axios.delete(
-        `${this.baseUri}/api/chain/${chainName}`,
-        { headers: this.headers }
-      );
+      const response = await axios.delete(`${this.baseUri}/api/chain/${chainName}`, { headers: this.headers });
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async addStep(
-    chainName: string,
-    stepNumber: number,
-    agentName: string,
-    promptType: string,
-    prompt: any
-  ) {
+  async addStep(chainName: string, stepNumber: number, agentName: string, promptType: string, prompt: any) {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/chain/${chainName}/step`,
@@ -596,7 +511,7 @@ export default class AGiXTSDK {
           prompt_type: promptType,
           prompt,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -604,13 +519,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async updateStep(
-    chainName: string,
-    stepNumber: number,
-    agentName: string,
-    promptType: string,
-    prompt: any
-  ) {
+  async updateStep(chainName: string, stepNumber: number, agentName: string, promptType: string, prompt: any) {
     try {
       const response = await axios.put(
         `${this.baseUri}/api/chain/${chainName}/step/${stepNumber}`,
@@ -620,7 +529,7 @@ export default class AGiXTSDK {
           prompt_type: promptType,
           prompt,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -628,11 +537,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async moveStep(
-    chainName: string,
-    oldStepNumber: number,
-    newStepNumber: number
-  ) {
+  async moveStep(chainName: string, oldStepNumber: number, newStepNumber: number) {
     try {
       const response = await axios.patch(
         `${this.baseUri}/api/chain/${chainName}/step/move`,
@@ -640,7 +545,7 @@ export default class AGiXTSDK {
           old_step_number: oldStepNumber,
           new_step_number: newStepNumber,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -650,21 +555,16 @@ export default class AGiXTSDK {
 
   async deleteStep(chainName: string, stepNumber: number) {
     try {
-      const response = await axios.delete(
-        `${this.baseUri}/api/chain/${chainName}/step/${stepNumber}`,
-        { headers: this.headers }
-      );
+      const response = await axios.delete(`${this.baseUri}/api/chain/${chainName}/step/${stepNumber}`, {
+        headers: this.headers,
+      });
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async addPrompt(
-    promptName: string,
-    prompt: string,
-    promptCategory = "Default"
-  ) {
+  async addPrompt(promptName: string, prompt: string, promptCategory = 'Default') {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/prompt/${promptCategory}`,
@@ -672,7 +572,7 @@ export default class AGiXTSDK {
           prompt_name: promptName,
           prompt,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -680,24 +580,22 @@ export default class AGiXTSDK {
     }
   }
 
-  async getPrompt(promptName: string, promptCategory = "Default") {
+  async getPrompt(promptName: string, promptCategory = 'Default') {
     try {
-      const response = await axios.get<{ prompt: any }>(
-        `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ prompt: any }>(`${this.baseUri}/api/prompt/${promptCategory}/${promptName}`, {
+        headers: this.headers,
+      });
       return response.data.prompt;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getPrompts(promptCategory = "Default") {
+  async getPrompts(promptCategory = 'Default') {
     try {
-      const response = await axios.get<{ prompts: string[] }>(
-        `${this.baseUri}/api/prompt/${promptCategory}`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ prompts: string[] }>(`${this.baseUri}/api/prompt/${promptCategory}`, {
+        headers: this.headers,
+      });
       return response.data.prompts;
     } catch (error) {
       return this.handleError(error);
@@ -706,10 +604,9 @@ export default class AGiXTSDK {
 
   async addPromptCategory(promptCategory: string) {
     try {
-      const response = await axios.get<{ prompts: string[] }>(
-        `${this.baseUri}/api/prompt/${promptCategory}`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ prompts: string[] }>(`${this.baseUri}/api/prompt/${promptCategory}`, {
+        headers: this.headers,
+      });
       return `Prompt category ${promptCategory} created.`;
     } catch (error) {
       return this.handleError(error);
@@ -718,21 +615,20 @@ export default class AGiXTSDK {
 
   async getPromptCategories() {
     try {
-      const response = await axios.get<{ prompt_categories: string[] }>(
-        `${this.baseUri}/api/prompt/categories`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ prompt_categories: string[] }>(`${this.baseUri}/api/prompt/categories`, {
+        headers: this.headers,
+      });
       return response.data.prompt_categories;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getPromptArgs(promptName: string, promptCategory = "Default") {
+  async getPromptArgs(promptName: string, promptCategory = 'Default') {
     try {
       const response = await axios.get<{ prompt_args: any }>(
         `${this.baseUri}/api/prompt/${promptCategory}/${promptName}/args`,
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.prompt_args;
     } catch (error) {
@@ -740,23 +636,18 @@ export default class AGiXTSDK {
     }
   }
 
-  async deletePrompt(promptName: string, promptCategory = "Default") {
+  async deletePrompt(promptName: string, promptCategory = 'Default') {
     try {
-      const response = await axios.delete(
-        `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`,
-        { headers: this.headers }
-      );
+      const response = await axios.delete(`${this.baseUri}/api/prompt/${promptCategory}/${promptName}`, {
+        headers: this.headers,
+      });
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async updatePrompt(
-    promptName: string,
-    prompt: string,
-    promptCategory = "Default"
-  ) {
+  async updatePrompt(promptName: string, prompt: string, promptCategory = 'Default') {
     try {
       const response = await axios.put(
         `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`,
@@ -765,7 +656,7 @@ export default class AGiXTSDK {
           prompt_name: promptName,
           prompt_category: promptCategory,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -773,16 +664,12 @@ export default class AGiXTSDK {
     }
   }
 
-  async renamePrompt(
-    promptName: string,
-    newName: string,
-    promptCategory = "Default"
-  ) {
+  async renamePrompt(promptName: string, newName: string, promptCategory = 'Default') {
     try {
       const response = await axios.patch(
         `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`,
         { prompt_name: newName },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -792,10 +679,9 @@ export default class AGiXTSDK {
 
   async getExtensionSettings() {
     try {
-      const response = await axios.get<{ extension_settings: any }>(
-        `${this.baseUri}/api/extensions/settings`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ extension_settings: any }>(`${this.baseUri}/api/extensions/settings`, {
+        headers: this.headers,
+      });
       return response.data.extension_settings;
     } catch (error) {
       return this.handleError(error);
@@ -804,10 +690,7 @@ export default class AGiXTSDK {
 
   async getExtensions() {
     try {
-      const response = await axios.get<{ extensions: any[] }>(
-        `${this.baseUri}/api/extensions`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ extensions: any[] }>(`${this.baseUri}/api/extensions`, { headers: this.headers });
       return response.data.extensions;
     } catch (error) {
       return this.handleError(error);
@@ -816,22 +699,16 @@ export default class AGiXTSDK {
 
   async getCommandArgs(commandName: string) {
     try {
-      const response = await axios.get<{ command_args: any }>(
-        `${this.baseUri}/api/extensions/${commandName}/args`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ command_args: any }>(`${this.baseUri}/api/extensions/${commandName}/args`, {
+        headers: this.headers,
+      });
       return response.data.command_args;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async learnText(
-    agentName: string,
-    userInput: string,
-    text: string,
-    collectionNumber: number = 0
-  ) {
+  async learnText(agentName: string, userInput: string, text: string, collectionNumber = 0) {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/learn/text`,
@@ -840,7 +717,7 @@ export default class AGiXTSDK {
           text: text,
           collection_number: collectionNumber,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -848,12 +725,12 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnUrl(agentName: string, url: string, collectionNumber: number = 0) {
+  async learnUrl(agentName: string, url: string, collectionNumber = 0) {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/learn/url`,
         { url: url, collection_number: collectionNumber },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -861,12 +738,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnFile(
-    agentName: string,
-    fileName: string,
-    fileContent: string,
-    collectionNumber: number = 0
-  ) {
+  async learnFile(agentName: string, fileName: string, fileContent: string, collectionNumber = 0) {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/learn/file`,
@@ -875,7 +747,7 @@ export default class AGiXTSDK {
           file_content: fileContent,
           collection_number: collectionNumber,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -888,8 +760,8 @@ export default class AGiXTSDK {
     githubRepo: string,
     githubUser?: string,
     githubToken?: string,
-    githubBranch = "main",
-    collectionNumber: number = 0
+    githubBranch = 'main',
+    collectionNumber = 0,
   ) {
     try {
       const response = await axios.post(
@@ -901,7 +773,7 @@ export default class AGiXTSDK {
           github_branch: githubBranch,
           collection_number: collectionNumber,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -909,13 +781,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnArxiv(
-    agentName: string,
-    query: string = "",
-    arxivIds: string = "",
-    max_results: number = 5,
-    collection_number: number = 0
-  ) {
+  async learnArxiv(agentName: string, query = '', arxivIds = '', max_results = 5, collection_number = 0) {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/learn/arxiv`,
@@ -925,7 +791,7 @@ export default class AGiXTSDK {
           max_results: max_results,
           collection_number: collection_number,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -933,12 +799,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async agentReader(
-    agentName: string,
-    readerName: string,
-    data: any,
-    collectionNumber: number = 0
-  ) {
+  async agentReader(agentName: string, readerName: string, data: any, collectionNumber = 0) {
     if (!data.collection_number) {
       data.collection_number = collectionNumber;
     }
@@ -948,7 +809,7 @@ export default class AGiXTSDK {
         {
           data: data,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -956,13 +817,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async getAgentMemories(
-    agentName: string,
-    userInput: string,
-    limit: number = 5,
-    minRelevanceScore: number = 0.5,
-    collectionNumber: number = 0
-  ) {
+  async getAgentMemories(agentName: string, userInput: string, limit = 5, minRelevanceScore = 0.5, collectionNumber = 0) {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}/query`,
@@ -971,7 +826,7 @@ export default class AGiXTSDK {
           limit: limit,
           min_relevance_score: minRelevanceScore,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.memories;
     } catch (error) {
@@ -979,29 +834,18 @@ export default class AGiXTSDK {
     }
   }
 
-  async deleteAgentMemory(
-    agentName: string,
-    memoryId: string,
-    collectionNumber: number = 0
-  ) {
+  async deleteAgentMemory(agentName: string, memoryId: string, collectionNumber = 0) {
     try {
-      const response = await axios.delete(
-        `${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}/${memoryId}`,
-        {
-          headers: this.headers,
-        }
-      );
+      const response = await axios.delete(`${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}/${memoryId}`, {
+        headers: this.headers,
+      });
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async createDataset(
-    agentName: string,
-    datasetName: string,
-    batchSize: number = 4
-  ) {
+  async createDataset(agentName: string, datasetName: string, batchSize = 4) {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/memory/dataset`,
@@ -1009,7 +853,7 @@ export default class AGiXTSDK {
           dataset_name: datasetName,
           batch_size: batchSize,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -1021,27 +865,26 @@ export default class AGiXTSDK {
     agentName: string,
     base64Audio: string,
     conversationName: string,
-    conversationResults: number = 4,
-    contextResults: number = 4,
-    inject_memories_from_collection_number: number = 0,
-    tts: boolean = false
+    conversationResults = 4,
+    contextResults = 4,
+    inject_memories_from_collection_number = 0,
+    tts = false,
   ) {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/command`,
         {
-          command_name: "Chat with Voice",
+          command_name: 'Chat with Voice',
           command_args: {
             base64_audio: base64Audio,
             conversation_results: conversationResults,
             context_results: contextResults,
-            inject_memories_from_collection_number:
-              inject_memories_from_collection_number,
+            inject_memories_from_collection_number: inject_memories_from_collection_number,
             tts: tts,
           },
           conversation_name: conversationName,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.response;
     } catch (error) {
