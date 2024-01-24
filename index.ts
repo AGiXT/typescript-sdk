@@ -860,28 +860,81 @@ export default class AGiXTSDK {
       return this.handleError(error);
     }
   }
-
-  async voiceChat(
+  async executeCommandWithVoice(
     agentName: string,
     base64Audio: string,
-    conversationName: string,
-    conversationResults = 4,
-    contextResults = 4,
-    inject_memories_from_collection_number = 0,
+    audioFormat = 'm4a',
+    audioVariable = 'data_to_correlate_with_input',
+    commandName = 'Store information in my long term memory',
+    commandArgs = { input: 'Voice transcription from user' },
     tts = false,
+    conversationName = 'AGiXT Terminal',
   ) {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/command`,
         {
-          command_name: 'Chat with Voice',
+          command_name: 'Command with Voice',
           command_args: {
             base64_audio: base64Audio,
-            conversation_results: conversationResults,
-            context_results: contextResults,
-            inject_memories_from_collection_number: inject_memories_from_collection_number,
+            audio_variable: audioVariable,
+            audio_format: audioFormat,
             tts: tts,
+            command_name: commandName,
+            command_args: commandArgs,
           },
+          conversation_name: conversationName,
+        },
+        { headers: this.headers },
+      );
+      return response.data.response;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async promptAgentWithVoice(
+    agentName: string,
+    base64Audio: string,
+    audioFormat = 'm4a',
+    audioVariable = 'user_input',
+    promptName = 'Custom Input',
+    promptArgs = {
+      context_results: 6,
+      inject_memories_from_collection_number: 0,
+    },
+    tts = false,
+    conversationName = 'AGiXT Terminal',
+  ) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/command`,
+        {
+          command_name: 'Prompt with Voice',
+          command_args: {
+            base64_audio: base64Audio,
+            audio_variable: audioVariable,
+            audio_format: audioFormat,
+            tts: tts,
+            prompt_name: promptName,
+            prompt_args: promptArgs,
+          },
+          conversation_name: conversationName,
+        },
+        { headers: this.headers },
+      );
+      return response.data.response;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+  async textToSpeech(agentName: string, text: string, conversationName: string) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/command`,
+        {
+          command_name: 'Text to Speech',
+          command_args: { text: text },
           conversation_name: conversationName,
         },
         { headers: this.headers },
