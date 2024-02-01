@@ -238,6 +238,24 @@ export default class AGiXTSDK {
     }
   }
 
+  async updateConversationMessage(agentName: string, conversationName: string, message: string, newMessage: string) {
+    try {
+      const response = await axios.put(
+        `${this.baseUri}/api/conversation/message`,
+        {
+          message: message,
+          new_message: newMessage,
+          agent_name: agentName,
+          conversation_name: conversationName,
+        },
+        { headers: this.headers },
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
   async deleteConversationMessage(agentName: string, conversationName: string, message: string) {
     try {
       const response = await axios.delete(`${this.baseUri}/api/conversation/message`, {
