@@ -39,6 +39,17 @@ export default class AGiXTSDK {
     }
   }
 
+  async getProvidersByService(service: string): Promise<string[]> {
+    try {
+      const response = await axios.get<{ providers: string[] }>(`${this.baseUri}/api/providers/service/${service}`, {
+        headers: this.headers,
+      });
+      return response.data.providers;
+    } catch (error) {
+      return [this.handleError(error)];
+    }
+  }
+
   async getAllProviders(): Promise<string[]> {
     try {
       const response = await axios.get<{ providers: any[] }>(`${this.baseUri}/api/providers`, { headers: this.headers });
