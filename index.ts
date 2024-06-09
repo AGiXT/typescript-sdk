@@ -199,6 +199,30 @@ export default class AGiXTSDK {
     }
   }
 
+  async addConversationFeedback(
+    positive: boolean,
+    agentName: string,
+    user_input: string,
+    feedback: string,
+    conversationName: string,
+  ) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/agent/${agentName}/feedback`,
+        {
+          positive,
+          feedback,
+          user_input,
+          conversation_name: conversationName,
+        },
+        { headers: this.headers },
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
   async getConversation(agentName = '', conversationName = '', limit = 100, page = 1) {
     try {
       const response = await axios.request({
