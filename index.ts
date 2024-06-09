@@ -202,7 +202,8 @@ export default class AGiXTSDK {
   async addConversationFeedback(
     positive: boolean,
     agentName: string,
-    user_input: string,
+    message: string,
+    userInput: string,
     feedback: string,
     conversationName: string,
   ) {
@@ -212,7 +213,8 @@ export default class AGiXTSDK {
         {
           positive,
           feedback,
-          user_input,
+          message,
+          user_input: userInput,
           conversation_name: conversationName,
         },
         { headers: this.headers },
