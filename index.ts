@@ -186,7 +186,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async getConversations(agentName = '') {
+  async getConversations(agentName?: string) {
     const url = agentName ? `${this.baseUri}/api/${agentName}/conversations` : `${this.baseUri}/api/conversations`;
 
     try {
@@ -225,7 +225,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async getConversation(agentName = '', conversationName = '', limit = 100, page = 1) {
+  async getConversation(conversationName = '', limit = 100, page = 1, agentName?: string) {
     try {
       const response = await axios.request({
         method: 'get',
@@ -238,6 +238,23 @@ export default class AGiXTSDK {
         },
       });
       return response.data.conversation_history;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async renameConversation(agentName: string, conversationName: string, newName: string = '-') {
+    try {
+      const response = await axios.put<{ conversation_name: string }>(
+        `${this.baseUri}/api/conversation`,
+        {
+          conversation_name: conversationName,
+          new_conversation_name: newName,
+          agent_name: agentName,
+        },
+        { headers: this.headers },
+      );
+      return response.data.conversation_name;
     } catch (error) {
       return this.handleError(error);
     }
@@ -260,7 +277,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async deleteConversation(agentName: string, conversationName: string) {
+  async deleteConversation(conversationName: string, agentName?: string) {
     try {
       const response = await axios.delete(`${this.baseUri}/api/conversation`, {
         headers: this.headers,
@@ -275,7 +292,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async updateConversationMessage(agentName: string, conversationName: string, message: string, newMessage: string) {
+  async updateConversationMessage(conversationName: string, message: string, newMessage: string, agentName?: string) {
     try {
       const response = await axios.put(
         `${this.baseUri}/api/conversation/message`,
@@ -293,7 +310,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async deleteConversationMessage(agentName: string, conversationName: string, message: string) {
+  async deleteConversationMessage(conversationName: string, message: string, agentName?: string) {
     try {
       const response = await axios.delete(`${this.baseUri}/api/conversation/message`, {
         headers: this.headers,
