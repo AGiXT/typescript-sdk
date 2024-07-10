@@ -252,7 +252,7 @@ export default class AGiXTSDK {
           new_conversation_name: newName,
           agent_name: agentName,
         },
-        { headers: this.headers },
+        { headers: this.headers }
       );
       return response.data.conversation_name;
     } catch (error) {
@@ -833,19 +833,21 @@ export default class AGiXTSDK {
     githubUser?: string,
     githubToken?: string,
     githubBranch = 'main',
-    collectionNumber = 0,
+    useAgentSettings = false,
+    collectionNumber = '0'
   ) {
     try {
-      const response = await axios.post(
+      const response = await axios.post<{ message: string }>(
         `${this.baseUri}/api/agent/${agentName}/learn/github`,
         {
           github_repo: githubRepo,
           github_user: githubUser,
           github_token: githubToken,
           github_branch: githubBranch,
+          use_agent_settings: useAgentSettings,
           collection_number: collectionNumber,
         },
-        { headers: this.headers },
+        { headers: this.headers }
       );
       return response.data.message;
     } catch (error) {
@@ -853,17 +855,23 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnArxiv(agentName: string, query = '', arxivIds = '', max_results = 5, collection_number = 0) {
+  async learnArxiv(
+    agentName: string,
+    query = '',
+    arxivIds = '',
+    maxResults = 5,
+    collectionNumber = '0'
+  ) {
     try {
-      const response = await axios.post(
+      const response = await axios.post<{ message: string }>(
         `${this.baseUri}/api/agent/${agentName}/learn/arxiv`,
         {
           query: query,
           arxiv_ids: arxivIds,
-          max_results: max_results,
-          collection_number: collection_number,
+          max_results: maxResults,
+          collection_number: collectionNumber,
         },
-        { headers: this.headers },
+        { headers: this.headers }
       );
       return response.data.message;
     } catch (error) {
@@ -871,17 +879,20 @@ export default class AGiXTSDK {
     }
   }
 
-  async agentReader(agentName: string, readerName: string, data: any, collectionNumber = 0) {
+  async agentReader(
+    agentName: string,
+    readerName: string,
+    data: any,
+    collectionNumber = '0'
+  ) {
     if (!data.collection_number) {
       data.collection_number = collectionNumber;
     }
     try {
-      const response = await axios.post(
-        `${this.baseUri}/api/agent/${agentName}/learn/reader/${readerName}`,
-        {
-          data: data,
-        },
-        { headers: this.headers },
+      const response = await axios.post<{ message: string }>(
+        `${this.baseUri}/api/agent/${agentName}/reader/${readerName}`,
+        { data },
+        { headers: this.headers }
       );
       return response.data.message;
     } catch (error) {
@@ -964,7 +975,98 @@ export default class AGiXTSDK {
       return this.handleError(error);
     }
   }
+  async getEmbeddersDetails() {
+    try {
+      const response = await axios.get<{ embedders: any }>(`${this.baseUri}/api/embedders`, { headers: this.headers });
+      return response.data.embedders;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
 
+  async positiveFeedback(agentName: string, message: string, userInput: string, feedback: string, conversationName: string = "") {
+    return this.provideFeedback(agentName, message, userInput, feedback, true, conversationName);
+  }
+
+  async negativeFeedback(agentName: string, message: string, userInput: string, feedback: string, conversationName: string = "") {
+    return this.provideFeedback(agentName, message, userInput, feedback, false, conversationName);
+  }
+
+  private async provideFeedback(agentName: string, message: string, userInput: string, feedback: string, positive: boolean, conversationName: string) {
+    try {
+      const response = await axios.post<{ message: string }>(
+        `${this.baseUri}/api/agent/${agentName}/feedback`,
+        {
+          user_input: userInput,
+          message,
+          feedback,
+          positive,
+          conversation_name: conversationName,
+        },
+        { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getBrowsedLinks(agentName: string, collectionNumber: string = "0") {
+    try {
+      const response = await axios.get<{ links: string[] }>(
+        `${this.baseUri}/api/agent/${agentName}/browsed_links/${collectionNumber}`,
+        { headers: this.headers }
+      );
+      return response.data.links;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async deleteBrowsedLink(agentName: string, link: string, collectionNumber: string = "0") {
+    try {
+      const response = await axios.delete<{ message: string }>(
+        `${this.baseUri}/api/agent/${agentName}/browsed_links`,
+        {
+          headers: this.headers,
+          data: { link, collection_number: collectionNumber },
+        }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getMemoriesExternalSources(agentName: string, collectionNumber: string) {
+    try {
+      const response = await axios.get<{ external_sources: any }>(
+        `${this.baseUri}/api/agent/${agentName}/memory/external_sources/${collectionNumber}`,
+        { headers: this.headers }
+      );
+      return response.data.external_sources;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async deleteMemoryExternalSource(agentName: string, source: string, collectionNumber: string) {
+    try {
+      const response = await axios.delete<{ message: string }>(
+        `${this.baseUri}/api/agent/${agentName}/memory/external_source`,
+        {
+          headers: this.headers,
+          data: {
+            external_source: source,
+            collection_number: collectionNumber,
+          },
+        }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
   async promptAgentWithVoice(
     agentName: string,
     base64Audio: string,
@@ -1000,16 +1102,71 @@ export default class AGiXTSDK {
       return this.handleError(error);
     }
   }
-  async textToSpeech(agentName: string, text: string, conversationName: string) {
+  async textToSpeech(agentName: string, text: string) {
     try {
-      const response = await axios.post(
-        `${this.baseUri}/api/agent/${agentName}/command`,
+      const response = await axios.post<{ url: string }>(
+        `${this.baseUri}/api/agent/${agentName}/text_to_speech`,
+        { text },
+        { headers: this.headers }
+      );
+      return response.data.url;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async newConversationMessage(role: string, message: string, conversationName: string) {
+    try {
+      const response = await axios.post<{ message: string }>(
+        `${this.baseUri}/api/conversation/message`,
         {
-          command_name: 'Text to Speech',
-          command_args: { text: text },
+          role,
+          message,
           conversation_name: conversationName,
         },
-        { headers: this.headers },
+        { headers: this.headers }
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getConversationsWithIds() {
+    try {
+      const response = await axios.get<{ conversations_with_ids: any }>(
+        `${this.baseUri}/api/conversations`,
+        { headers: this.headers }
+      );
+      return response.data.conversations_with_ids;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async planTask(
+    agentName: string,
+    userInput: string,
+    websearch: boolean = false,
+    websearchDepth: number = 3,
+    conversationName: string = "",
+    logUserInput: boolean = true,
+    logOutput: boolean = true,
+    enableNewCommand: boolean = true
+  ) {
+    try {
+      const response = await axios.post<{ response: string }>(
+        `${this.baseUri}/api/agent/${agentName}/plan/task`,
+        {
+          user_input: userInput,
+          websearch,
+          websearch_depth: websearchDepth,
+          conversation_name: conversationName,
+          log_user_input: logUserInput,
+          log_output: logOutput,
+          enable_new_command: enableNewCommand,
+        },
+        { headers: this.headers }
       );
       return response.data.response;
     } catch (error) {
