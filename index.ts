@@ -252,7 +252,7 @@ export default class AGiXTSDK {
           new_conversation_name: newName,
           agent_name: agentName,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.conversation_name;
     } catch (error) {
@@ -292,15 +292,13 @@ export default class AGiXTSDK {
     }
   }
 
-  async updateConversationMessage(conversationName: string, message: string, newMessage: string, agentName?: string) {
+  async updateConversationMessage(conversationName: string, messageId: string, newMessage: string) {
     try {
       const response = await axios.put(
-        `${this.baseUri}/api/conversation/message`,
+        `${this.baseUri}/api/conversation/message/${messageId}`,
         {
-          message: message,
-          new_message: newMessage,
-          agent_name: agentName,
           conversation_name: conversationName,
+          new_message: newMessage,
         },
         { headers: this.headers },
       );
@@ -310,13 +308,11 @@ export default class AGiXTSDK {
     }
   }
 
-  async deleteConversationMessage(conversationName: string, message: string, agentName?: string) {
+  async deleteConversationMessage(conversationName: string, messageId: string) {
     try {
-      const response = await axios.delete(`${this.baseUri}/api/conversation/message`, {
+      const response = await axios.delete(`${this.baseUri}/api/conversation/message/${messageId}`, {
         headers: this.headers,
         data: {
-          message,
-          agent_name: agentName,
           conversation_name: conversationName,
         },
       });
@@ -834,7 +830,7 @@ export default class AGiXTSDK {
     githubToken?: string,
     githubBranch = 'main',
     useAgentSettings = false,
-    collectionNumber = '0'
+    collectionNumber = '0',
   ) {
     try {
       const response = await axios.post<{ message: string }>(
@@ -847,7 +843,7 @@ export default class AGiXTSDK {
           use_agent_settings: useAgentSettings,
           collection_number: collectionNumber,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -855,13 +851,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnArxiv(
-    agentName: string,
-    query = '',
-    arxivIds = '',
-    maxResults = 5,
-    collectionNumber = '0'
-  ) {
+  async learnArxiv(agentName: string, query = '', arxivIds = '', maxResults = 5, collectionNumber = '0') {
     try {
       const response = await axios.post<{ message: string }>(
         `${this.baseUri}/api/agent/${agentName}/learn/arxiv`,
@@ -871,7 +861,7 @@ export default class AGiXTSDK {
           max_results: maxResults,
           collection_number: collectionNumber,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -879,12 +869,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async agentReader(
-    agentName: string,
-    readerName: string,
-    data: any,
-    collectionNumber = '0'
-  ) {
+  async agentReader(agentName: string, readerName: string, data: any, collectionNumber = '0') {
     if (!data.collection_number) {
       data.collection_number = collectionNumber;
     }
@@ -892,7 +877,7 @@ export default class AGiXTSDK {
       const response = await axios.post<{ message: string }>(
         `${this.baseUri}/api/agent/${agentName}/reader/${readerName}`,
         { data },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -984,15 +969,34 @@ export default class AGiXTSDK {
     }
   }
 
-  async positiveFeedback(agentName: string, message: string, userInput: string, feedback: string, conversationName: string = "") {
+  async positiveFeedback(
+    agentName: string,
+    message: string,
+    userInput: string,
+    feedback: string,
+    conversationName: string = '',
+  ) {
     return this.provideFeedback(agentName, message, userInput, feedback, true, conversationName);
   }
 
-  async negativeFeedback(agentName: string, message: string, userInput: string, feedback: string, conversationName: string = "") {
+  async negativeFeedback(
+    agentName: string,
+    message: string,
+    userInput: string,
+    feedback: string,
+    conversationName: string = '',
+  ) {
     return this.provideFeedback(agentName, message, userInput, feedback, false, conversationName);
   }
 
-  private async provideFeedback(agentName: string, message: string, userInput: string, feedback: string, positive: boolean, conversationName: string) {
+  private async provideFeedback(
+    agentName: string,
+    message: string,
+    userInput: string,
+    feedback: string,
+    positive: boolean,
+    conversationName: string,
+  ) {
     try {
       const response = await axios.post<{ message: string }>(
         `${this.baseUri}/api/agent/${agentName}/feedback`,
@@ -1003,7 +1007,7 @@ export default class AGiXTSDK {
           positive,
           conversation_name: conversationName,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -1011,11 +1015,11 @@ export default class AGiXTSDK {
     }
   }
 
-  async getBrowsedLinks(agentName: string, collectionNumber: string = "0") {
+  async getBrowsedLinks(agentName: string, collectionNumber: string = '0') {
     try {
       const response = await axios.get<{ links: string[] }>(
         `${this.baseUri}/api/agent/${agentName}/browsed_links/${collectionNumber}`,
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.links;
     } catch (error) {
@@ -1023,15 +1027,12 @@ export default class AGiXTSDK {
     }
   }
 
-  async deleteBrowsedLink(agentName: string, link: string, collectionNumber: string = "0") {
+  async deleteBrowsedLink(agentName: string, link: string, collectionNumber: string = '0') {
     try {
-      const response = await axios.delete<{ message: string }>(
-        `${this.baseUri}/api/agent/${agentName}/browsed_links`,
-        {
-          headers: this.headers,
-          data: { link, collection_number: collectionNumber },
-        }
-      );
+      const response = await axios.delete<{ message: string }>(`${this.baseUri}/api/agent/${agentName}/browsed_links`, {
+        headers: this.headers,
+        data: { link, collection_number: collectionNumber },
+      });
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
@@ -1042,7 +1043,7 @@ export default class AGiXTSDK {
     try {
       const response = await axios.get<{ external_sources: any }>(
         `${this.baseUri}/api/agent/${agentName}/memory/external_sources/${collectionNumber}`,
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.external_sources;
     } catch (error) {
@@ -1060,7 +1061,7 @@ export default class AGiXTSDK {
             external_source: source,
             collection_number: collectionNumber,
           },
-        }
+        },
       );
       return response.data.message;
     } catch (error) {
@@ -1107,7 +1108,7 @@ export default class AGiXTSDK {
       const response = await axios.post<{ url: string }>(
         `${this.baseUri}/api/agent/${agentName}/text_to_speech`,
         { text },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.url;
     } catch (error) {
@@ -1124,7 +1125,7 @@ export default class AGiXTSDK {
           message,
           conversation_name: conversationName,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.message;
     } catch (error) {
@@ -1134,10 +1135,9 @@ export default class AGiXTSDK {
 
   async getConversationsWithIds() {
     try {
-      const response = await axios.get<{ conversations_with_ids: any }>(
-        `${this.baseUri}/api/conversations`,
-        { headers: this.headers }
-      );
+      const response = await axios.get<{ conversations_with_ids: any }>(`${this.baseUri}/api/conversations`, {
+        headers: this.headers,
+      });
       return response.data.conversations_with_ids;
     } catch (error) {
       return this.handleError(error);
@@ -1149,10 +1149,10 @@ export default class AGiXTSDK {
     userInput: string,
     websearch: boolean = false,
     websearchDepth: number = 3,
-    conversationName: string = "",
+    conversationName: string = '',
     logUserInput: boolean = true,
     logOutput: boolean = true,
-    enableNewCommand: boolean = true
+    enableNewCommand: boolean = true,
   ) {
     try {
       const response = await axios.post<{ response: string }>(
@@ -1166,7 +1166,7 @@ export default class AGiXTSDK {
           log_output: logOutput,
           enable_new_command: enableNewCommand,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       );
       return response.data.response;
     } catch (error) {
