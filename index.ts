@@ -259,7 +259,21 @@ export default class AGiXTSDK {
       return this.handleError(error);
     }
   }
-
+  async forkConversation(conversationName: string, messageId: string) {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/api/conversation/fork`,
+        {
+          conversation_name: conversationName,
+          message_id: messageId,
+        },
+        { headers: this.headers },
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
   async newConversation(agentName: string, conversationName: string, conversationContent: any[] = []) {
     try {
       const response = await axios.post<{ conversation_history: any[] }>(
