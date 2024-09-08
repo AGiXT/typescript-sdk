@@ -779,6 +779,15 @@ export default class AGiXTSDK {
     }
   }
 
+  async getAgentExtensions(agentName: string) {
+    try {
+      const response = await axios.get<{ extensions: any[] }>(`${this.baseUri}/api/agent/${agentName}/extensions`, { headers: this.headers });
+      return response.data.extensions;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+  
   async getCommandArgs(commandName: string) {
     try {
       const response = await axios.get<{ command_args: any }>(`${this.baseUri}/api/extensions/${commandName}/args`, {
