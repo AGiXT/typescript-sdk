@@ -1091,6 +1091,33 @@ export default class AGiXTSDK {
       return this.handleError(error);
     }
   }
+  async getPersona(
+    agentName: string,
+  ) {
+    try {
+      const response = await axios.get<{ persona: any }>(
+        `${this.baseUri}/api/agent/${agentName}/persona`,
+        { headers: this.headers },
+      );
+      return response.data.persona;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+  async updatePersona(
+    agentName: string, persona: string
+  ) {
+    try {
+      const response = await axios.put<{ message: string }>(
+        `${this.baseUri}/api/agent/${agentName}/persona`,
+        { persona: persona },
+        { headers: this.headers },
+      );
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
   async promptAgentWithVoice(
     agentName: string,
     base64Audio: string,
