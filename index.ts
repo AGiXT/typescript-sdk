@@ -360,7 +360,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async wipeAgentMemories(agentName: string, collectionNumber = 0) {
+  async wipeAgentMemories(agentName: string, collectionNumber: string = "0") {
     try {
       const response = await axios.delete(`${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}`, {
         headers: this.headers,
@@ -799,7 +799,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnText(agentName: string, userInput: string, text: string, collectionNumber = 0) {
+  async learnText(agentName: string, userInput: string, text: string, collectionNumber: string = "0") {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/learn/text`,
@@ -816,7 +816,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnUrl(agentName: string, url: string, collectionNumber = 0) {
+  async learnUrl(agentName: string, url: string, collectionNumber: string = "0") {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/learn/url`,
@@ -829,7 +829,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnFile(agentName: string, fileName: string, fileContent: string, collectionNumber = 0) {
+  async learnFile(agentName: string, fileName: string, fileContent: string, collectionNumber: string = "0") {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/learn/file`,
@@ -908,7 +908,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async getAgentMemories(agentName: string, userInput: string, limit = 5, minRelevanceScore = 0.5, collectionNumber = 0) {
+  async getAgentMemories(agentName: string, userInput: string, limit = 5, minRelevanceScore = 0.5, collectionNumber: string = "0") {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}/query`,
@@ -925,7 +925,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async deleteAgentMemory(agentName: string, memoryId: string, collectionNumber = 0) {
+  async deleteAgentMemory(agentName: string, memoryId: string, collectionNumber: string = "0") {
     try {
       const response = await axios.delete(`${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}/${memoryId}`, {
         headers: this.headers,
