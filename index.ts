@@ -1,5 +1,11 @@
 import axios, { AxiosRequestConfig } from 'axios';
-
+type Conversation = {
+  id: string;
+  name: string;
+  has_notifications: boolean;
+  created_at: string;
+  updated_at: string;
+};
 export default class AGiXTSDK {
   private baseUri: string;
   private headers: AxiosRequestConfig['headers'];
@@ -186,13 +192,21 @@ export default class AGiXTSDK {
     }
   }
 
-  async getConversations(agentName?: string) {
-    const url = agentName ? `${this.baseUri}/api/${agentName}/conversations` : `${this.baseUri}/api/conversations`;
+  async getConversations(objects: boolean = false, agentName?: string) {
+    const url = objects
+      ? `${this.baseUri}/v1/conversations`
+      : agentName
+        ? `${this.baseUri}/api/${agentName}/conversations`
+        : `${this.baseUri}/api/conversations`;
 
     try {
-      const response = await axios.get<{ conversations: string[] }>(url, {
-        headers: this.headers,
-      });
+      const response = objects
+        ? await axios.get<{ conversations: Conversation[] }>(url, {
+            headers: this.headers,
+          })
+        : await axios.get<{ conversations: string[] }>(url, {
+            headers: this.headers,
+          });
       return response.data.conversations;
     } catch (error) {
       return this.handleError(error);
@@ -225,21 +239,44 @@ export default class AGiXTSDK {
     }
   }
 
-  async getConversation(conversationName = '', limit = 100, page = 1, agentName?: string) {
-    try {
-      const response = await axios.request({
-        method: 'get',
-        url: `${this.baseUri}/api/conversation/${conversationName}`,
-        headers: this.headers,
-        params: {
-          agent_name: agentName,
-          limit: limit,
-          page: page,
-        },
-      });
-      return response.data.conversation_history;
-    } catch (error) {
-      return this.handleError(error);
+  async getConversation(conversationName = '', conversationId = '', limit = 100, page = 1, agentName?: string) {
+    if (!conversationName && !conversationId) {
+      throw new Error('Must define either conversationName or conversationId.');
+    }
+    if (conversationId && conversationName) {
+      throw new Error('Must define conversationName or conversationId, not both.');
+    }
+    if (conversationId) {
+      try {
+        const response = await axios.request({
+          method: 'get',
+          url: `${this.baseUri}/v1/conversation/${conversationId}`,
+          headers: this.headers,
+          params: {
+            limit: limit,
+            page: page,
+          },
+        });
+        return response.data.conversation_history;
+      } catch (error) {
+        return this.handleError(error);
+      }
+    } else {
+      try {
+        const response = await axios.request({
+          method: 'get',
+          url: `${this.baseUri}/api/conversation/${conversationName}`,
+          headers: this.headers,
+          params: {
+            agent_name: agentName,
+            limit: limit,
+            page: page,
+          },
+        });
+        return response.data.conversation_history;
+      } catch (error) {
+        return this.handleError(error);
+      }
     }
   }
 
@@ -360,7 +397,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async wipeAgentMemories(agentName: string, collectionNumber: string = "0") {
+  async wipeAgentMemories(agentName: string, collectionNumber: string = '0') {
     try {
       const response = await axios.delete(`${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}`, {
         headers: this.headers,
@@ -781,13 +818,15 @@ export default class AGiXTSDK {
 
   async getAgentExtensions(agentName: string) {
     try {
-      const response = await axios.get<{ extensions: any[] }>(`${this.baseUri}/api/agent/${agentName}/extensions`, { headers: this.headers });
+      const response = await axios.get<{ extensions: any[] }>(`${this.baseUri}/api/agent/${agentName}/extensions`, {
+        headers: this.headers,
+      });
       return response.data.extensions;
     } catch (error) {
       return this.handleError(error);
     }
   }
-  
+
   async getCommandArgs(commandName: string) {
     try {
       const response = await axios.get<{ command_args: any }>(`${this.baseUri}/api/extensions/${commandName}/args`, {
@@ -799,7 +838,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnText(agentName: string, userInput: string, text: string, collectionNumber: string = "0") {
+  async learnText(agentName: string, userInput: string, text: string, collectionNumber: string = '0') {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/learn/text`,
@@ -816,7 +855,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnUrl(agentName: string, url: string, collectionNumber: string = "0") {
+  async learnUrl(agentName: string, url: string, collectionNumber: string = '0') {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/learn/url`,
@@ -829,7 +868,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async learnFile(agentName: string, fileName: string, fileContent: string, collectionNumber: string = "0") {
+  async learnFile(agentName: string, fileName: string, fileContent: string, collectionNumber: string = '0') {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/learn/file`,
@@ -908,7 +947,13 @@ export default class AGiXTSDK {
     }
   }
 
-  async getAgentMemories(agentName: string, userInput: string, limit = 5, minRelevanceScore = 0.5, collectionNumber: string = "0") {
+  async getAgentMemories(
+    agentName: string,
+    userInput: string,
+    limit = 5,
+    minRelevanceScore = 0.5,
+    collectionNumber: string = '0',
+  ) {
     try {
       const response = await axios.post(
         `${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}/query`,
@@ -925,7 +970,7 @@ export default class AGiXTSDK {
     }
   }
 
-  async deleteAgentMemory(agentName: string, memoryId: string, collectionNumber: string = "0") {
+  async deleteAgentMemory(agentName: string, memoryId: string, collectionNumber: string = '0') {
     try {
       const response = await axios.delete(`${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}/${memoryId}`, {
         headers: this.headers,
@@ -1091,22 +1136,17 @@ export default class AGiXTSDK {
       return this.handleError(error);
     }
   }
-  async getPersona(
-    agentName: string,
-  ) {
+  async getPersona(agentName: string) {
     try {
-      const response = await axios.get<{ persona: any }>(
-        `${this.baseUri}/api/agent/${agentName}/persona`,
-        { headers: this.headers },
-      );
+      const response = await axios.get<{ persona: any }>(`${this.baseUri}/api/agent/${agentName}/persona`, {
+        headers: this.headers,
+      });
       return response.data.persona;
     } catch (error) {
       return this.handleError(error);
     }
   }
-  async updatePersona(
-    agentName: string, persona: string
-  ) {
+  async updatePersona(agentName: string, persona: string) {
     try {
       const response = await axios.put<{ message: string }>(
         `${this.baseUri}/api/agent/${agentName}/persona`,
