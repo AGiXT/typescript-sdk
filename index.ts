@@ -58,7 +58,7 @@ export default class AGiXTSDK {
 
   async getAllProviders(): Promise<string[]> {
     try {
-      const response = await axios.get<{ providers: any[] }>(`${this.baseUri}/api/providers`, { headers: this.headers });
+      const response = await axios.get<{ providers: any[] }>(`${this.baseUri}/v1/providers`, { headers: this.headers });
       return response.data.providers;
     } catch (error) {
       return [this.handleError(error)];
@@ -1261,6 +1261,31 @@ export default class AGiXTSDK {
       return response.data.response;
     } catch (error) {
       return this.handleError(error);
+    }
+  }
+  async getCompanies(): Promise<any[]> {
+    try {
+      const response = await axios.get<any[]>(`${this.baseUri}/v1/companies`, { headers: this.headers });
+      return response.data;
+    } catch (error) {
+      return [this.handleError(error)];
+    }
+  }
+  async getInvitations(company_id?: string): Promise<any[]> {
+    try {
+      let response;
+      if (!company_id) {
+        response = await axios.get<{ invitations: any[] }>(`${this.baseUri}/v1/invitations`, {
+          headers: this.headers,
+        });
+      } else {
+        response = await axios.get<{ invitations: any[] }>(`${this.baseUri}/v1/invitations/${company_id}`, {
+          headers: this.headers,
+        });
+      }
+      return response.data.invitations;
+    } catch (error) {
+      return [this.handleError(error)];
     }
   }
 }
