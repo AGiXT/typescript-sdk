@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
+
 type Conversation = {
   id: string;
   name: string;
@@ -6,18 +7,19 @@ type Conversation = {
   created_at: string;
   updated_at: string;
 };
+
 export default class AGiXTSDK {
   private baseUri: string;
   private headers: AxiosRequestConfig['headers'];
+  private verbose: boolean;
 
-  constructor(config: { baseUri: string; apiKey?: string }) {
+  constructor(config: { baseUri?: string; apiKey?: string; verbose?: boolean }) {
     this.baseUri = config.baseUri || 'http://localhost:7437';
+    this.verbose = config.verbose || false;
     if (config.apiKey) {
-      if (config.apiKey.includes('Bearer ')) {
-        config.apiKey = config.apiKey.replace('Bearer ', '');
-      }
+      const apiKey = config.apiKey.replace('Bearer ', '').replace('bearer ', '');
       this.headers = {
-        Authorization: `Bearer ${config.apiKey}`,
+        Authorization: apiKey,
         'Content-Type': 'application/json',
       };
     } else {
@@ -31,46 +33,150 @@ export default class AGiXTSDK {
     }
   }
 
-  private handleError(error: any) {
-    //console.error(`Error: ${error}`);
-    return `Error: ${error}`;
+  private handleError(error: any): string {
+    console.error(`Error: ${error}`);
+    throw new Error(`Unable to retrieve data. ${error}`);
   }
 
-  async getProviders(): Promise<string[]> {
+  private parseResponse(response: any): void {
+    if (this.verbose) {
+      console.log(`Status Code: ${response.status}`);
+      console.log('Response JSON:');
+      if (response.status === 200) {
+        console.log(response.data);
+      } else {
+        console.log(response.data);
+      }
+      console.log('\n');
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Auth Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async login(email: string, otp: string): Promise<string | undefined> {
     try {
-      const response = await axios.get<{ providers: string[] }>(`${this.baseUri}/api/provider`, { headers: this.headers });
-      return response.data.providers;
+      const response = await axios.post(
+        `${this.baseUri}/v1/login`,
+        { email, token: otp },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      const data = response.data;
+      if (data.detail && data.detail.includes('?token=')) {
+        const token = data.detail.split('token=')[1];
+        this.headers = { ...this.headers, Authorization: token };
+        if (this.verbose) {
+          console.log(`Log in at ${data.detail}`);
+        }
+        return token;
+      }
+      return undefined;
     } catch (error) {
-      return [this.handleError(error)];
+      return this.handleError(error);
+    }
+  }
+
+  async registerUser(email: string, firstName: string, lastName: string): Promise<string> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/user`,
+        { email, first_name: firstName, last_name: lastName },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      const data = response.data;
+      if (data.otp_uri) {
+        const mfaToken = data.otp_uri.split('secret=')[1].split('&')[0];
+        // Note: In a real implementation, you'd use a TOTP library
+        await this.login(email, mfaToken);
+        return data.otp_uri;
+      }
+      return JSON.stringify(data);
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async userExists(email: string): Promise<boolean> {
+    try {
+      const response = await axios.get(`${this.baseUri}/v1/user/exists?email=${encodeURIComponent(email)}`, {
+        headers: this.headers,
+      });
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async updateUser(updates: any): Promise<any> {
+    try {
+      const response = await axios.put(`${this.baseUri}/v1/user`, updates, { headers: this.headers });
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getUser(): Promise<any> {
+    try {
+      const response = await axios.get(`${this.baseUri}/v1/user`, { headers: this.headers });
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Provider Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async getProviders(): Promise<any[]> {
+    try {
+      const response = await axios.get(`${this.baseUri}/v1/providers`, { headers: this.headers });
+      this.parseResponse(response);
+      const data = response.data;
+      if (Array.isArray(data)) {
+        return data;
+      }
+      return data.providers || data;
+    } catch (error) {
+      return this.handleError(error);
     }
   }
 
   async getProvidersByService(service: string): Promise<string[]> {
     try {
-      const response = await axios.get<{ providers: string[] }>(`${this.baseUri}/api/providers/service/${service}`, {
-        headers: this.headers,
-      });
-      return response.data.providers;
+      const providers = await this.getProviders();
+      const filtered: string[] = [];
+      for (const provider of providers) {
+        if (typeof provider === 'object' && provider.service === service) {
+          filtered.push(provider.name || provider);
+        } else if (typeof provider === 'string') {
+          filtered.push(provider);
+        }
+      }
+      return filtered.length
+        ? filtered
+        : providers.map((p: any) => (typeof p === 'object' ? p.name || p : p));
     } catch (error) {
-      return [this.handleError(error)];
+      return this.handleError(error);
     }
   }
 
-  async getAllProviders(): Promise<string[]> {
+  async getProviderSettings(providerName: string): Promise<any> {
     try {
-      const response = await axios.get<{ providers: any[] }>(`${this.baseUri}/v1/providers`, { headers: this.headers });
-      return response.data.providers;
-    } catch (error) {
-      return [this.handleError(error)];
-    }
-  }
-
-  async getProviderSettings(providerName: string) {
-    try {
-      const response = await axios.get<{ settings: any }>(`${this.baseUri}/api/provider/${providerName}`, {
-        headers: this.headers,
-      });
-      return response.data.settings;
+      const providers = await this.getProviders();
+      for (const provider of providers) {
+        if (typeof provider === 'object' && provider.name === providerName) {
+          return provider.settings || provider;
+        }
+      }
+      return {};
     } catch (error) {
       return this.handleError(error);
     }
@@ -78,35 +184,68 @@ export default class AGiXTSDK {
 
   async getEmbedProviders(): Promise<string[]> {
     try {
-      const response = await axios.get<{ providers: string[] }>(`${this.baseUri}/api/embedding_providers`, {
-        headers: this.headers,
-      });
-      return response.data.providers;
+      const providers = await this.getProviders();
+      const embedProviders: string[] = [];
+      for (const provider of providers) {
+        if (typeof provider === 'object' && provider.supports_embeddings) {
+          embedProviders.push(provider.name || provider);
+        } else if (typeof provider === 'string') {
+          embedProviders.push(provider);
+        }
+      }
+      return embedProviders;
     } catch (error) {
-      return [this.handleError(error)];
+      return this.handleError(error);
     }
   }
 
-  async addAgent(agentName: string, settings: any = {}) {
+  async getEmbedders(): Promise<any> {
     try {
-      const response = await axios.post<{ [key: string]: any }>(
-        `${this.baseUri}/api/agent`,
+      const providers = await this.getProviders();
+      const embedders: any = {};
+      for (const provider of providers) {
+        if (typeof provider === 'object' && provider.supports_embeddings) {
+          embedders[provider.name] = provider;
+        }
+      }
+      return embedders;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Agent Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async addAgent(
+    agentName: string,
+    settings: any = {},
+    commands: any = {},
+    trainingUrls: string[] = [],
+  ): Promise<any> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/agent`,
         {
           agent_name: agentName,
           settings,
+          commands,
+          training_urls: trainingUrls,
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async importAgent(agentName: string, settings: any = {}, commands: any = {}) {
+  async importAgent(agentName: string, settings: any = {}, commands: any = {}): Promise<any> {
     try {
-      const response = await axios.post<{ [key: string]: any }>(
-        `${this.baseUri}/api/agent/import`,
+      const response = await axios.post(
+        `${this.baseUri}/v1/agent/import`,
         {
           agent_name: agentName,
           settings,
@@ -114,764 +253,909 @@ export default class AGiXTSDK {
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async renameAgent(agentName: string, newName: string) {
+  async renameAgent(agentId: string, newName: string): Promise<any> {
     try {
       const response = await axios.patch(
-        `${this.baseUri}/api/agent/${agentName}`,
+        `${this.baseUri}/v1/agent/${agentId}`,
         { new_name: newName },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async updateAgentSettings(agentName: string, settings: any) {
+  async updateAgentSettings(agentId: string, settings: any, agentName: string = ''): Promise<string> {
     try {
       const response = await axios.put(
-        `${this.baseUri}/api/agent/${agentName}`,
+        `${this.baseUri}/v1/agent/${agentId}`,
         {
+          agent_name: agentName,
           settings,
-          agent_name: agentName,
+          commands: {},
+          training_urls: [],
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async updateAgentCommands(agentName: string, commands: any) {
+  async updateAgentCommands(agentId: string, commands: any): Promise<string> {
     try {
       const response = await axios.put(
-        `${this.baseUri}/api/agent/${agentName}/commands`,
-        {
-          commands,
-          agent_name: agentName,
-        },
+        `${this.baseUri}/v1/agent/${agentId}/commands`,
+        { commands },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async deleteAgent(agentName: string) {
+  async deleteAgent(agentId: string): Promise<string> {
     try {
-      const response = await axios.delete(`${this.baseUri}/api/agent/${agentName}`, { headers: this.headers });
+      const response = await axios.delete(`${this.baseUri}/v1/agent/${agentId}`, { headers: this.headers });
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getAgents() {
+  async getAgents(): Promise<any[]> {
     try {
-      const response = await axios.get<{ agents: any[] }>(`${this.baseUri}/api/agent`, { headers: this.headers });
+      const response = await axios.get(`${this.baseUri}/v1/agent`, { headers: this.headers });
+      this.parseResponse(response);
       return response.data.agents;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getAgentConfig(agentName: string) {
+  async getAgentConfig(agentId: string): Promise<any> {
     try {
-      const response = await axios.get<{ agent: any }>(`${this.baseUri}/api/agent/${agentName}`, { headers: this.headers });
+      const response = await axios.get(`${this.baseUri}/v1/agent/${agentId}`, { headers: this.headers });
+      this.parseResponse(response);
       return response.data.agent;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getConversations(objects: boolean = false, agentName?: string) {
-    const url = objects
-      ? `${this.baseUri}/v1/conversations`
-      : agentName
-        ? `${this.baseUri}/api/${agentName}/conversations`
-        : `${this.baseUri}/api/conversations`;
-
+  async getAgentIdByName(agentName: string): Promise<string | null> {
     try {
-      const response = objects
-        ? await axios.get<{ conversations: Conversation[] }>(url, {
-            headers: this.headers,
-          })
-        : await axios.get<{ conversations: string[] }>(url, {
-            headers: this.headers,
-          });
-      return response.data.conversations;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-
-  async addConversationFeedback(
-    positive: boolean,
-    agentName: string,
-    message: string,
-    userInput: string,
-    feedback: string,
-    conversationName: string,
-  ) {
-    try {
-      const response = await axios.post(
-        `${this.baseUri}/api/agent/${agentName}/feedback`,
-        {
-          positive,
-          feedback,
-          message,
-          user_input: userInput,
-          conversation_name: conversationName,
-        },
-        { headers: this.headers },
-      );
-      return response.data.message;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-
-  async getConversation(conversationName = '', conversationId = '', limit = 100, page = 1, agentName?: string) {
-    if (!conversationName && !conversationId) {
-      throw new Error('Must define either conversationName or conversationId.');
-    }
-    if (conversationId && conversationName) {
-      throw new Error('Must define conversationName or conversationId, not both.');
-    }
-    if (conversationId) {
-      try {
-        const response = await axios.request({
-          method: 'get',
-          url: `${this.baseUri}/v1/conversation/${conversationId}`,
-          headers: this.headers,
-          params: {
-            limit: limit,
-            page: page,
-          },
-        });
-        return response.data.conversation_history;
-      } catch (error) {
-        return this.handleError(error);
+      const agents = await this.getAgents();
+      for (const agent of agents) {
+        if (typeof agent === 'object' && agent.name === agentName) {
+          return agent.id;
+        }
       }
-    } else {
-      try {
-        const response = await axios.request({
-          method: 'get',
-          url: `${this.baseUri}/api/conversation/${conversationName}`,
-          headers: this.headers,
-          params: {
-            agent_name: agentName,
-            limit: limit,
-            page: page,
-          },
-        });
-        return response.data.conversation_history;
-      } catch (error) {
-        return this.handleError(error);
-      }
+      return null;
+    } catch (error) {
+      return null;
     }
   }
 
-  async renameConversation(agentName: string, conversationName: string, newName: string = '-') {
+  // ─────────────────────────────────────────────────────────────
+  // Conversation Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async getConversations(agentId: string = ''): Promise<any[]> {
     try {
-      const response = await axios.put<{ conversation_name: string }>(
-        `${this.baseUri}/api/conversation`,
-        {
-          conversation_name: conversationName,
-          new_conversation_name: newName,
-          agent_name: agentName,
-        },
-        { headers: this.headers },
-      );
-      return response.data.conversation_name;
+      const url = agentId ? `${this.baseUri}/v1/conversations?agent_id=${agentId}` : `${this.baseUri}/v1/conversations`;
+      const response = await axios.get(url, { headers: this.headers });
+      this.parseResponse(response);
+      const data = response.data;
+      if (Array.isArray(data)) {
+        return data;
+      }
+      return data.conversations || data;
     } catch (error) {
       return this.handleError(error);
     }
   }
-  async forkConversation(conversationName: string, messageId: string) {
+
+  async getConversationsWithIds(): Promise<any[]> {
     try {
-      const response = await axios.post(
-        `${this.baseUri}/api/conversation/fork`,
-        {
-          conversation_name: conversationName,
-          message_id: messageId,
-        },
-        { headers: this.headers },
-      );
-      return response.data.message;
+      const response = await axios.get(`${this.baseUri}/v1/conversations`, { headers: this.headers });
+      this.parseResponse(response);
+      const data = response.data;
+      if (Array.isArray(data)) {
+        return data;
+      }
+      return data.conversations_with_ids || data.conversations || data;
     } catch (error) {
       return this.handleError(error);
     }
   }
-  async newConversation(agentName: string, conversationName: string, conversationContent: any[] = []) {
+
+  async getConversation(conversationId: string, limit: number = 100, page: number = 1): Promise<any[]> {
     try {
-      const response = await axios.post<{ conversation_history: any[] }>(
-        `${this.baseUri}/api/conversation`,
-        {
-          conversation_name: conversationName,
-          agent_name: agentName,
-          conversation_content: conversationContent,
-        },
-        { headers: this.headers },
-      );
+      const response = await axios.get(`${this.baseUri}/v1/conversation/${conversationId}`, {
+        headers: this.headers,
+        params: { limit, page },
+      });
+      this.parseResponse(response);
       return response.data.conversation_history;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async deleteConversation(conversationName: string, agentName?: string) {
-    try {
-      const response = await axios.delete(`${this.baseUri}/api/conversation`, {
-        headers: this.headers,
-        data: {
-          conversation_name: conversationName,
-          agent_name: agentName,
-        },
-      });
-      return response.data.message;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-
-  async updateConversationMessage(conversationName: string, messageId: string, newMessage: string) {
-    try {
-      const response = await axios.put(
-        `${this.baseUri}/api/conversation/message/${messageId}`,
-        {
-          conversation_name: conversationName,
-          new_message: newMessage,
-        },
-        { headers: this.headers },
-      );
-      return response.data.message;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-
-  async deleteConversationMessage(conversationName: string, messageId: string) {
-    try {
-      const response = await axios.delete(`${this.baseUri}/api/conversation/message/${messageId}`, {
-        headers: this.headers,
-        data: {
-          conversation_name: conversationName,
-        },
-      });
-      return response.data.message;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-
-  async importAgentMemories(agentName: string, memories: any[]) {
+  async forkConversation(conversationId: string, messageId: string): Promise<any> {
     try {
       const response = await axios.post(
-        `${this.baseUri}/api/agent/${agentName}/memory/import`,
+        `${this.baseUri}/v1/conversation/fork/${conversationId}/${messageId}`,
+        {},
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async newConversation(
+    agentId: string,
+    conversationName: string,
+    conversationContent: any[] = [],
+  ): Promise<any> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/conversation`,
         {
-          memories: memories,
+          conversation_name: conversationName,
+          agent_id: agentId,
+          conversation_content: conversationContent,
         },
         { headers: this.headers },
       );
-      return response.data.message;
+      this.parseResponse(response);
+      return response.data;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async exportAgentMemories(agentName: string) {
+  async renameConversation(conversationId: string, newName: string = '-'): Promise<any> {
     try {
-      const response = await axios.get(`${this.baseUri}/api/agent/${agentName}/memory/export`, { headers: this.headers });
-      return response.data.memories;
+      const response = await axios.put(
+        `${this.baseUri}/v1/conversation/${conversationId}`,
+        { new_conversation_name: newName },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async wipeAgentMemories(agentName: string, collectionNumber: string = '0') {
+  async deleteConversation(conversationId: string): Promise<string> {
     try {
-      const response = await axios.delete(`${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}`, {
+      const response = await axios.delete(`${this.baseUri}/v1/conversation/${conversationId}`, {
         headers: this.headers,
       });
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async promptAgent(agentName: string, promptName: string, promptArgs: any) {
+  async deleteConversationMessage(conversationId: string, messageId: string): Promise<string> {
     try {
-      const response = await axios.post<{ response: string }>(
-        `${this.baseUri}/api/agent/${agentName}/prompt`,
+      const response = await axios.delete(
+        `${this.baseUri}/v1/conversation/${conversationId}/message/${messageId}`,
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async updateConversationMessage(
+    conversationId: string,
+    messageId: string,
+    newMessage: string,
+  ): Promise<string> {
+    try {
+      const response = await axios.put(
+        `${this.baseUri}/v1/conversation/${conversationId}/message/${messageId}`,
+        { new_message: newMessage },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async newConversationMessage(
+    role: string = 'user',
+    message: string = '',
+    conversationId: string = '',
+  ): Promise<string> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/conversation/${conversationId}/message`,
+        { role, message },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getConversationIdByName(conversationName: string): Promise<string | null> {
+    try {
+      const conversations = await this.getConversationsWithIds();
+      for (const conv of conversations) {
+        if (typeof conv === 'object' && conv.name === conversationName) {
+          return conv.id;
+        }
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Agent Prompt Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async promptAgent(agentId: string, promptName: string, promptArgs: any): Promise<string> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/agent/${agentId}/prompt`,
         {
           prompt_name: promptName,
           prompt_args: promptArgs,
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.response;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async instruct(agentName: string, userInput: string, conversation: string) {
-    return this.promptAgent(agentName, 'instruct', {
+  async instruct(agentId: string, userInput: string, conversationId: string): Promise<string> {
+    return this.promptAgent(agentId, 'instruct', {
       user_input: userInput,
       disable_memory: true,
-      conversation_name: conversation,
+      conversation_name: conversationId,
     });
   }
 
-  async chat(agentName: string, userInput: string, conversation: string, contextResults = 4) {
-    return this.promptAgent(agentName, 'Chat', {
+  async chat(
+    agentId: string,
+    userInput: string,
+    conversationId: string,
+    contextResults: number = 4,
+  ): Promise<string> {
+    return this.promptAgent(agentId, 'Chat', {
       user_input: userInput,
       context_results: contextResults,
-      conversation_name: conversation,
+      conversation_name: conversationId,
       disable_memory: true,
     });
   }
 
-  async smartinstruct(agentName: string, userInput: string, conversation: string) {
-    return this.runChain('Smart Instruct', userInput, agentName, false, 1, {
-      conversation_name: conversation,
-      disable_memory: true,
+  async smartinstruct(agentId: string, userInput: string, conversationId: string): Promise<string> {
+    return this.runChain({
+      chainName: 'Smart Instruct',
+      userInput,
+      agentId,
+      allResponses: false,
+      fromStep: 1,
+      chainArgs: {
+        conversation_name: conversationId,
+        disable_memory: true,
+      },
     });
   }
 
-  async smartchat(agentName: string, userInput: string, conversation: string) {
-    return this.runChain('Smart Chat', userInput, agentName, false, 1, {
-      conversation_name: conversation,
-      disable_memory: true,
+  async smartchat(agentId: string, userInput: string, conversationId: string): Promise<string> {
+    return this.runChain({
+      chainName: 'Smart Chat',
+      userInput,
+      agentId,
+      allResponses: false,
+      fromStep: 1,
+      chainArgs: {
+        conversation_name: conversationId,
+        disable_memory: true,
+      },
     });
   }
 
-  async getCommands(agentName: string) {
+  // ─────────────────────────────────────────────────────────────
+  // Command Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async getCommands(agentId: string): Promise<any> {
     try {
-      const response = await axios.get<{ commands: any }>(`${this.baseUri}/api/agent/${agentName}/command`, {
+      const response = await axios.get(`${this.baseUri}/v1/agent/${agentId}/command`, {
         headers: this.headers,
       });
+      this.parseResponse(response);
       return response.data.commands;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async executeCommand(agentName: string, commandName: string, commandArgs: any, conversation: string) {
-    try {
-      const response = await axios.post<{ response: string }>(
-        `${this.baseUri}/api/agent/${agentName}/command`,
-        {
-          command_name: commandName,
-          command_args: commandArgs,
-          conversation_name: conversation,
-        },
-        { headers: this.headers },
-      );
-      return response.data.response;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-  async toggleCommand(agentName: string, commandName: string, enable: boolean) {
+  async toggleCommand(agentId: string, commandName: string, enable: boolean): Promise<string> {
     try {
       const response = await axios.patch(
-        `${this.baseUri}/api/agent/${agentName}/command`,
+        `${this.baseUri}/v1/agent/${agentId}/command`,
         { command_name: commandName, enable },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getChains() {
+  async executeCommand(
+    agentId: string,
+    commandName: string,
+    commandArgs: any,
+    conversationId: string = '',
+  ): Promise<string> {
     try {
-      const response = await axios.get<string[]>(`${this.baseUri}/api/chain`, {
-        headers: this.headers,
-      });
+      const response = await axios.post(
+        `${this.baseUri}/v1/agent/${agentId}/command`,
+        {
+          command_name: commandName,
+          command_args: commandArgs,
+          conversation_name: conversationId,
+        },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data.response;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Chain Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async getChains(): Promise<any[]> {
+    try {
+      const response = await axios.get(`${this.baseUri}/v1/chains`, { headers: this.headers });
+      this.parseResponse(response);
       return response.data;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getChain(chainName: string) {
+  async getChain(chainId: string): Promise<any> {
     try {
-      const response = await axios.get<{ chain: any }>(`${this.baseUri}/api/chain/${chainName}`, { headers: this.headers });
+      const response = await axios.get(`${this.baseUri}/v1/chain/${chainId}`, { headers: this.headers });
+      this.parseResponse(response);
+      const data = response.data;
+      if (typeof data === 'object' && Object.keys(data).length === 1) {
+        return Object.values(data)[0];
+      }
+      return data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getChainResponses(chainId: string): Promise<any> {
+    try {
+      const response = await axios.get(`${this.baseUri}/v1/chain/${chainId}/responses`, {
+        headers: this.headers,
+      });
+      this.parseResponse(response);
       return response.data.chain;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getChainResponses(chainName: string) {
+  async getChainArgs(chainId: string): Promise<string[]> {
     try {
-      const response = await axios.get<{ chain: any }>(`${this.baseUri}/api/chain/${chainName}/responses`, {
+      const response = await axios.get(`${this.baseUri}/v1/chain/${chainId}/args`, {
         headers: this.headers,
       });
-      return response.data.chain;
+      this.parseResponse(response);
+      return response.data;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getChainArgs(chainName: string) {
+  async runChain(params: {
+    chainId?: string;
+    chainName?: string;
+    userInput?: string;
+    agentId?: string;
+    allResponses?: boolean;
+    fromStep?: number;
+    chainArgs?: any;
+  }): Promise<any> {
+    const {
+      chainId = '',
+      chainName = '',
+      userInput = '',
+      agentId = '',
+      allResponses = false,
+      fromStep = 1,
+      chainArgs = {},
+    } = params;
     try {
-      const response = await axios.get<{ chain_args: string[] }>(`${this.baseUri}/api/chain/${chainName}/args`, {
-        headers: this.headers,
-      });
-      return response.data.chain_args;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-
-  async runChain(chainName: string, userInput: string, agentName = '', allResponses = false, fromStep = 1, chainArgs = {}) {
-    try {
-      const response = await axios.post<any>(
-        `${this.baseUri}/api/chain/${chainName}/run`,
+      const endpoint = chainId || chainName;
+      const response = await axios.post(
+        `${this.baseUri}/v1/chain/${endpoint}/run`,
         {
           prompt: userInput,
-          agent_override: agentName,
+          agent_override: agentId,
           all_responses: allResponses,
           from_step: fromStep,
           chain_args: chainArgs,
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async runChainStep(chainName: string, stepNumber: number, userInput: string, agentName?: string, chainArgs = {}) {
+  async runChainStep(
+    chainId: string,
+    stepNumber: number,
+    userInput: string,
+    agentId: string = '',
+    chainArgs: any = {},
+  ): Promise<any> {
     try {
-      const response = await axios.post<any>(
-        `${this.baseUri}/api/chain/${chainName}/run/step/${stepNumber}`,
+      const response = await axios.post(
+        `${this.baseUri}/v1/chain/${chainId}/run/step/${stepNumber}`,
         {
           prompt: userInput,
-          agent_override: agentName,
+          agent_override: agentId,
           chain_args: chainArgs,
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async addChain(chainName: string) {
-    try {
-      const response = await axios.post(`${this.baseUri}/api/chain`, { chain_name: chainName }, { headers: this.headers });
-      return response.data.message;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-
-  async importChain(chainName: string, steps: any) {
+  async addChain(chainName: string): Promise<any> {
     try {
       const response = await axios.post(
-        `${this.baseUri}/api/chain/import`,
-        {
-          chain_name: chainName,
-          steps,
-        },
+        `${this.baseUri}/v1/chain`,
+        { chain_name: chainName },
         { headers: this.headers },
       );
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async importChain(chainName: string, steps: any): Promise<string> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/chain/import`,
+        { chain_name: chainName, steps },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async renameChain(chainName: string, newName: string) {
+  async renameChain(chainId: string, newName: string): Promise<string> {
     try {
       const response = await axios.put(
-        `${this.baseUri}/api/chain/${chainName}`,
+        `${this.baseUri}/v1/chain/${chainId}`,
         { new_name: newName },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async deleteChain(chainName: string) {
+  async deleteChain(chainId: string): Promise<string> {
     try {
-      const response = await axios.delete(`${this.baseUri}/api/chain/${chainName}`, { headers: this.headers });
+      const response = await axios.delete(`${this.baseUri}/v1/chain/${chainId}`, { headers: this.headers });
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async addStep(chainName: string, stepNumber: number, agentName: string, promptType: string, prompt: any) {
+  async addStep(
+    chainId: string,
+    stepNumber: number,
+    agentId: string,
+    promptType: string,
+    prompt: any,
+  ): Promise<string> {
     try {
       const response = await axios.post(
-        `${this.baseUri}/api/chain/${chainName}/step`,
+        `${this.baseUri}/v1/chain/${chainId}/step`,
         {
           step_number: stepNumber,
-          agent_name: agentName,
+          agent_id: agentId,
           prompt_type: promptType,
           prompt,
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async updateStep(chainName: string, stepNumber: number, agentName: string, promptType: string, prompt: any) {
+  async updateStep(
+    chainId: string,
+    stepNumber: number,
+    agentId: string,
+    promptType: string,
+    prompt: any,
+  ): Promise<string> {
     try {
       const response = await axios.put(
-        `${this.baseUri}/api/chain/${chainName}/step/${stepNumber}`,
+        `${this.baseUri}/v1/chain/${chainId}/step/${stepNumber}`,
         {
           step_number: stepNumber,
-          agent_name: agentName,
+          agent_id: agentId,
           prompt_type: promptType,
           prompt,
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async moveStep(chainName: string, oldStepNumber: number, newStepNumber: number) {
+  async moveStep(chainId: string, oldStepNumber: number, newStepNumber: number): Promise<string> {
     try {
       const response = await axios.patch(
-        `${this.baseUri}/api/chain/${chainName}/step/move`,
+        `${this.baseUri}/v1/chain/${chainId}/step/move`,
         {
           old_step_number: oldStepNumber,
           new_step_number: newStepNumber,
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async deleteStep(chainName: string, stepNumber: number) {
+  async deleteStep(chainId: string, stepNumber: number): Promise<string> {
     try {
-      const response = await axios.delete(`${this.baseUri}/api/chain/${chainName}/step/${stepNumber}`, {
+      const response = await axios.delete(`${this.baseUri}/v1/chain/${chainId}/step/${stepNumber}`, {
         headers: this.headers,
       });
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async addPrompt(promptName: string, prompt: string, promptCategory = 'Default') {
+  async getChainIdByName(chainName: string): Promise<string | null> {
+    try {
+      const chains = await this.getChains();
+      for (const chain of chains) {
+        if (typeof chain === 'object' && chain.name === chainName) {
+          return chain.id;
+        }
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Prompt Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async addPrompt(promptName: string, prompt: string, promptCategory: string = 'Default'): Promise<any> {
     try {
       const response = await axios.post(
-        `${this.baseUri}/api/prompt/${promptCategory}`,
+        `${this.baseUri}/v1/prompt`,
         {
           prompt_name: promptName,
           prompt,
+          prompt_category: promptCategory,
         },
         { headers: this.headers },
       );
-      return response.data.message;
+      this.parseResponse(response);
+      return response.data;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getPrompt(promptName: string, promptCategory = 'Default') {
+  async getPrompt(promptId: string): Promise<any> {
     try {
-      const response = await axios.get<{ prompt: any }>(`${this.baseUri}/api/prompt/${promptCategory}/${promptName}`, {
+      const response = await axios.get(`${this.baseUri}/v1/prompt/${promptId}`, {
         headers: this.headers,
       });
-      return response.data.prompt;
+      this.parseResponse(response);
+      return response.data;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getPrompts(promptCategory = 'Default') {
+  async getPrompts(promptCategory: string = 'Default'): Promise<any[]> {
     try {
-      const response = await axios.get<{ prompts: string[] }>(`${this.baseUri}/api/prompt/${promptCategory}`, {
+      const response = await axios.get(`${this.baseUri}/v1/prompts`, {
         headers: this.headers,
+        params: { prompt_category: promptCategory },
       });
+      this.parseResponse(response);
       return response.data.prompts;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async addPromptCategory(promptCategory: string) {
+  async getAllPrompts(): Promise<any> {
     try {
-      const response = await axios.get<{ prompts: string[] }>(`${this.baseUri}/api/prompt/${promptCategory}`, {
-        headers: this.headers,
-      });
-      return `Prompt category ${promptCategory} created.`;
+      const response = await axios.get(`${this.baseUri}/v1/prompt/all`, { headers: this.headers });
+      this.parseResponse(response);
+      return response.data;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getPromptCategories() {
+  async getPromptCategories(): Promise<any[]> {
     try {
-      const response = await axios.get<{ prompt_categories: string[] }>(`${this.baseUri}/api/prompt/categories`, {
+      const response = await axios.get(`${this.baseUri}/v1/prompt/categories`, {
         headers: this.headers,
       });
-      return response.data.prompt_categories;
+      this.parseResponse(response);
+      return response.data.categories;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getPromptArgs(promptName: string, promptCategory = 'Default') {
+  async getPromptsByCategoryId(categoryId: string): Promise<any[]> {
     try {
-      const response = await axios.get<{ prompt_args: any }>(
-        `${this.baseUri}/api/prompt/${promptCategory}/${promptName}/args`,
-        { headers: this.headers },
-      );
+      const response = await axios.get(`${this.baseUri}/v1/prompt/category/${categoryId}`, {
+        headers: this.headers,
+      });
+      this.parseResponse(response);
+      return response.data.prompts;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getPromptArgs(promptId: string): Promise<any> {
+    try {
+      const response = await axios.get(`${this.baseUri}/v1/prompt/${promptId}/args`, {
+        headers: this.headers,
+      });
+      this.parseResponse(response);
       return response.data.prompt_args;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async deletePrompt(promptName: string, promptCategory = 'Default') {
+  async deletePrompt(promptId: string): Promise<string> {
     try {
-      const response = await axios.delete(`${this.baseUri}/api/prompt/${promptCategory}/${promptName}`, {
+      const response = await axios.delete(`${this.baseUri}/v1/prompt/${promptId}`, {
         headers: this.headers,
       });
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async updatePrompt(promptName: string, prompt: string, promptCategory = 'Default') {
+  async updatePrompt(promptId: string, prompt: string): Promise<string> {
     try {
       const response = await axios.put(
-        `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`,
-        {
-          prompt,
-          prompt_name: promptName,
-          prompt_category: promptCategory,
-        },
+        `${this.baseUri}/v1/prompt/${promptId}`,
+        { prompt },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async renamePrompt(promptName: string, newName: string, promptCategory = 'Default') {
+  async renamePrompt(promptId: string, newName: string): Promise<string> {
     try {
       const response = await axios.patch(
-        `${this.baseUri}/api/prompt/${promptCategory}/${promptName}`,
+        `${this.baseUri}/v1/prompt/${promptId}`,
         { prompt_name: newName },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getExtensionSettings() {
+  async getPromptIdByName(promptName: string, category: string = 'Default'): Promise<string | null> {
     try {
-      const response = await axios.get<{ extension_settings: any }>(`${this.baseUri}/api/extensions/settings`, {
+      const prompts = await this.getPrompts(category);
+      for (const prompt of prompts) {
+        if (typeof prompt === 'object' && prompt.name === promptName) {
+          return prompt.id;
+        }
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Extension Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async getExtensionSettings(): Promise<any> {
+    try {
+      const response = await axios.get(`${this.baseUri}/v1/extensions/settings`, {
         headers: this.headers,
       });
+      this.parseResponse(response);
       return response.data.extension_settings;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getExtensions() {
+  async getExtensions(): Promise<any[]> {
     try {
-      const response = await axios.get<{ extensions: any[] }>(`${this.baseUri}/api/extensions`, { headers: this.headers });
+      const response = await axios.get(`${this.baseUri}/v1/extensions`, { headers: this.headers });
+      this.parseResponse(response);
+      const data = response.data;
+      if (Array.isArray(data)) {
+        return data;
+      }
+      return data.extensions || data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getAgentExtensions(agentId: string): Promise<any[]> {
+    try {
+      const response = await axios.get(`${this.baseUri}/v1/agent/${agentId}/extensions`, {
+        headers: this.headers,
+      });
+      this.parseResponse(response);
       return response.data.extensions;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getAgentExtensions(agentName: string) {
+  async getCommandArgs(commandName: string): Promise<any> {
     try {
-      const response = await axios.get<{ extensions: any[] }>(`${this.baseUri}/api/agent/${agentName}/extensions`, {
+      const response = await axios.get(`${this.baseUri}/v1/extensions/${commandName}/args`, {
         headers: this.headers,
       });
-      return response.data.extensions;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-
-  async getCommandArgs(commandName: string) {
-    try {
-      const response = await axios.get<{ command_args: any }>(`${this.baseUri}/api/extensions/${commandName}/args`, {
-        headers: this.headers,
-      });
+      this.parseResponse(response);
       return response.data.command_args;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async learnText(agentName: string, userInput: string, text: string, collectionNumber: string = '0') {
+  // ─────────────────────────────────────────────────────────────
+  // Memory Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async learnText(
+    agentId: string,
+    userInput: string,
+    text: string,
+    collectionNumber: string = '0',
+  ): Promise<string> {
     try {
       const response = await axios.post(
-        `${this.baseUri}/api/agent/${agentName}/learn/text`,
+        `${this.baseUri}/v1/agent/${agentId}/learn/text`,
         {
           user_input: userInput,
-          text: text,
+          text,
           collection_number: collectionNumber,
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async learnUrl(agentName: string, url: string, collectionNumber: string = '0') {
+  async learnUrl(agentId: string, url: string, collectionNumber: string = '0'): Promise<string> {
     try {
       const response = await axios.post(
-        `${this.baseUri}/api/agent/${agentName}/learn/url`,
-        { url: url, collection_number: collectionNumber },
+        `${this.baseUri}/v1/agent/${agentId}/learn/url`,
+        { url, collection_number: collectionNumber },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async learnFile(agentName: string, fileName: string, fileContent: string, collectionNumber: string = '0') {
+  async learnFile(
+    agentId: string,
+    fileName: string,
+    fileContent: string,
+    collectionNumber: string = '0',
+  ): Promise<string> {
     try {
       const response = await axios.post(
-        `${this.baseUri}/api/agent/${agentName}/learn/file`,
+        `${this.baseUri}/v1/agent/${agentId}/learn/file`,
         {
           file_name: fileName,
           file_content: fileContent,
@@ -879,6 +1163,7 @@ export default class AGiXTSDK {
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
@@ -886,17 +1171,17 @@ export default class AGiXTSDK {
   }
 
   async learnGithubRepo(
-    agentName: string,
+    agentId: string,
     githubRepo: string,
     githubUser?: string,
     githubToken?: string,
-    githubBranch = 'main',
-    useAgentSettings = false,
-    collectionNumber = '0',
-  ) {
+    githubBranch: string = 'main',
+    useAgentSettings: boolean = false,
+    collectionNumber: string = '0',
+  ): Promise<string> {
     try {
-      const response = await axios.post<{ message: string }>(
-        `${this.baseUri}/api/agent/${agentName}/learn/github`,
+      const response = await axios.post(
+        `${this.baseUri}/v1/agent/${agentId}/learn/github`,
         {
           github_repo: githubRepo,
           github_user: githubUser,
@@ -907,40 +1192,83 @@ export default class AGiXTSDK {
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async learnArxiv(agentName: string, query = '', arxivIds = '', maxResults = 5, collectionNumber = '0') {
+  async learnArxiv(
+    agentId: string,
+    query: string = '',
+    arxivIds: string = '',
+    maxResults: number = 5,
+    collectionNumber: string = '0',
+  ): Promise<string> {
     try {
-      const response = await axios.post<{ message: string }>(
-        `${this.baseUri}/api/agent/${agentName}/learn/arxiv`,
+      const response = await axios.post(
+        `${this.baseUri}/v1/agent/${agentId}/learn/arxiv`,
         {
-          query: query,
+          query,
           arxiv_ids: arxivIds,
           max_results: maxResults,
           collection_number: collectionNumber,
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async agentReader(agentName: string, readerName: string, data: any, collectionNumber = '0') {
+  async agentReader(
+    agentId: string,
+    readerName: string,
+    data: any,
+    collectionNumber: string = '0',
+  ): Promise<string> {
     if (!data.collection_number) {
       data.collection_number = collectionNumber;
     }
     try {
-      const response = await axios.post<{ message: string }>(
-        `${this.baseUri}/api/agent/${agentName}/reader/${readerName}`,
+      const response = await axios.post(
+        `${this.baseUri}/v1/agent/${agentId}/reader/${readerName}`,
         { data },
         { headers: this.headers },
       );
+      this.parseResponse(response);
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async wipeAgentMemories(agentId: string, collectionNumber: string = '0'): Promise<string> {
+    try {
+      const response = await axios.delete(`${this.baseUri}/v1/agent/${agentId}/memory/${collectionNumber}`, {
+        headers: this.headers,
+      });
+      this.parseResponse(response);
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async deleteAgentMemory(
+    agentId: string,
+    memoryId: string,
+    collectionNumber: string = '0',
+  ): Promise<string> {
+    try {
+      const response = await axios.delete(
+        `${this.baseUri}/v1/agent/${agentId}/memory/${collectionNumber}/${memoryId}`,
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
@@ -948,344 +1276,524 @@ export default class AGiXTSDK {
   }
 
   async getAgentMemories(
-    agentName: string,
+    agentId: string,
     userInput: string,
-    limit = 5,
-    minRelevanceScore = 0.5,
+    limit: number = 5,
+    minRelevanceScore: number = 0.0,
     collectionNumber: string = '0',
-  ) {
+  ): Promise<any[]> {
     try {
       const response = await axios.post(
-        `${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}/query`,
+        `${this.baseUri}/v1/agent/${agentId}/memory/${collectionNumber}/query`,
         {
           user_input: userInput,
-          limit: limit,
+          limit,
           min_relevance_score: minRelevanceScore,
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.memories;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async deleteAgentMemory(agentName: string, memoryId: string, collectionNumber: string = '0') {
+  async exportAgentMemories(agentId: string): Promise<any[]> {
     try {
-      const response = await axios.delete(`${this.baseUri}/api/agent/${agentName}/memory/${collectionNumber}/${memoryId}`, {
+      const response = await axios.get(`${this.baseUri}/v1/agent/${agentId}/memory/export`, {
         headers: this.headers,
       });
+      this.parseResponse(response);
+      return response.data.memories;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async importAgentMemories(agentId: string, memories: any[]): Promise<string> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/agent/${agentId}/memory/import`,
+        { memories },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async createDataset(agentName: string, datasetName: string, batchSize = 4) {
+  async createDataset(agentId: string, datasetName: string, batchSize: number = 4): Promise<string> {
     try {
       const response = await axios.post(
-        `${this.baseUri}/api/agent/${agentName}/memory/dataset`,
+        `${this.baseUri}/v1/agent/${agentId}/memory/dataset`,
         {
           dataset_name: datasetName,
           batch_size: batchSize,
         },
         { headers: this.headers },
       );
-      return response.data.message;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-  async executeCommandWithVoice(
-    agentName: string,
-    base64Audio: string,
-    audioFormat = 'm4a',
-    audioVariable = 'data_to_correlate_with_input',
-    commandName = 'Store information in my long term memory',
-    commandArgs = { input: 'Voice transcription from user' },
-    tts = false,
-    conversationName = 'AGiXT Terminal',
-  ) {
-    try {
-      const response = await axios.post(
-        `${this.baseUri}/api/agent/${agentName}/command`,
-        {
-          command_name: 'Command with Voice',
-          command_args: {
-            base64_audio: base64Audio,
-            audio_variable: audioVariable,
-            audio_format: audioFormat,
-            tts: tts,
-            command_name: commandName,
-            command_args: commandArgs,
-          },
-          conversation_name: conversationName,
-        },
-        { headers: this.headers },
-      );
-      return response.data.response;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-  async getEmbeddersDetails() {
-    try {
-      const response = await axios.get<{ embedders: any }>(`${this.baseUri}/api/embedders`, { headers: this.headers });
-      return response.data.embedders;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-
-  async positiveFeedback(
-    agentName: string,
-    message: string,
-    userInput: string,
-    feedback: string,
-    conversationName: string = '',
-  ) {
-    return this.provideFeedback(agentName, message, userInput, feedback, true, conversationName);
-  }
-
-  async negativeFeedback(
-    agentName: string,
-    message: string,
-    userInput: string,
-    feedback: string,
-    conversationName: string = '',
-  ) {
-    return this.provideFeedback(agentName, message, userInput, feedback, false, conversationName);
-  }
-
-  private async provideFeedback(
-    agentName: string,
-    message: string,
-    userInput: string,
-    feedback: string,
-    positive: boolean,
-    conversationName: string,
-  ) {
-    try {
-      const response = await axios.post<{ message: string }>(
-        `${this.baseUri}/api/agent/${agentName}/feedback`,
-        {
-          user_input: userInput,
-          message,
-          feedback,
-          positive,
-          conversation_name: conversationName,
-        },
-        { headers: this.headers },
-      );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getBrowsedLinks(agentName: string, collectionNumber: string = '0') {
+  async getBrowsedLinks(agentId: string, collectionNumber: string = '0'): Promise<string[]> {
     try {
-      const response = await axios.get<{ links: string[] }>(
-        `${this.baseUri}/api/agent/${agentName}/browsed_links/${collectionNumber}`,
+      const response = await axios.get(
+        `${this.baseUri}/v1/agent/${agentId}/browsed_links/${collectionNumber}`,
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.links;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async deleteBrowsedLink(agentName: string, link: string, collectionNumber: string = '0') {
+  async deleteBrowsedLink(agentId: string, link: string, collectionNumber: string = '0'): Promise<string> {
     try {
-      const response = await axios.delete<{ message: string }>(`${this.baseUri}/api/agent/${agentName}/browsed_links`, {
+      const response = await axios.delete(`${this.baseUri}/v1/agent/${agentId}/browsed_links`, {
         headers: this.headers,
         data: { link, collection_number: collectionNumber },
       });
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async getMemoriesExternalSources(agentName: string, collectionNumber: string) {
+  async getMemoriesExternalSources(agentId: string, collectionNumber: string): Promise<any> {
     try {
-      const response = await axios.get<{ external_sources: any }>(
-        `${this.baseUri}/api/agent/${agentName}/memory/external_sources/${collectionNumber}`,
+      const response = await axios.get(
+        `${this.baseUri}/v1/agent/${agentId}/memory/external_sources/${collectionNumber}`,
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.external_sources;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async deleteMemoryExternalSource(agentName: string, source: string, collectionNumber: string) {
+  async deleteMemoryExternalSource(
+    agentId: string,
+    source: string,
+    collectionNumber: string,
+  ): Promise<string> {
     try {
-      const response = await axios.delete<{ message: string }>(
-        `${this.baseUri}/api/agent/${agentName}/memory/external_source`,
-        {
-          headers: this.headers,
-          data: {
-            external_source: source,
-            collection_number: collectionNumber,
-          },
+      const response = await axios.delete(`${this.baseUri}/v1/agent/${agentId}/memory/external_source`, {
+        headers: this.headers,
+        data: {
+          external_source: source,
+          collection_number: collectionNumber,
         },
-      );
+      });
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
-  async getPersona(agentName: string) {
+
+  // ─────────────────────────────────────────────────────────────
+  // Persona Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async getPersona(agentId: string): Promise<any> {
     try {
-      const response = await axios.get<{ persona: any }>(`${this.baseUri}/api/agent/${agentName}/persona`, {
+      const response = await axios.get(`${this.baseUri}/v1/agent/${agentId}/persona`, {
         headers: this.headers,
       });
-      return response.data.persona;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-  async updatePersona(agentName: string, persona: string) {
-    try {
-      const response = await axios.put<{ message: string }>(
-        `${this.baseUri}/api/agent/${agentName}/persona`,
-        { persona: persona },
-        { headers: this.headers },
-      );
+      this.parseResponse(response);
       return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
-  async promptAgentWithVoice(
-    agentName: string,
-    base64Audio: string,
-    audioFormat = 'm4a',
-    audioVariable = 'user_input',
-    promptName = 'Custom Input',
-    promptArgs = {
-      context_results: 6,
-      inject_memories_from_collection_number: 0,
-    },
-    tts = false,
-    conversationName = 'AGiXT Terminal',
-  ) {
+
+  async updatePersona(agentId: string, persona: string): Promise<string> {
     try {
-      const response = await axios.post(
-        `${this.baseUri}/api/agent/${agentName}/command`,
-        {
-          command_name: 'Prompt with Voice',
-          command_args: {
-            base64_audio: base64Audio,
-            audio_variable: audioVariable,
-            audio_format: audioFormat,
-            tts: tts,
-            prompt_name: promptName,
-            prompt_args: promptArgs,
-          },
-          conversation_name: conversationName,
-        },
+      const response = await axios.put(
+        `${this.baseUri}/v1/agent/${agentId}/persona`,
+        { persona },
         { headers: this.headers },
       );
-      return response.data.response;
+      this.parseResponse(response);
+      return response.data.message;
     } catch (error) {
       return this.handleError(error);
     }
   }
-  async textToSpeech(agentName: string, text: string) {
+
+  // ─────────────────────────────────────────────────────────────
+  // Feedback Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async positiveFeedback(
+    agentId: string,
+    message: string,
+    userInput: string,
+    feedback: string,
+    conversationId: string = '',
+  ): Promise<string> {
+    return this.provideFeedback(agentId, message, userInput, feedback, true, conversationId);
+  }
+
+  async negativeFeedback(
+    agentId: string,
+    message: string,
+    userInput: string,
+    feedback: string,
+    conversationId: string = '',
+  ): Promise<string> {
+    return this.provideFeedback(agentId, message, userInput, feedback, false, conversationId);
+  }
+
+  private async provideFeedback(
+    agentId: string,
+    message: string,
+    userInput: string,
+    feedback: string,
+    positive: boolean,
+    conversationId: string,
+  ): Promise<string> {
     try {
-      const response = await axios.post<{ url: string }>(
-        `${this.baseUri}/api/agent/${agentName}/text_to_speech`,
+      const response = await axios.post(
+        `${this.baseUri}/v1/agent/${agentId}/feedback`,
+        {
+          user_input: userInput,
+          message,
+          feedback,
+          positive,
+          conversation_name: conversationId,
+        },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data.message;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Text-to-Speech Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async textToSpeech(agentId: string, text: string): Promise<string> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/agent/${agentId}/text_to_speech`,
         { text },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.url;
     } catch (error) {
       return this.handleError(error);
     }
   }
 
-  async newConversationMessage(role: string, message: string, conversationName: string) {
-    try {
-      const response = await axios.post<{ message: string }>(
-        `${this.baseUri}/api/conversation/message`,
-        {
-          role,
-          message,
-          conversation_name: conversationName,
-        },
-        { headers: this.headers },
-      );
-      return response.data.message;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
-
-  async getConversationsWithIds() {
-    try {
-      const response = await axios.get<{ conversations_with_ids: any }>(`${this.baseUri}/api/conversations`, {
-        headers: this.headers,
-      });
-      return response.data.conversations_with_ids;
-    } catch (error) {
-      return this.handleError(error);
-    }
-  }
+  // ─────────────────────────────────────────────────────────────
+  // Task Planning Methods
+  // ─────────────────────────────────────────────────────────────
 
   async planTask(
-    agentName: string,
+    agentId: string,
     userInput: string,
     websearch: boolean = false,
     websearchDepth: number = 3,
-    conversationName: string = '',
+    conversationId: string = '',
     logUserInput: boolean = true,
     logOutput: boolean = true,
     enableNewCommand: boolean = true,
-  ) {
+  ): Promise<string> {
     try {
-      const response = await axios.post<{ response: string }>(
-        `${this.baseUri}/api/agent/${agentName}/plan/task`,
+      const response = await axios.post(
+        `${this.baseUri}/v1/agent/${agentId}/plan/task`,
         {
           user_input: userInput,
           websearch,
           websearch_depth: websearchDepth,
-          conversation_name: conversationName,
+          conversation_name: conversationId,
           log_user_input: logUserInput,
           log_output: logOutput,
           enable_new_command: enableNewCommand,
         },
         { headers: this.headers },
       );
+      this.parseResponse(response);
       return response.data.response;
     } catch (error) {
       return this.handleError(error);
     }
   }
+
+  // ─────────────────────────────────────────────────────────────
+  // Company Methods
+  // ─────────────────────────────────────────────────────────────
+
   async getCompanies(): Promise<any[]> {
     try {
-      const response = await axios.get<any[]>(`${this.baseUri}/v1/companies`, { headers: this.headers });
+      const response = await axios.get(`${this.baseUri}/v1/companies`, { headers: this.headers });
+      this.parseResponse(response);
       return response.data;
     } catch (error) {
-      return [this.handleError(error)];
+      return this.handleError(error);
     }
   }
-  async getInvitations(company_id?: string): Promise<any[]> {
+
+  async createCompany(
+    name: string,
+    agentName: string,
+    parentCompanyId?: string,
+  ): Promise<any> {
     try {
-      let response;
-      if (!company_id) {
-        response = await axios.get<{ invitations: any[] }>(`${this.baseUri}/v1/invitations`, {
-          headers: this.headers,
-        });
-      } else {
-        response = await axios.get<{ invitations: any[] }>(`${this.baseUri}/v1/invitations/${company_id}`, {
-          headers: this.headers,
-        });
-      }
+      const response = await axios.post(
+        `${this.baseUri}/v1/companies`,
+        {
+          name,
+          agent_name: agentName,
+          parent_company_id: parentCompanyId,
+        },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async updateCompany(companyId: string, name: string): Promise<any> {
+    try {
+      const response = await axios.put(
+        `${this.baseUri}/v1/companies/${companyId}`,
+        { name },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async deleteCompany(companyId: string): Promise<any> {
+    try {
+      const response = await axios.delete(`${this.baseUri}/v1/companies/${companyId}`, {
+        headers: this.headers,
+      });
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async deleteUserFromCompany(companyId: string, userId: string): Promise<any> {
+    try {
+      const response = await axios.delete(`${this.baseUri}/v1/companies/${companyId}/users/${userId}`, {
+        headers: this.headers,
+      });
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Invitation Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async getInvitations(companyId?: string): Promise<any[]> {
+    try {
+      const url = companyId
+        ? `${this.baseUri}/v1/invitations/${companyId}`
+        : `${this.baseUri}/v1/invitations`;
+      const response = await axios.get(url, { headers: this.headers });
+      this.parseResponse(response);
       return response.data.invitations;
     } catch (error) {
-      return [this.handleError(error)];
+      return this.handleError(error);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // OAuth2 Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async getOauth2Providers(): Promise<any[]> {
+    try {
+      const response = await axios.get(`${this.baseUri}/v1/oauth2`, { headers: this.headers });
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async getUserOauth2Connections(): Promise<string[]> {
+    try {
+      const response = await axios.get(`${this.baseUri}/v1/user/oauth2`, { headers: this.headers });
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async oauth2Login(provider: string, code: string, referrer?: string): Promise<any> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/oauth2/${provider}`,
+        { code, referrer },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Embedder Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async getEmbeddersDetails(): Promise<any> {
+    try {
+      const response = await axios.get(`${this.baseUri}/v1/embedders`, { headers: this.headers });
+      this.parseResponse(response);
+      return response.data.embedders;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Training Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async train(
+    agentId: string,
+    datasetName: string = 'dataset',
+    model: string = 'unsloth/mistral-7b-v0.2',
+    maxSeqLength: number = 16384,
+    huggingfaceOutputPath: string = 'JoshXT/finetuned-mistral-7b-v0.2',
+    privateRepo: boolean = true,
+  ): Promise<any> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/agent/${agentId}/train`,
+        {
+          dataset_name: datasetName,
+          model,
+          max_seq_length: maxSeqLength,
+          huggingface_output_path: huggingfaceOutputPath,
+          private_repo: privateRepo,
+        },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Audio Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async transcribeAudio(
+    file: string,
+    model: string,
+    language?: string,
+    prompt?: string,
+    responseFormat: string = 'json',
+    temperature: number = 0.0,
+  ): Promise<any> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/audio/transcriptions`,
+        {
+          file,
+          model,
+          language,
+          prompt,
+          response_format: responseFormat,
+          temperature,
+        },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  async translateAudio(
+    file: string,
+    model: string,
+    prompt?: string,
+    responseFormat: string = 'json',
+    temperature: number = 0.0,
+  ): Promise<any> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/audio/translations`,
+        {
+          file,
+          model,
+          prompt,
+          response_format: responseFormat,
+          temperature,
+        },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // Image Generation Methods
+  // ─────────────────────────────────────────────────────────────
+
+  async generateImage(
+    prompt: string,
+    model: string = 'dall-e-3',
+    n: number = 1,
+    size: string = '1024x1024',
+    responseFormat: string = 'url',
+  ): Promise<any> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/images/generations`,
+        {
+          prompt,
+          model,
+          n,
+          size,
+          response_format: responseFormat,
+        },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
     }
   }
 }
