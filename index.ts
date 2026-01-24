@@ -55,10 +55,46 @@ export default class AGiXTSDK {
   // Auth Methods
   // ─────────────────────────────────────────────────────────────
 
-  async login(email: string, otp: string): Promise<string | undefined> {
+  /**
+   * Login with username/password authentication.
+   * @param username - Username or email address
+   * @param password - User's password
+   * @param mfaToken - Optional TOTP code if MFA is enabled
+   * @returns JWT token on success, or undefined on failure
+   */
+  async login(username: string, password: string, mfaToken?: string): Promise<string | any> {
+    try {
+      const payload: any = { username, password };
+      if (mfaToken) {
+        payload.mfa_token = mfaToken;
+      }
+      const response = await axios.post(`${this.baseUri}/v1/login`, payload, { headers: this.headers });
+      this.parseResponse(response);
+      const data = response.data;
+      if (response.status === 200 && data.token) {
+        this.headers = { ...this.headers, Authorization: data.token };
+        if (this.verbose) {
+          console.log('Logged in successfully');
+        }
+        return data.token;
+      }
+      return data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  /**
+   * Legacy login with magic link (email + OTP token).
+   * Maintained for backward compatibility.
+   * @param email - User's email address
+   * @param otp - TOTP code from authenticator app
+   * @returns JWT token on success, or undefined on failure
+   */
+  async loginMagicLink(email: string, otp: string): Promise<string | undefined> {
     try {
       const response = await axios.post(
-        `${this.baseUri}/v1/login`,
+        `${this.baseUri}/v1/login/magic-link`,
         { email, token: otp },
         { headers: this.headers },
       );
@@ -78,22 +114,147 @@ export default class AGiXTSDK {
     }
   }
 
-  async registerUser(email: string, firstName: string, lastName: string): Promise<string> {
+  /**
+   * Register a new user with username/password authentication.
+   * @param email - User's email address
+   * @param password - User's password
+   * @param confirmPassword - Password confirmation
+   * @param firstName - User's first name (optional)
+   * @param lastName - User's last name (optional)
+   * @param username - Desired username (optional, auto-generated from email if not provided)
+   * @param organizationName - Company/organization name (optional)
+   * @returns Response object with user_id, username, token on success
+   */
+  async registerUser(
+    email: string,
+    password: string,
+    confirmPassword: string,
+    firstName?: string,
+    lastName?: string,
+    username?: string,
+    organizationName?: string,
+  ): Promise<any> {
+    try {
+      const payload: any = {
+        email,
+        password,
+        confirm_password: confirmPassword,
+        first_name: firstName || '',
+        last_name: lastName || '',
+      };
+      if (username) payload.username = username;
+      if (organizationName) payload.organization_name = organizationName;
+
+      const response = await axios.post(`${this.baseUri}/v1/user`, payload, { headers: this.headers });
+      this.parseResponse(response);
+      const data = response.data;
+      if (response.status === 200 && data.token) {
+        this.headers = { ...this.headers, Authorization: data.token };
+        if (this.verbose) {
+          console.log(`Registered and logged in as ${data.username}`);
+        }
+      }
+      return data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  /**
+   * Get MFA setup information including QR code URI.
+   * @returns Object with provisioning_uri, secret, and mfa_enabled status
+   */
+  async getMfaSetup(): Promise<{ provisioning_uri: string; secret: string; mfa_enabled: boolean }> {
+    try {
+      const response = await axios.get(`${this.baseUri}/v1/user/mfa/setup`, { headers: this.headers });
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  /**
+   * Enable MFA for the current user.
+   * @param mfaToken - TOTP code from authenticator app to verify setup
+   * @returns Response object with success message
+   */
+  async enableMfa(mfaToken: string): Promise<{ detail: string }> {
     try {
       const response = await axios.post(
-        `${this.baseUri}/v1/user`,
-        { email, first_name: firstName, last_name: lastName },
+        `${this.baseUri}/v1/user/mfa/enable`,
+        { mfa_token: mfaToken },
         { headers: this.headers },
       );
       this.parseResponse(response);
-      const data = response.data;
-      if (data.otp_uri) {
-        const mfaToken = data.otp_uri.split('secret=')[1].split('&')[0];
-        // Note: In a real implementation, you'd use a TOTP library
-        await this.login(email, mfaToken);
-        return data.otp_uri;
-      }
-      return JSON.stringify(data);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  /**
+   * Disable MFA for the current user.
+   * @param password - User's password (optional)
+   * @param mfaToken - Current TOTP code (optional)
+   * @returns Response object with success message
+   */
+  async disableMfa(password?: string, mfaToken?: string): Promise<{ detail: string }> {
+    try {
+      const payload: any = {};
+      if (password) payload.password = password;
+      if (mfaToken) payload.mfa_token = mfaToken;
+      const response = await axios.post(`${this.baseUri}/v1/user/mfa/disable`, payload, { headers: this.headers });
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  /**
+   * Change the current user's password.
+   * @param currentPassword - Current password
+   * @param newPassword - New password
+   * @param confirmPassword - New password confirmation
+   * @returns Response object with success message
+   */
+  async changePassword(currentPassword: string, newPassword: string, confirmPassword: string): Promise<{ detail: string }> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/user/password/change`,
+        {
+          current_password: currentPassword,
+          new_password: newPassword,
+          confirm_password: confirmPassword,
+        },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data;
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  /**
+   * Set a password for users who don't have one (e.g., social login users).
+   * @param newPassword - New password
+   * @param confirmPassword - New password confirmation
+   * @returns Response object with success message
+   */
+  async setPassword(newPassword: string, confirmPassword: string): Promise<{ detail: string }> {
+    try {
+      const response = await axios.post(
+        `${this.baseUri}/v1/user/password/set`,
+        {
+          new_password: newPassword,
+          confirm_password: confirmPassword,
+        },
+        { headers: this.headers },
+      );
+      this.parseResponse(response);
+      return response.data;
     } catch (error) {
       return this.handleError(error);
     }
